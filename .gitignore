@@ -31,4 +31,5 @@ cache/
 # Users Environment Variables
 .lock-wscript
 
+app.js
 *.map
