@@ -1,4 +1,4 @@
 nw-example
 ==========
 
-node-webkit examples
+Examples of node-webkit.
