@@ -30,3 +30,5 @@ cache/
 
 # Users Environment Variables
 .lock-wscript
+
+.map

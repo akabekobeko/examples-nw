@@ -53,7 +53,7 @@ function renderFolder( component ) {
     var children  = null;
     if( component.state.children ) {
         children = component.state.children.map( function( item, index ) {
-            return ( <li key={index}><Explorer item={item} /></li> );
+            return ( <li key={index}><Explorer name={item.name} type={item.type} /></li> );
         } );
     }
 
@@ -65,7 +65,7 @@ function renderFolder( component ) {
             <div onClick={component.onClick}>
                 <i className={mark}></i>
                 <i className={icon}></i>
-                <span>{component.props.item.name}</span>
+                <span>{component.props.name}</span>
             </div>
             <ul style={style}>
                 {children}
@@ -86,7 +86,7 @@ function renderFile( component ) {
     return (
         <div onClick={component.onClick}>
             <i className={icon}></i>
-            <span>{component.props.item.name}</span>
+            <span>{component.props.name}</span>
         </div>
     );
 }
@@ -110,14 +110,14 @@ var Explorer = React.createClass( {
      * @return {Object} 描画オブジェクト。
      */
     render: function() {
-        return ( this.props.item.type === ITEM_TYPE_FOLDER ? renderFolder( this ) : renderFile( this ) );
+        return ( this.props.type === ITEM_TYPE_FOLDER ? renderFolder( this ) : renderFile( this ) );
     },
 
     /**
      * アイテムがクリックされた時に発生します。
      */
     onClick: function() {
-        if( this.props.item.type === ITEM_TYPE_FOLDER ) {
+        if( this.props.type === ITEM_TYPE_FOLDER ) {
             if( !this.state.enumerated ) {
                 this.setState( { enumerated: true } );
                 this.setState( { children: getSubItems() } );
@@ -129,13 +129,8 @@ var Explorer = React.createClass( {
 } );
 
 module.exports = function( target ) {
-    var root = {
-        name: 'root',
-        type: 'folder'
-    };
-
     React.render(
-        <Explorer item={root} />,
+        <Explorer name="root" type="folder" />,
         document.querySelector( target )
     );
 };
