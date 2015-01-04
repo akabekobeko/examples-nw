@@ -1,0 +1,15 @@
+{
+    "name": "SimpleFiler",
+    "version": "1.0.0",
+    "description": "Example of the simple filer in node-webkit.",
+    "main": "index.html",
+    "window": {
+        "title": "Simple Filer",
+        "toolbar": true,
+        "frame": true,
+        "resizable": true,
+        "width": 800,
+        "height": 640,
+        "position": "mouse"
+    }
+}
