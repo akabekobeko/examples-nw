@@ -2,46 +2,11 @@ var gulp = require( 'gulp' );
 var $    = require( 'gulp-load-plugins' )();
 
 /**
- * リリース用イメージを削除します。
- *
- * @param {Function} cb コールバック関数。
- */
-gulp.task( 'clean', require( 'del' ).bind( './dist', './build' ) );
-
-/**
- * リリース用イメージに必要なファイルをコピーします。
- *
- * @param {Function} cb コールバック関数。
- */
-gulp.task( 'copy', [ 'clean' ], function( cb ) {
-    gulp.src( './src/fonts/**' ).pipe( gulp.dest( './dist/fonts' ) );
-    gulp.src( './src/js/app.js' ).pipe( gulp.dest( './dist/js' ) );
-    gulp.src( './src/package.json' ).pipe( gulp.dest( './dist' ) );
-    gulp.src( './src/bower_components/react/react.js' ).pipe( gulp.dest( './dist/bower_components/react' ) );
-    cb();
-} );
-
-/**
- * HTML 内のリソース参照情報を元にリリース用 CSS と HTML ファイルを生成します。
+ * JavaScript と JSX ファイルをコンパイルした単一ファイルを開発フォルダに出力します。
  *
  * @return {Object} gulp ストリーム。
  */
-gulp.task( 'useref', function() {
-    var assets = $.useref.assets();
-    return gulp.src( './src/*.html' )
-        .pipe( assets )
-        .pipe( $.if( '*.css', $.minifyCss() ) )
-        .pipe( assets.restore() )
-        .pipe( $.useref() )
-        .pipe( gulp.dest( './dist' ) );
-} );
-
-/**
- * プロジェクトの JavaScript と JSX ファイルをビルドします。
- *
- * @return {Object} gulp ストリーム。
- */
-gulp.task( 'build', function() {
+gulp.task( 'js', function() {
     var browserify = require( 'browserify' );
     var source     = require( 'vinyl-source-stream' );
     var buffer     = require( 'vinyl-buffer' );
@@ -61,7 +26,47 @@ gulp.task( 'build', function() {
         .pipe( $.sourcemaps.init( { loadMaps: true } ) )
         .pipe( $.uglify() )
         .pipe( $.sourcemaps.write( './' ) )
-        .pipe( gulp.dest( './src/js' ) );
+        .pipe( gulp.dest( 'src/js' ) );
+} );
+
+/**
+ * リリース用イメージを削除します。
+ *
+ * @param {Function} cb コールバック関数。
+ */
+gulp.task( 'clean', function( cb ) {
+    var del = require( 'del' );
+    del( [ 'release/bin/', 'release/src/' ], cb );
+} );
+
+/**
+ * HTML 内のリソース参照情報を解決し、リリース用フォルダに HTML/CSS/JS を出力します。
+ *
+ * 対象となる JavaScript は Bower 経由でインストールしたライブラリです。
+ * node-webkit のグローバルな require と競合せぬよう、このタスクで処理します。
+ * 自作スクリプトは js タスクで処理されます。
+ *
+ * @return {Object} gulp ストリーム。
+ */
+gulp.task( 'useref', [ 'clean' ], function() {
+    var assets = $.useref.assets();
+    return gulp.src( 'src/*.html' )
+        .pipe( assets )
+        .pipe( $.if( '*.css', $.minifyCss() ) )
+        .pipe( assets.restore() )
+        .pipe( $.useref() )
+        .pipe( gulp.dest( 'release/src' ) );
+} );
+
+/**
+ * リリース用イメージに必要なファイルをコピーします。
+ */
+gulp.task( 'copy', [ 'js', 'useref' ], function() {
+    return gulp.src(
+            [ 'src/fonts/**', 'src/js/app.js', 'src/package.json' ],
+            { base: 'src' }
+        )
+        .pipe( gulp.dest( 'release/src' ) );
 } );
 
 /**
@@ -69,12 +74,14 @@ gulp.task( 'build', function() {
  *
  * @return {Object} gulp ストリーム。
  */
-gulp.task( 'release', [ 'copy', 'useref', 'build' ], function () {
+gulp.task( 'release', [ 'copy' ], function () {
     var builder = require( 'node-webkit-builder' );
  
     var nw = new builder( {
         version: '0.11.5',
-        files: [ './dist/**' ],
+        files: [ 'release/src/**' ],
+        buildDir: 'release/bin',
+        cacheDir: 'release/nw',
         platforms: [ 'osx' ]
     });
  
@@ -90,11 +97,11 @@ gulp.task( 'release', [ 'copy', 'useref', 'build' ], function () {
 /**
  * 開発用リソースの変更を監視して、必要ならビルドを実行します。
  */
-gulp.task( 'watch', [ 'build' ], function () {
-    gulp.watch( [ './src/js/*.js', '!./src/js/app.js' ], [ 'build' ]);
+gulp.task( 'watch', [ 'js' ], function () {
+    gulp.watch( [ 'src/js/*.js', '!src/js/app.js' ], [ 'js' ]);
 } );
 
 /**
  * gulp の既定タスクです。
  */
-gulp.task( 'default', [ 'build' ] );
+gulp.task( 'default', [ 'js' ] );

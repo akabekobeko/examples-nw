@@ -8,5 +8,7 @@ Example of the simple filer in [node-webkit](https://github.com/rogerwang/node-w
 1. git clone https://github.com/akabekobeko/examples-nw.git
 1. cd simple-filer
 1. npm install
+1. cd src
 1. bower install
+1. cd ..
 1. Run "gulp release", this app is outputted
