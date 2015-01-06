@@ -2,44 +2,45 @@ var ITEM_TYPE_FOLDER = 'folder';
 var ITEM_TYPE_FILE = 'file';
 
 /**
- * 指定された範囲のランダムな整数を取得します。
+ * フォルダ内のアイテムを列挙します。
  *
- * @param {Number} min 下限。
- * @param {Number} max 上限。
- *
- * @return {Number} 整数。
+ * @param {Object} component コンポーネント。
  */
-function getRandomInt( min, max ) {
-    return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
-}
+function enumSubItems( component ) {
+    var dir = component.props.path + '/';
 
-/**
- * フォルダ内のアイテムを取得します。
- * このアプリはサンプルなので、得られる結果はランダムな 3 パターンから選択されます。
- *
- * @return {Array} アイテムのコレクション。
- */
-function getSubItems() {
-    switch( getRandomInt( 0, 2 ) ) {
-    case 1:
-        return [
-            { name: 'dir-1', type: ITEM_TYPE_FOLDER },
-            { name: 'dir-2', type: ITEM_TYPE_FOLDER }
-        ];
+    var fs = require( 'fs' );
+    fs.readdir( dir, function( err, items ) {
+        if( err ) {
+            console.log( err );
+            return;
+        }
 
-    case 2:
-        return [
-            { name: 'dir', type: ITEM_TYPE_FOLDER },
-            { name: 'music.aac', type: ITEM_TYPE_FILE },
-            { name: 'sample.jpg', type: ITEM_TYPE_FILE }
-        ];
+        var children = [];
+        items.forEach( function( item, index ) {
+            // 隠しファイル、フォルダは除外
+            if( item.lastIndexOf( '.' ) !== 0 ) {
+                var path = dir + item;
+                var type = fs.statSync( path ).isDirectory() ? ITEM_TYPE_FOLDER : ITEM_TYPE_FILE;
+                children.push( { name: item, type: type, path: path } );
+            }
 
-    default:
-        return [
-            { name: 'dir', type: ITEM_TYPE_FOLDER },
-            { name: 'test.txt', type: ITEM_TYPE_FILE }
-        ];
-    }
+            if( index === items.length - 1 ) {
+                // フォルダを先頭にする
+                children.sort( function( a, b ) {
+                    if( a.type === ITEM_TYPE_FOLDER && b.type === ITEM_TYPE_FILE ) {
+                        return -1;
+                    } else if( b.type === ITEM_TYPE_FOLDER && a.type === ITEM_TYPE_FILE ) {
+                        return 1;
+                    }
+
+                    return 0;
+                } );
+
+                component.setState( { children: children } );
+            }
+        } );
+    } );
 }
 
 /**
@@ -53,7 +54,7 @@ function renderFolder( component ) {
     var children  = null;
     if( component.state.children ) {
         children = component.state.children.map( function( item, index ) {
-            return ( <li key={index}><Explorer name={item.name} type={item.type} /></li> );
+            return ( <li key={index}><Explorer name={item.name} type={item.type} path={item.path} /></li> );
         } );
     }
 
@@ -120,7 +121,8 @@ var Explorer = React.createClass( {
         if( this.props.type === ITEM_TYPE_FOLDER ) {
             if( !this.state.enumerated ) {
                 this.setState( { enumerated: true } );
-                this.setState( { children: getSubItems() } );
+                enumSubItems( this );
+                //this.setState( { children: getSubItems( this.props.path ) } );
             }
 
             this.setState( { expanded: !this.state.expanded } );
@@ -130,7 +132,7 @@ var Explorer = React.createClass( {
 
 module.exports = function( target ) {
     React.render(
-        <Explorer name="root" type="folder" />,
+        <Explorer name="root" type="folder" path="" />,
         document.querySelector( target )
     );
 };
