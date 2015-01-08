@@ -89,6 +89,9 @@ html, body {
  * フォルダ詳細
  ******************************************************************************/
 
+/**
+ * フォルダ詳細。
+ */
 .l-content .explorer .folder-detail {
   position: absolute;
   left: 300px;
@@ -96,24 +99,42 @@ html, body {
   bottom: 0;
   right: 0;
   overflow: scroll;
+  border: solid 1px #bdc3c7;
 }
 
+/**
+ * 詳細テーブル。
+ */
 .l-content .explorer .folder-detail .items {
   width: 100%;
   border-collapse: collapse;
-  border: solid 1px #95a5a6;
+  border-bottom: solid 1px #bdc3c7;
 }
 
+/**
+ * ヘッダー。
+ */
 .l-content .explorer .folder-detail .items th {
   background-color: #bdc3c7;
+  color: #fff;
   font-weight: normal;
-  border: solid 1px #95a5a6;
-  padding: .2em;
+  padding: .2em .5em;
 }
 
+/**
+ * アイテム情報。
+ */
 .l-content .explorer .folder-detail .items td {
-  border-left: solid 1px #95a5a6;
-  padding: .2em;
+  border-right: solid 1px #bdc3c7;
+  padding: .2em .5em;
+  white-space: nowrap;
+}
+
+/**
+ * サイズ。
+ */
+.l-content .explorer .folder-detail .items td:nth-child( 3 ) {
+  text-align: right;
 }
 
 

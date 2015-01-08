@@ -1,3 +1,29 @@
+
+/**
+ * アイテム情報を生成します。
+ *
+ * @param {String} folderPath 親フォルダのパス。
+ * @param {String} name       アイテム名。
+ *
+ * @return {Object} アイテム情報。
+ */
+function createItem( folderPath, name ) {
+    if( name.lastIndexOf( '.', 0 ) === 0 ) { return null; }
+
+    var path        = folderPath + name;
+    var stat        = fs.statSync( path );
+    var isDirectory = stat.isDirectory();
+    if( !( withFiles || isDirectory ) ) { return null; }
+
+    return {
+        name:        name,
+        path:        path,
+        size:        stat.size,
+        mtime:       stat.mtime,
+        isDirectory: isDirectory
+    };
+}
+
 module.exports = {
     /**
      * フォルダ内のアイテムを列挙します。
@@ -10,7 +36,7 @@ module.exports = {
         folderPath += '/';
 
         var fs = require( 'fs' );
-        fs.readdir( folderPath, function( err, files ) {
+        fs.readdir( folderPath, function( err, names ) {
             if( err ) {
                 console.log( err );
                 onEnd( [] );
@@ -18,17 +44,17 @@ module.exports = {
             }
 
             var items = [];
-            files.forEach( function( file, index ) {
+            names.forEach( function( name, index ) {
                 function createItem() {
-                    if( file.lastIndexOf( '.', 0 ) === 0 ) { return null; }
+                    if( name.lastIndexOf( '.', 0 ) === 0 ) { return null; }
 
-                    var path        = folderPath + file;
+                    var path        = folderPath + name;
                     var stat        = fs.statSync( path );
                     var isDirectory = stat.isDirectory();
                     if( !( withFiles || isDirectory ) ) { return null; }
 
                     return {
-                        name:        file,
+                        name:        name,
                         path:        path,
                         size:        stat.size,
                         mtime:       stat.mtime,
@@ -41,7 +67,7 @@ module.exports = {
                     items.push( item );
                 }
 
-                if( index === files.length - 1 ) {
+                if( index === names.length - 1 ) {
                     onEnd( items );
                 }
             } );

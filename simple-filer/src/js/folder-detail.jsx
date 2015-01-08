@@ -1,4 +1,10 @@
 
+/**
+ * アイテム種別を取得します。
+ *
+ * @param  {[type]} item [description]
+ * @return {[type]}      [description]
+ */
 function getItemType( item ) {
     if( item.isDirectory ) { return 'Folder'; }
 
@@ -24,21 +30,20 @@ function getItemType( item ) {
 }
 
 /**
+ * 日時情報を文字列化します。
+ *
+ * @param {Date} date 日時情報。
+ *
+ * @return {String} 文字列。
+ */
+function dateToString( date ) {
+    return ( date && date.toLocaleString ? date.toLocaleString() : '' );
+}
+
+/**
  * フォルダー内の詳細情報コンポーネントです。
  */
 var FolderDetail = React.createClass( {
-    /**
-     * コンポーネントの状態を初期化します。
-     *
-     * @return {Object} 初期化された状態オブジェクト。
-     */
-    /*
-    getInitialState: function() {
-        return {
-            items: null
-        };
-    },*/
-
     /**
      * コンポーネントの描画オブジェクトを取得します。
      *
@@ -51,13 +56,14 @@ var FolderDetail = React.createClass( {
             var icon = ( item.isDirectory ? 'icon-folder' : 'icon-file' );
             var type = getItemType( item );
             var size = fileutil.fileSizeToString( item.size );
+            var date = dateToString( item.mtime );
 
             return (
                 <tr>
                     <td><i className={icon}></i> {item.name}</td>
                     <td>{type}</td>
                     <td>{size}</td>
-                    <td>{item.mtime}</td>
+                    <td>{date}</td>
                 </tr>
             );
         } );
