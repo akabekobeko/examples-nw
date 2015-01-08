@@ -56,6 +56,7 @@ html, body {
   top: 0;
   bottom: 0;
   padding: .5em;
+  box-sizing: border-box;
   overflow: scroll;
   background-color: #ecf0f1;
 }
@@ -64,7 +65,7 @@ html, body {
  * フォルダ内のツリー。
  */
 .l-content .explorer .folder-tree ul {
-  margin: 0;
+  margin: .5em;
   padding: 0 0 0 2em;
   list-style: none;
 }
@@ -83,3 +84,36 @@ html, body {
 .l-content .explorer .folder-tree .icon-arrow-down {
   color: #95a5a6;
 }
+
+/*******************************************************************************
+ * フォルダ詳細
+ ******************************************************************************/
+
+.l-content .explorer .folder-detail {
+  position: absolute;
+  left: 300px;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  overflow: scroll;
+}
+
+.l-content .explorer .folder-detail .items {
+  width: 100%;
+  border-collapse: collapse;
+  border: solid 1px #95a5a6;
+}
+
+.l-content .explorer .folder-detail .items th {
+  background-color: #bdc3c7;
+  font-weight: normal;
+  border: solid 1px #95a5a6;
+  padding: .2em;
+}
+
+.l-content .explorer .folder-detail .items td {
+  border-left: solid 1px #95a5a6;
+  padding: .2em;
+}
+
+

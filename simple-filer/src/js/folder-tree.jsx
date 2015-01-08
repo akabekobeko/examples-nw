@@ -1,37 +1,5 @@
 
 /**
- * サブフォルダを列挙します。
- *
- * @param {String}   folderPath フォルダのパス。
- * @param {Function} onEnd      フォルダを列挙し終えたことを通知するコールバック関数。
- */
-function enumSubFolders( folderPath, onEnd ) {
-    folderPath += '/';
-
-    var fs = require( 'fs' );
-    fs.readdir( folderPath, function( err, items ) {
-        if( err ) {
-            console.log( err );
-            return;
-        }
-
-        var subFolders = [];
-        items
-            .filter( function( item ) {
-                // 表示対象となるフォルダのみを対象とする
-                return ( item.lastIndexOf( '.' ) !== 0 && fs.statSync( folderPath + item ).isDirectory() );
-            } )
-            .forEach( function( item, index, arr ) {
-                subFolders.push( { name: item, path: folderPath + item } );
-
-                if( index === arr.length - 1 ) {
-                    onEnd( subFolders );
-                }
-            } );
-    } );
-}
-
-/**
  * フォルダー ツリーとなるコンポーネントです。
  */
 var FolderTree = React.createClass( {
@@ -54,8 +22,9 @@ var FolderTree = React.createClass( {
     render: function() {
         var subFolders  = null;
         if( this.state.subFolders ) {
+            var onSelectFolder = this.props.onSelectFolder;
             subFolders = this.state.subFolders.map( function( item, index ) {
-                return ( <li key={index}><FolderTree name={item.name} path={item.path} /></li> );
+                return ( <li key={index}><FolderTree name={item.name} path={item.path} onSelectFolder={onSelectFolder} /></li> );
             } );
         }
 
@@ -79,21 +48,25 @@ var FolderTree = React.createClass( {
      */
     onClick: function() {
         if( this.state.enumerated ) {
-            // ここでフォルダ内表示を更新する
             this.setState( { expanded: !this.state.expanded } );
+            this.props.onSelectFolder( this.props.path );
+
         } else {
             this.setState( { enumerated: true } );
 
             var component = this;
-            enumSubFolders( this.props.path, function( subFolders ) {
+            var fileutil  = require( './file-utility.js' );
+
+            fileutil.enumItemsAtFolder( this.props.path, function( subFolders ) {
                 component.setState( {
                     subFolders: subFolders,
                     expanded: !component.state.expanded
                 } );
+
+                component.props.onSelectFolder( component.props.path );
             } );
         }
     }
 } );
 
 module.exports = FolderTree;
-
