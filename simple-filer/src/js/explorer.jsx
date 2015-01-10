@@ -2,6 +2,9 @@
 var FolderTree   = require( './folder-tree.jsx' );
 var FolderDetail = require( './folder-detail.jsx' );
 
+/**
+ * ファイル、フォルダのビューアーです。
+ */
 var Explorer = React.createClass( {
     /**
      * コンポーネントの状態を初期化します。
@@ -9,10 +12,17 @@ var Explorer = React.createClass( {
      * @return {Object} 初期化された状態オブジェクト。
      */
     getInitialState: function() {
+        var fileutil = require( './file-utility.js' );
         return {
-            currentFolder: "",
+            currentFolder: fileutil.getUserHomeDir(),
             items: []
         };
+    },
+    /**
+     * コンポーネントが DOM ツリーへ追加された時に発生します。
+     */
+    componentWillMount: function() {
+        this.updateFolderDetail( this.state.currentFolder );
     },
     /**
      * コンポーネントの描画オブジェクトを取得します。
@@ -23,7 +33,7 @@ var Explorer = React.createClass( {
         return (
             <div className="explorer">
                 <div className="folder-tree">
-                    <FolderTree name="root" path="" onSelectFolder={this.onSelectFolder} />
+                    <FolderTree name="HOME" path={this.state.currentFolder} onSelectFolder={this.onSelectFolder} />
                 </div>
                 <div className="folder-detail">
                     <FolderDetail items={this.state.items} />
@@ -32,23 +42,36 @@ var Explorer = React.createClass( {
         );
     },
     /**
-     * フォルダが選択された時に発生します。
+     * フォルダ詳細を更新します。
      *
-     * @param  {String} path 選択されたフォルダ。
+     * @param  {String} folder 新たに選択されたフォルダ。
      */
-    onSelectFolder: function( path ) {
-        if( path === this.state.currentFolder ) { return; }
-
+    updateFolderDetail: function( folder ) {
         var fileutil  = require( './file-utility.js' );
         var component = this;
-        fileutil.enumItemsAtFolder( path, function( items ) {
-            // フォルダを先頭にする
-            items.sort( function( a, b ) {
-                return ( a.isDirectory && b.isDirectory ? 0 : ( a.isDirectory ? -1 : 1 ) );
-            } );
 
-            component.setState( { currentFolder: path, items: items } );
-        }, true );
+        fileutil.enumItemsAtFolder(
+            folder,
+            function( items ) {
+                // フォルダを先頭にする
+                items.sort( function( a, b ) {
+                    return ( a.isDirectory && b.isDirectory ? 0 : ( a.isDirectory ? -1 : 1 ) );
+                } );
+
+                component.setState( { currentFolder: folder, items: items } );
+            },
+            true
+        );
+    },
+    /**
+     * フォルダが選択された時に発生します。
+     *
+     * @param  {String} folder 選択されたフォルダ。
+     */
+    onSelectFolder: function( folder ) {
+        if( folder !== this.state.currentFolder ) {
+            this.updateFolderDetail( folder );
+        }
     }
 } );
 

@@ -93,5 +93,14 @@ module.exports = {
         }
 
         return '--';
+    },
+    /**
+     * ユーザーのホームディレクトリを取得します。
+     * http://stackoverflow.com/questions/9080085/node-js-find-home-directory-in-platform-agnostic-way
+     *
+     * @return {String} ホームディレクトリのパス。
+     */
+    getUserHomeDir: function() {
+        return process.env[ ( process.platform == 'win32' ) ? 'USERPROFILE' : 'HOME' ];
     }
 };
