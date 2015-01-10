@@ -57,6 +57,7 @@ module.exports = {
                         name:        name,
                         path:        path,
                         size:        stat.size,
+                        mode:        stat.mode,
                         mtime:       stat.mtime,
                         isDirectory: isDirectory
                     };
@@ -98,5 +99,37 @@ module.exports = {
      */
     getUserHomeDir: function() {
         return process.env[ ( process.platform == 'win32' ) ? 'USERPROFILE' : 'HOME' ];
+    },
+    /**
+     * パーミッションを示す数値から記号化された文字列を取得します。
+     *
+     * @param {Number} mode モード。
+     *
+     * @return {String} パーミッション表記の文字列。
+     */
+    getPermissionString: function( mode, isDirectory ) {
+        var S_IRUSR = 0x0400;
+        var S_IWUSR = 0x0200;
+        var S_IXUSR = 0x0100;
+        var S_IRGRP = 0x0040;
+        var S_IWGRP = 0x0020;
+        var S_IXGRP = 0x0010;
+        var S_IROTH = 0x0004;
+        var S_IWOTH = 0x0002;
+        var S_IXOTH = 0x0001;
+
+        var str =
+         ( isDirectory    ? 'd' : '-' ) +
+         ( mode & S_IRUSR ? 'r' : '-' ) +
+         ( mode & S_IWUSR ? 'w' : '-' ) +
+         ( mode & S_IXUSR ? 'x' : '-' ) +
+         ( mode & S_IRGRP ? 'r' : '-' ) +
+         ( mode & S_IWGRP ? 'w' : '-' ) +
+         ( mode & S_IXGRP ? 'x' : '-' ) +
+         ( mode & S_IROTH ? 'r' : '-' ) +
+         ( mode & S_IWOTH ? 'w' : '-' ) +
+         ( mode & S_IXOTH ? 'x' : '-' );
+
+        return str;
     }
 };

@@ -56,6 +56,7 @@ var FolderDetail = React.createClass( {
             var icon = ( item.isDirectory ? 'icon-folder' : 'icon-file' );
             var type = getItemType( item );
             var size = fileutil.bytesToSize( item.size );
+            var mode = fileutil.getPermissionString( item.mode, item.isDirectory );
             var date = dateToString( item.mtime );
 
             return (
@@ -63,6 +64,7 @@ var FolderDetail = React.createClass( {
                     <td><i className={icon}></i> {item.name}</td>
                     <td>{type}</td>
                     <td>{size}</td>
+                    <td>{mode}</td>
                     <td>{date}</td>
                 </tr>
             );
@@ -71,7 +73,7 @@ var FolderDetail = React.createClass( {
         return (
             <table className="items">
                 <thead>
-                    <tr><th>Name</th><th>Type</th><th>Size</th><th>Modified</th></tr>
+                    <tr><th>Name</th><th>Type</th><th>Size</th><th>Permission</th><th>Modified</th></tr>
                 </thead>
                 <tbody>
                     {items}
