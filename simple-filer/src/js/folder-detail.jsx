@@ -55,7 +55,8 @@ var FolderDetail = React.createClass( {
         var items = this.props.items.map( function( item, index ) {
             var icon = ( item.isDirectory ? 'icon-folder' : 'icon-file' );
             var type = getItemType( item );
-            var size = fileutil.fileSizeToString( item.size );
+            //var size = fileutil.fileSizeToString( item.size );
+            var size = fileutil.bytesToSize( item.size );
             var date = dateToString( item.mtime );
 
             return (

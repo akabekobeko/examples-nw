@@ -74,25 +74,21 @@ module.exports = {
         } );
     },
     /**
-     * ファイル サイズに単位を付与した文字列を取得します。
+     * バイト数を単位付き文字列に変換します。
      *
      * @param {Number} size ファイル サイズ。
      *
      * @return {String} 単位付きのファイル サイズ文字列。TB を超えるサイズの場合は '--' を返します。
      */
-    fileSizeToString: function( size ) {
-        if( size < 1024 ) { return size + 'Byte'; }
+    bytesToSize: function( bytes ) {
+        if( bytes === 0 ) { return '--'; }
 
-        var units = [ 'KB', 'MB', 'GB', 'TB' ];
-        for( var i = 0, max = units.length; i <= max; ++i  ) {
-            var unitSize = Math.pow( 1024, i + 2 );
-            if( size < unitSize ) {
-                size = Math.round( size / Math.pow( 1024, i + 1 ) );
-                return size + units[ i ];
-            }
-        }
+        var k     = 1024; 
+        var units = [ 'Bytes', 'KB', 'MB', 'GB', 'TB' ];
+        var unit  = parseInt( Math.floor( Math.log( bytes ) / Math.log( k ) ) );
+        var size  = ( bytes / Math.pow( k, unit ) ) * 10;
 
-        return '--';
+        return ( Math.ceil( size ) / 10 )+ ' ' + units[ unit ];
     },
     /**
      * ユーザーのホームディレクトリを取得します。
