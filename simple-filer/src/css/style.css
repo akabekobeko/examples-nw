@@ -75,6 +75,7 @@ html, body {
  */
 .l-content .explorer  .folder-tree li {
   padding: .2em 0;
+  white-space: nowrap;
 }
 
 /**
