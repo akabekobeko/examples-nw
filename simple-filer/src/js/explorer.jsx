@@ -53,9 +53,8 @@ var Explorer = React.createClass( {
         fileutil.enumItemsAtFolder(
             folder,
             function( items ) {
-                // フォルダを先頭にする
                 items.sort( function( a, b ) {
-                    return ( a.isDirectory && b.isDirectory ? 0 : ( a.isDirectory ? -1 : 1 ) );
+                    return ( a.isDirectory === b.isDirectory ? a.name.localeCompare( b.name ) : ( a.isDirectory ? -1 : 1 ) );
                 } );
 
                 component.setState( { currentFolder: folder, items: items } );
