@@ -37,7 +37,7 @@ function getItemType( item ) {
  * @return {String} 文字列。
  */
 function dateToString( date ) {
-    return ( date && date.toLocaleString ? date.toLocaleString() : '' );
+    return ( date && date.toLocaleDateString ? date.toLocaleDateString() : '' );
 }
 
 /**
