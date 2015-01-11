@@ -24,6 +24,8 @@ gulp.task( 'js', function() {
         .pipe( source( 'app.js' ) )
         .pipe( buffer() )
         .pipe( $.sourcemaps.init( { loadMaps: true } ) )
+        .pipe( $.replace( 'require', 'requireClient' ) )
+        .pipe( $.replace( 'nequire', 'require' ) )
         //.pipe( $.uglify() )
         .pipe( $.sourcemaps.write( './' ) )
         .pipe( gulp.dest( 'src/js' ) );

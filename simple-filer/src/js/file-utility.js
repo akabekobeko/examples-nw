@@ -35,7 +35,7 @@ module.exports = {
     enumItemsAtFolder: function( folderPath, onEnd, withFiles ) {
         folderPath += '/';
 
-        var fs = require( 'fs' );
+        var fs = nequire( 'fs' );
         fs.readdir( folderPath, function( err, names ) {
             if( err ) {
                 console.log( err );

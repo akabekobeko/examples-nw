@@ -8,10 +8,7 @@
 function getItemType( item ) {
     if( item.isDirectory ) { return 'Folder'; }
 
-    //var mime = require( 'mime' );
-    //return mime.lookup( item.path );
-
-    var path = require( 'path' );
+    var path = nequire( 'path' );
     var ext  = path.extname( item.path );
     switch( ext ) {
     case '.txt':  return 'Text';
@@ -90,6 +87,8 @@ var FolderDetail = React.createClass( {
     onDoubleClickItem: function( item ) {
         if( item.isDirectory ) {
         } else {
+            var gui = nequire( 'nw.gui' );
+            gui.Shell.openItem( item.path );
         }
     }
 } );
