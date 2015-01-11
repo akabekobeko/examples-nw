@@ -50,7 +50,8 @@ var FolderDetail = React.createClass( {
      * @return {Object} 描画オブジェクト。
      */
     render: function() {
-        var fileutil = require( './file-utility.js' );
+        var fileutil  = require( './file-utility.js' );
+        var component = this;
 
         var items = this.props.items.map( function( item, index ) {
             var icon = ( item.isDirectory ? 'icon-folder' : 'icon-file' );
@@ -60,7 +61,7 @@ var FolderDetail = React.createClass( {
             var date = dateToString( item.mtime );
 
             return (
-                <tr>
+                <tr onDoubleClick={component.onDoubleClickItem.bind(this, item)}>
                     <td><i className={icon}></i> {item.name}</td>
                     <td>{type}</td>
                     <td>{size}</td>
@@ -80,6 +81,16 @@ var FolderDetail = React.createClass( {
                 </tbody>
             </table>
         );
+    },
+    /**
+     * アイテムがダブルクリックされた時に発生します。
+     *
+     * @param {Object} アイテム情報。
+     */
+    onDoubleClickItem: function( item ) {
+        if( item.isDirectory ) {
+        } else {
+        }
     }
 } );
 
