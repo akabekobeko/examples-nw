@@ -42,6 +42,16 @@ function dateToString( date ) {
  */
 var FolderDetail = React.createClass( {
     /**
+     * コンポーネントの状態を初期化します。
+     *
+     * @return {Object} 初期化された状態オブジェクト。
+     */
+    getInitialState: function() {
+        return {
+            selectedItem: null
+        };
+    },
+    /**
      * コンポーネントの描画オブジェクトを取得します。
      *
      * @return {Object} 描画オブジェクト。
@@ -51,14 +61,18 @@ var FolderDetail = React.createClass( {
         var component = this;
 
         var items = this.props.items.map( function( item, index ) {
-            var icon = ( item.isDirectory ? 'icon-folder' : 'icon-file' );
-            var type = getItemType( item );
-            var size = fileutil.bytesToSize( item.size );
-            var mode = fileutil.getPermissionString( item.mode, item.isDirectory );
-            var date = dateToString( item.mtime );
+            var style = ( item === component.state.selectedItem ? 'selected' : '' );
+            var icon  = ( item.isDirectory ? 'icon-folder' : 'icon-file' );
+            var type  = getItemType( item );
+            var size  = fileutil.bytesToSize( item.size );
+            var mode  = fileutil.getPermissionString( item.mode, item.isDirectory );
+            var date  = dateToString( item.mtime );
 
             return (
-                <tr onDoubleClick={component.onDoubleClickItem.bind(this, item)}>
+                <tr
+                    className={style}
+                    onClick={component.onClickItem.bind( this, item )}
+                    onDoubleClick={component.onDoubleClickItem.bind( this, item )}>
                     <td><i className={icon}></i> {item.name}</td>
                     <td>{type}</td>
                     <td>{size}</td>
@@ -80,12 +94,22 @@ var FolderDetail = React.createClass( {
         );
     },
     /**
-     * アイテムがダブルクリックされた時に発生します。
+     * アイテムがクリックされた時に発生します。
+     *
+     * @param {Object} アイテム情報。
+     */
+    onClickItem: function( item ) {
+        this.setState( { selectedItem: item } );
+    },
+    /**
+     * アイテムがダブル クリックされた時に発生します。
      *
      * @param {Object} アイテム情報。
      */
     onDoubleClickItem: function( item ) {
         if( item.isDirectory ) {
+            // ここでフォルダ ツリーに変更通知して展開させたい
+
         } else {
             var gui = nequire( 'nw.gui' );
             gui.Shell.openItem( item.path );

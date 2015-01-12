@@ -113,6 +113,13 @@ html, body {
 }
 
 /**
+ * 選択された行。
+ */
+.l-content .explorer .folder-detail .items .selected {
+  background-color: #ecf0f1;
+}
+
+/**
  * ヘッダー。
  */
 .l-content .explorer .folder-detail .items th {
