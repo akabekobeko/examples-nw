@@ -1,0 +1,154 @@
+
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+/**
+ * コンテンツ領域。
+ */
+.l-content {
+  width: 100%;
+  height: 100%;
+  color: #2c3e50;
+}
+
+.l-content .explorer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/**
+ * ツリー内のアイコン。
+ */
+.l-content .explorer [class^="icon-"],
+.l-content .explorer [class*=" icon-"] {
+  margin-right: .2em;
+}
+
+/**
+ * フォルダのアイコン。
+ */
+.l-content .explorer .icon-folder {
+  color: #3498db;
+}
+
+/**
+ * ファイルのアイコン。
+ */
+.l-content .explorer .icon-file {
+  color: #f39c12;
+}
+
+/*******************************************************************************
+ * フォルダ ツリー
+ ******************************************************************************/
+
+/**
+ * ツリー部分。explorer.jsx のターゲット。
+ */
+.l-content .explorer .folder-tree {
+  position: absolute;
+  width: 300px;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  padding: .5em;
+  box-sizing: border-box;
+  overflow: scroll;
+  background-color: #ecf0f1;
+}
+
+/**
+ * フォルダ内のツリー。
+ */
+.l-content .explorer .folder-tree ul {
+  margin: .5em;
+  padding: 0 0 0 2em;
+  list-style: none;
+}
+
+/**
+ * フォルダ内ツリーのアイテム。
+ */
+.l-content .explorer  .folder-tree li {
+  padding: .2em 0;
+  white-space: nowrap;
+}
+
+/**
+ * ツリー展開状態アイコン。
+ */
+.l-content .explorer .folder-tree .icon-arrow-right,
+.l-content .explorer .folder-tree .icon-arrow-down {
+  color: #95a5a6;
+}
+
+/*******************************************************************************
+ * フォルダ詳細
+ ******************************************************************************/
+
+/**
+ * フォルダ詳細。
+ */
+.l-content .explorer .folder-detail {
+  position: absolute;
+  left: 300px;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  overflow: scroll;
+  border: solid 1px #bdc3c7;
+}
+
+/**
+ * 詳細テーブル。
+ */
+.l-content .explorer .folder-detail .items {
+  width: 100%;
+  border-collapse: collapse;
+  border-bottom: solid 1px #bdc3c7;
+}
+
+/**
+ * 選択された行。
+ */
+.l-content .explorer .folder-detail .items .selected {
+  background-color: #ecf0f1;
+}
+
+/**
+ * ヘッダー。
+ */
+.l-content .explorer .folder-detail .items th {
+  background-color: #bdc3c7;
+  color: #fff;
+  font-weight: normal;
+  padding: .2em .5em;
+}
+
+/**
+ * アイテム情報。
+ */
+.l-content .explorer .folder-detail .items td {
+  border-right: solid 1px #bdc3c7;
+  padding: .2em .5em;
+  white-space: nowrap;
+}
+
+/**
+ * サイズ。
+ */
+.l-content .explorer .folder-detail .items td:nth-child( 3 ) {
+  text-align: right;
+}
+
+/**
+ * パーミッション。
+ */
+.l-content .explorer .folder-detail .items td:nth-child( 4 ) {
+  text-align: center;
+  font-family: monospace;
+}
