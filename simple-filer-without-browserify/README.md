@@ -1,16 +1,15 @@
-# nw.js: Simple Filer
+# nw.js: Use require
 
-Example of the simple filer in [nw.js](https://github.com/nwjs/nw.js "nw.js").
-
-![Screenshot](ss.png)
+Example of use the require in [nw.js](https://github.com/nwjs/nw.js "nw.js").
 
 # Installation & Build
 
 1. Install node.js, gulp and bower
 1. git clone https://github.com/akabekobeko/examples-nw.git
-1. cd simple-filer
+1. cd use-require
 1. npm install
 1. cd src
+1. npm install
 1. bower install
 1. cd ..
 1. Run "gulp js" or "gulp release"
