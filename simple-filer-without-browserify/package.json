@@ -1,0 +1,35 @@
+{
+  "name": "simple-filer-without-browserify",
+  "version": "1.0.0",
+  "description": "Example of use normal 'require' in nw.js.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/akabekobeko/examples-nw"
+  },
+  "keywords": [
+    "Example",
+    "nw.js",
+    "require"
+  ],
+  "author": "akabeko",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/akabekobeko/examples-nw/issues"
+  },
+  "homepage": "https://github.com/akabekobeko/examples-nw",
+  "devDependencies": {
+    "del": "^1.1.1",
+    "gulp": "^3.8.10",
+    "gulp-if": "^1.2.5",
+    "gulp-load-plugins": "^0.8.0",
+    "gulp-minify-css": "^0.3.13",
+    "gulp-react": "^2.0.0",
+    "gulp-useref": "^1.1.1",
+    "gulp-util": "^3.0.2",
+    "node-webkit-builder": "^1.0.6"
+  }
+}

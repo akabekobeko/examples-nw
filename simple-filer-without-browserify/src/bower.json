@@ -1,0 +1,25 @@
+{
+  "name": "use-require",
+  "version": "1.0.0",
+  "homepage": "https://github.com/akabekobeko/examples-nw",
+  "authors": [
+    "akabeko"
+  ],
+  "description": "Example of use normal 'require' in nw.js.",
+  "keywords": [
+    "Example",
+    "nw.js",
+    "require"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "normalize.css": "~3.0.2"
+  }
+}

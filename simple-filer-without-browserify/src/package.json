@@ -1,0 +1,32 @@
+{
+  "name": "simple-filer-without-browserify",
+  "version": "1.0.0",
+  "description": "Example of use normal 'require' in nw.js.",
+  "main": "index.html",
+  "window": {
+    "title": "Simple filer without browserify",
+    "toolbar": true,
+    "frame": true,
+    "resizable": true,
+    "width": 800,
+    "height": 480,
+    "position": "mouse"
+  },
+  "platformOverrides": {
+    "osx": {
+      "window": {
+        "toolbar": false
+      }
+    },
+    "win": {
+      "window": {
+        "toolbar": false
+      }
+    },
+    "linux": {
+      "window": {
+        "toolbar": false
+      }
+    }
+  }
+}
