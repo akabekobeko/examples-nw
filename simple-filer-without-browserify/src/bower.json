@@ -5,7 +5,7 @@
   "authors": [
     "akabeko"
   ],
-  "description": "Example of use the require in nw.js.",
+  "description": "Example of use normal 'require' in nw.js.",
   "keywords": [
     "Example",
     "nw.js",
