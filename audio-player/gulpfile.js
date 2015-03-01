@@ -19,8 +19,6 @@ gulp.task( 'clean', function( cb ) {
 
 /**
  * リリース用 CSS と、その参照を解決した HTML を生成します。
- *
- * @return {[type]} [description]
  */
 gulp.task( 'css-release', [ 'clean', 'css', ], function() {
     var runSequence = require( 'run-sequence' );
@@ -47,6 +45,11 @@ gulp.task( 'release', [ 'copy' ], function() {
     var runSequence = require( 'run-sequence' );
     runSequence( 'nw' );
 } );
+
+/**
+ * 開発用ビルドを実行します。
+ */
+gulp.task( 'build', [ 'js', 'css', 'iconfont' ] );
 
 /**
  * 開発用リソースの変更を監視して、必要ならビルドを実行します。

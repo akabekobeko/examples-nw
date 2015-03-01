@@ -1,4 +1,5 @@
-var React = require( 'react' );
+var React  = require( 'react' );
+var Player = require( './player.jsx' );
 
 /**
  * アプリケーションのエントリー ポイントになるコンポーネントです。
@@ -6,8 +7,17 @@ var React = require( 'react' );
  * @type {Object}
  */
 var Main = React.createClass( {
+    /**
+     * コンポーネントの描画オブジェクトを取得します。
+     *
+     * @return {Object} 描画オブジェクト。
+     */
     render: function() {
-        return require( '../view/main.jsx' )();
+        return (
+            <div className="content">
+                <Player />
+            </div>
+        );
     }
 } );
 
@@ -20,7 +30,7 @@ var Main = React.createClass( {
  */
 module.exports = function( query ) {
     return React.render(
-        React.createElement( Main, null ),
+        <Main />,
         document.querySelector( query )
     );
 };
