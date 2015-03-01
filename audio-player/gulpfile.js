@@ -32,7 +32,7 @@ gulp.task( 'css-release', [ 'clean', 'css', ], function() {
  * 
  * @return {Object} gulp ストリーム。
  */
-gulp.task( 'copy', [ 'js-release', 'css-release' ], function() {
+gulp.task( 'copy', [ 'js-release', 'css-release', 'iconfont' ], function() {
     return gulp.src(
             [ './src/fonts/**', './src/js/bundle.js', 'src/package.json' ],
             { base: './src' }
