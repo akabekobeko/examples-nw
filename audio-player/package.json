@@ -1,23 +1,46 @@
 {
   "name": "audio-player",
   "version": "1.0.0",
-  "description": "Example of the simple audio player in nw.js",
+  "description": "Example of the audio player in nw.js.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/akabekobeko/examples-nw"
-  },
   "keywords": [
-    "nw.js",
-    "audio"
+    "Audio"
   ],
   "author": "akabeko",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/akabekobeko/examples-nw/issues"
+  "devDependencies": {
+    "browserify": "^9.0.3",
+    "del": "^1.1.1",
+    "gulp": "^3.8.11",
+    "gulp-consolidate": "^0.1.2",
+    "gulp-iconfont": "^1.0.0",
+    "gulp-if": "^1.2.5",
+    "gulp-load-plugins": "^0.8.0",
+    "gulp-minify-css": "^0.5.1",
+    "gulp-notify": "^2.2.0",
+    "gulp-plumber": "^0.6.6",
+    "gulp-rename": "^1.2.0",
+    "gulp-replace": "^0.5.3",
+    "gulp-sourcemaps": "^1.3.0",
+    "gulp-stylus": "^2.0.1",
+    "gulp-uglify": "^1.1.0",
+    "gulp-useref": "^1.1.1",
+    "gulp-utf8ize-sourcemaps": "^0.1.0",
+    "gulp-util": "^3.0.3",
+    "lodash": "^3.3.0",
+    "node-webkit-builder": "^1.0.8",
+    "pretty-hrtime": "^1.0.0",
+    "reactify": "^1.0.0",
+    "require-dir": "^0.1.0",
+    "run-sequence": "^1.0.2",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.0.0",
+    "watchify": "^2.4.0"
   },
-  "homepage": "https://github.com/akabekobeko/examples-nw"
+  "dependencies": {
+    "react": "^0.12.2"
+  }
 }
