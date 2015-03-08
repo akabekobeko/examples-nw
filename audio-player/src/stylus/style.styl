@@ -2,4 +2,78 @@
 body, html {
   width 100%
   height 100%
+  margin 0
+  padding 0
+  cursor default
+}
+
+/**
+ * プレーヤー領域。
+ */
+.player {
+    position relative
+    width 100%
+    height 4em
+    background-color #ecf0f1
+
+    /**
+     * 基本コントロール。
+     */
+    .control {
+        position absolute
+        top 0
+        left .5em
+        width 10em
+        height 3em;
+
+        .button {
+            display inline-block
+            margin-right .5em
+            width 1.5em
+            height 1.5em
+            line-height 2em
+            font-size 1.5em
+            text-align center
+        }
+        
+        .volume {
+            -webkit-appearance none
+            width 11em
+            
+            &:focus {
+                outline none
+            }
+
+            &::-webkit-slider-runnable-track {
+                -webkit-appearance none
+                width 100%
+                height .4em
+                background-color #7f8c8d
+            }
+
+            &::-webkit-slider-thumb {
+                -webkit-appearance none
+                margin-top -.6em
+                width 1.5em
+                height 1.5em
+                border-radius 50%
+                background-color #fff
+                border solid 1px #aaa
+                box-shadow 0 1px 1px #ccc
+            }
+        }
+    }
+
+    /**
+     * 音声情報の表示。
+     */
+    .display {
+        position absolute
+        top .25em
+        left 11em
+        right 1em
+        height 3.5em
+        border-radius .2em
+        background-color #bdc3c7
+    }
 }

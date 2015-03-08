@@ -12,11 +12,25 @@ var Player = React.createClass( {
     render: function() {
         return (
             <div className="player">
-                <i className="icon-prev"></i>
-                <i className="icon-play"></i>
-                <i className="icon-next"></i>
+                <div className="control">
+                    <div className="button"><i className="icon-prev"></i></div>
+                    <div className="button"><i className="icon-play"></i></div>
+                    <div className="button"><i className="icon-next"></i></div>
+                    <input className="volume" type="range" onChange={this._onVolumeChange} />
+                </div>
+                <div className="display">
+                </div>
             </div>
         );
+    },
+
+    /**
+     * 音声ボリュームが変更された時に発生します。
+     *
+     * @param {Object} ev イベント情報。
+     */
+    _onVolumeChange: function( ev ) {
+
     }
 } );
 
