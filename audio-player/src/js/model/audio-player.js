@@ -1,38 +1,65 @@
 /**
- * 音楽プレーヤーを表します。
+ * 音声プレーヤーを提供します。
+ *
+ * @see referred: http://github.com/eipark/buffaudio
+ *
+ * @throws {Error} Web Audio API が未定義です。
  */
 var AudioPlayer = function() {
     /**
      * 音声操作コンテキスト。
      * @type {AudioContext|webkitAudioContext}
      */
-    var _audioContext = _createAudioContext();
+    this._audioContext = this._createAudioContext();
 
     /**
      * 音量調整ノード。
      * @type {GainNode}
      */
-    var _gainNode = _audioContext.createGain();
-    _gainNode.gain.value = 1.0;
-    _gainNode.connect( _audioContext.destination );
+    this._gainNode = this._audioContext.createGain();
+    this._gainNode.gain.value = 1.0;
+    this._gainNode.connect( this._audioContext.destination );
 
     /**
-     * 音声ソース ノード
+     * アナライザー ノード。
+     * @type {AnalyserNode}
+     */
+    this._analyserNode = this._audioContext.createAnalyser();
+    this._analyserNode.fftSize = 128;
+    this._analyserNode.connect( this._gainNode );
+
+    /**
+     * 音声ソース ノード。
      * @type {AudioBufferSourceNode}
      */
-    var _sourceNode = null;
+    this._sourceNode = null;
 
     /**
      * 音声バッファ。
      * @type {AudioBuffer}
      */
-    var _audioBuffer = null;
+    this._audioBuffer = null;
 
     /**
      * 音声再生が実行中であることを示す値。
      * @type {Boolean}
      */
-    var _isPlaying = false;
+    this._isPlaying = false;
+
+    /**
+     * 再生位置 ( 秒単位 )。
+     * @type {Number}
+     */
+    this._playbackTime = 0; // time of the audio playback, seconds
+
+    /**
+     * 再生を開始した時の日時 ( ミリ秒単位 )。
+     * AudioBufferSourceNode の再生操作は start/stop のみをサポートし、pause が存在しません。
+     * よって、これを実装するために start 時間を記録し、pause された時の現時刻から引いて再開位置を算出します。
+     *
+     * @type {Number}
+     */
+    this._startTimestamp = 0;
 
     /**
      * 音声データを再生対象として開きます。
@@ -41,19 +68,18 @@ var AudioPlayer = function() {
      * @param {Function}    callback 処理が完了したときに呼び出される関数。
      */
     this.open = function( buffer, callback ) {
-        this.close();
+        this._audioContext.createBufferSource(
+            buffer,
 
-        _audioContext.createBufferSource( buffer,
             function( audioBuffer ) {
-                _audioBuffer = audioBuffer;
+                this.close();
 
-                _sourceNode = _audioContext.createBufferSource();
-                _sourceNode.buffer  = audioBuffer;
-                _sourceNode.onended = _onPlaybackEnd;
-                _sourceNode.connect( _gainNode );
+                this._audioBuffer = audioBuffer;
+                this._initSourceNode();
 
                 callback();
-            },
+            }.bind( this ),
+
             function( err ) {
                 callback( err );
             }
@@ -64,44 +90,106 @@ var AudioPlayer = function() {
      * 再生対象としている音声データを閉じます。
      */
     this.close = function() {
-        if( _sourceNode ) {
-            _sourceNode.stop( 0 );
-            _sourceNode = null;
-        }
+        this._stop();
 
-        _audioBuffer = null;
-        _isPlaying   = false;
+        this._audioBuffer    = null;
+        this._playbackTime   = 0;
+        this._startTimestamp = 0;
     };
 
     /**
      * 音声の再生を開始します。
      */
     this.play = function() {
+        if( this._isPlaying ) { return; }
 
+        this._initSourceNode();
+        this._source.start( 0, this._playbackTime );
+
+        this._startTimestamp = Date.now();
+        this._isPlaying      = true;
     };
 
     /**
      * 音声の再生を一時停止します。
      */
     this.pause = function() {
-
+        this._stop( true );
     };
 
     /**
      * 音声の再生位置を変更します。
      *
-     * @param {Number} portion 再生位置 ( 秒単位 )。
+     * @param {Number} playbackTime 再生位置 ( 秒単位 )。
      */
-    this.seek = function( portion ) {
+    this.seek = function( playbackTime ) {
+        if( playbackTime === undefined ) { return; }
 
+        if( playbackTime > this._buffer.duration ) {
+            console.log( '[ERROR] Seek time is greater than duration of audio buffer.' );
+            return;
+        }
+
+        if( this._isPlaying ) {
+            this.stop();
+            this._playbackTime = playbackTime;
+            this.play();
+        } else {
+            this._playbackTime = playbackTime;
+        }
+    };
+
+    /**
+     * 音声の周波数スペクトルを取得します。
+     *
+     * @return {Array} スペクトル。
+     */
+    this.spectrums = function() {
+        var spectrums = new Uint8Array( this._analyserNode.frequencyBinCount );
+        this._analyserNode.getByteFrequencyData( spectrums );
+
+        return spectrums;
+    };
+
+    /**
+     * 音声の再生を停止します。
+     */
+    this._stop = function( pause ) {
+        if( !( this._isPlaying ) ) { return; }
+        this._isPlaying = false;
+
+        if( this._sourceNode ) {
+            this._sourceNode.stop();
+            this._sourceNode = null;
+        }
+
+        // 一時停止なら次回の再生時に復元するための位置を記録
+        this._playbackTime =( pause ? ( Date.now() - this._startTimestamp ) / 1000 + this._playbackTime : 0 );
     };
 
     /**
      * 音声再生が終了した時に発生します。
      */
-    function _onPlaybackEnd() {
+    this._onEnded = function() {
+        if( this._isPlaying ) {
+            this._playbackTime = 0;
+        }
 
-    }
+        this._isPlaying = false;
+    };
+
+    /**
+     * 音声ソース ノードを初期化します。
+     */
+    this._initSourceNode = function() {
+        this._sourceNode = this._audioContext.createBufferSource();
+        this._sourceNode.buffer  = this._audioBuffer;
+        this._sourceNode.onended = this._onPlaybackEnd;
+        this._sourceNode.connect( this._analyserNode );
+
+        var onEnded = this._onEnded.bind( this );
+        this._sourceNode.onended = onEnded;
+    };
 
     /**
      * 音声操作コンテキストを生成します。
@@ -110,12 +198,12 @@ var AudioPlayer = function() {
      *
      * @throws {Error} Web Audio API が未定義です。
      */
-    function _createAudioContext() {
-        var audioContext = window.AudioContext || window.webkitAudioContext;
+    this._createAudioContext = function() {
+        var audioContext = ( window.AudioContext || window.webkitAudioContext );
         if( audioContext ) { return new audioContext(); }
 
         throw new Error( 'Web Audio API is not supported.' );
-    }
+    };
 };
 
 /**
@@ -162,8 +250,9 @@ module.exports = {
 
         /**
          * Node.js の Buffer を JavaScript の ArrayBuffer に変換します。
-         * 参考 : http://stackoverflow.com/questions/8609289/convert-a-binary-nodejs-buffer-to-javascript-arraybuffer
          * 
+         * @see referred: http://stackoverflow.com/questions/8609289/convert-a-binary-nodejs-buffer-to-javascript-arraybuffer
+         *
          * @param  {Buffer} Node.js の Buffer。
          *
          * @return {ArrayBuffer} JavaScript の ArrayBuffer。
@@ -207,7 +296,7 @@ module.exports = {
 
         request.onload = function() {
             this.fromArrayBuffer( request.response, callback );
-        };
+        }.bind( this );
 
         request.onerror = function( err ) {
             callback( err );
