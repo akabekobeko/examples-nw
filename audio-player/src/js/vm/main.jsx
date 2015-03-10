@@ -1,5 +1,5 @@
 var React     = require( 'react' );
-var Player    = require( './player.jsx' );
+var Toolbar   = require( './toolbar.jsx' );
 var MusicList = require( './music-list.jsx' );
 
 /**
@@ -15,7 +15,7 @@ var Main = React.createClass( {
      */
     getInitialState: function() {
         return {
-            musics: [],
+            musics: this._dummyMusics(),
             current: null,
             db: null
         };
@@ -28,15 +28,15 @@ var Main = React.createClass( {
      */
     render: function() {
         return (
-            <div className="content">
-                <Player
+            <article className="app">
+                <Toolbar
                     music={this.state.current} />
                 <MusicList
                     musics={this.state.musics}
                     current={this.state.current}
                     onSelect={this._onSelect}
                     onPlay={this._onPlay} />
-            </div>
+            </article>
         );
     },
 
@@ -56,6 +56,19 @@ var Main = React.createClass( {
      */
     _onPlay: function( music ) {
 
+    },
+
+    _dummyMusics: function() {
+        return [
+            { id: 1, title: 'test1', artist: 'artist1', album: 'album1', duration: '4:52' },
+            { id: 2, title: 'test2', artist: 'artist2', album: 'album2', duration: '3:09' },
+            { id: 3, title: 'test3', artist: 'artist3', album: 'album3', duration: '5:18' },
+            { id: 4, title: 'test4', artist: 'artist4', album: 'album4', duration: '4:52' },
+            { id: 5, title: 'test5', artist: 'artist5', album: 'album5', duration: '4:52' },
+            { id: 6, title: 'test6', artist: 'artist6', album: 'album6', duration: '4:52' },
+            { id: 7, title: 'test7', artist: 'artist7', album: 'album7', duration: '6:47' },
+            { id: 8, title: 'test8', artist: 'artist8', album: 'album8', duration: '4:52' },
+        ];
     }
 } );
 

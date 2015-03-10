@@ -1,4 +1,7 @@
-global.document  = window.document;
-global.navigator = window.navigator;
 
-require( './vm/main.jsx' )( 'article' );
+onload = function() {
+    global.document  = window.document;
+    global.navigator = window.navigator;
+
+    require( './vm/main.jsx' )( 'body' );
+};

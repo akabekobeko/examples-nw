@@ -1,0 +1,117 @@
+color_gray       = #bdc3c7
+color_gray_light = #ecf0f1
+color_gray_dark  = #95a5a6
+
+/**
+ * ツールバー領域。
+ */
+.toolbar {
+    position absolute
+    top 0
+    left 0
+    right 0
+    height 3em
+    border-bottom solid 1px color_gray
+    background-color color_gray_light
+
+    .wrapper {
+        position relative
+        width 100%
+        height 100%
+    }
+}
+
+/**
+ * 再生コントロール。
+ */
+.toolbar > .wrapper > .player {
+    display table-cell
+    vertical-align middle
+    padding 0 0 0 .5em
+    box-sizing border-box
+    width 15em
+    height 3em
+
+    .button {
+        display inline-block
+        margin 0 .5em 0 0
+        font-size 1.5em
+    }
+
+    .volume {
+        width 10em
+        height 2.5em
+    }
+}
+
+/**
+ * 音声情報の表示。
+ */
+.toolbar > .wrapper > .display {
+    position absolute
+    top 0
+    bottom 0
+    left 15em
+    right 15em
+    min-width 15em
+    border-left solid 1px color_gray
+    border-right solid 1px color_gray
+    background-color color_gray_light
+
+    .metadata {
+        width 100%
+        height 1.5em
+        text-align center
+
+        .title {
+            margin .3em .5em 0 .5em
+        }
+    }
+
+    /**
+     * 時間表示。
+     */
+    .time {
+        position relative
+        width 100%;
+        height 1em
+
+        span {
+            width 4em
+            font-size .8em
+            color color_gray_dark
+        }
+
+        .playtime {
+            position absolute
+            left .5em
+            text-align left
+        }
+
+        .duration {
+            position absolute
+            right .5em
+            text-align right
+        }
+
+        .position-wrapper {
+            display block
+            position absolute
+            left 4.5em
+            right 4.5em
+
+            .position {
+                width 100%
+            }
+        }
+    }
+}
+
+/**
+ * その他の機能。
+ */
+.toolbar > .wrapper > .option {
+    position absolute
+    right 0
+    width 15em
+}
