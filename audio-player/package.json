@@ -31,7 +31,7 @@
     "gulp-utf8ize-sourcemaps": "^0.1.0",
     "gulp-util": "^3.0.3",
     "lodash": "^3.3.0",
-    "node-webkit-builder": "^1.0.8",
+    "node-webkit-builder": "^1.0.11",
     "pretty-hrtime": "^1.0.0",
     "reactify": "^1.0.0",
     "require-dir": "^0.1.0",

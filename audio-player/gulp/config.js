@@ -66,6 +66,7 @@ module.exports = {
         dest:       './src/js',
         bundle:     'bundle.js',
         browserify: {
+            basedir:   './',
             debug:     true,
             transform: [ 'reactify' ]
         }
@@ -82,7 +83,7 @@ module.exports = {
      */
     nw: {
         builder: {
-            version:  '0.11.5',
+            version:  '0.12.0',
             files:     [ './bin/src/**' ],
             buildDir:  './bin/release',
             cacheDir:  './bin/nw',
