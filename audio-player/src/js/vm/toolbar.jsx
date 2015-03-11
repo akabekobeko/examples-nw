@@ -17,22 +17,18 @@ var Toolbar = React.createClass( {
                         <div className="button"><i className="icon-prev"></i></div>
                         <div className="button"><i className="icon-play"></i></div>
                         <div className="button"><i className="icon-next"></i></div>
-                        <input className="volume" type="range" onChange={this._onVolumeChange} />
+                        <input type="range" onChange={this._onVolumeChange} />
                     </div>
                     <div className="display">
                         <div className="metadata">
                             <div className="title">Title</div>
                         </div>
-                        <div className="time">
-                            <span className="playtime">00:00:00</span>
-                            <div className="position-wrapper">
-                                <input className="position" type="range" onChange={this._onPositionChange} />
-                            </div>
-                            <span className="duration">00:00:00</span>
-                        </div>
+                        <input className="position" type="range" onChange={this._onPositionChange} />
                     </div>
                     <div className="option">
-
+                        <div className="wrapper">
+                            <div className="button add"><i className="icon-add"></i></div>
+                        </div>
                     </div>
                 </div>
             </div>

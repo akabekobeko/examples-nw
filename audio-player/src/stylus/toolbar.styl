@@ -1,6 +1,13 @@
-color_gray       = #bdc3c7
-color_gray_light = #ecf0f1
-color_gray_dark  = #95a5a6
+color_gray          = #bdc3c7
+color_gray_light    = #ecf0f1
+color_gray_light_ex = #f8f8f8
+color_gray_dark     = #95a5a6
+color_blue_light    = #3498db
+
+toolbar_height    = 48px
+player_width      = 256px
+display_min_width = 256px
+option_width      = 256px
 
 /**
  * ツールバー領域。
@@ -10,7 +17,7 @@ color_gray_dark  = #95a5a6
     top 0
     left 0
     right 0
-    height 3em
+    height toolbar_height
     border-bottom solid 1px color_gray
     background-color color_gray_light
 
@@ -29,18 +36,47 @@ color_gray_dark  = #95a5a6
     vertical-align middle
     padding 0 0 0 .5em
     box-sizing border-box
-    width 15em
-    height 3em
+    width player_width
+    height toolbar_height
 
     .button {
         display inline-block
-        margin 0 .5em 0 0
-        font-size 1.5em
+        margin 0 1em 0 0
+        font-size 1.2em
     }
 
-    .volume {
-        width 10em
-        height 2.5em
+    player_volume_width  = 124px
+    player_volume_height = 24px
+
+    /**
+     * 音量スライダー。
+     */
+    input[type="range"] {
+        -webkit-appearance none
+        width player_volume_width
+        height player_volume_height
+        margin 0
+        padding 0
+        background-color transparent
+
+        &:focus {
+            outline none
+        }
+
+        &::-webkit-slider-thumb {
+            -webkit-appearance none
+            margin-top -5px
+            width 14px
+            height 14px
+            border-radius 50%
+            background-color color_gray_dark
+        }
+
+        &::-webkit-slider-runnable-track {
+            margin-top 6px
+            height 3px
+            background-color color_gray
+        }
     }
 }
 
@@ -51,20 +87,56 @@ color_gray_dark  = #95a5a6
     position absolute
     top 0
     bottom 0
-    left 15em
-    right 15em
-    min-width 15em
+    left player_width
+    right option_width
+    min-width 16em
     border-left solid 1px color_gray
     border-right solid 1px color_gray
-    background-color color_gray_light
+    background-color color_gray_light_ex
+    text-align center
 
+    display_metadata_height = 32px
+    display_position_height = 16px
+
+    /**
+     * メタデータ表示。
+     */
     .metadata {
         width 100%
-        height 1.5em
+        height display_metadata_height
         text-align center
 
         .title {
-            margin .3em .5em 0 .5em
+        }
+    }
+
+    /**
+     * 再生位置スライダー。
+     */
+    input[type="range"] {
+        -webkit-appearance none
+        margin 0
+        padding 0
+        width 100%
+        height display_position_height
+        background-color transparent
+
+        &:focus {
+            outline none
+        }
+
+        &::-webkit-slider-thumb {
+            -webkit-appearance none
+            margin-top -8px
+            width 8px
+            height 12px
+            background-color color_gray_dark
+        }
+
+        &::-webkit-slider-runnable-track {
+            margin-top 13px
+            height 3px
+            background-color color_gray
         }
     }
 
@@ -112,6 +184,20 @@ color_gray_dark  = #95a5a6
  */
 .toolbar > .wrapper > .option {
     position absolute
+    top 0
     right 0
-    width 15em
+    width option_width
+    height toolbar_height
+
+    .wrapper {
+        display table-cell
+        vertical-align middle
+        width option_width
+        height toolbar_height
+
+        .button {
+            display inline-block
+            margin-left 1em
+        }
+    }
 }
