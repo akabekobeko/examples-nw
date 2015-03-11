@@ -31,18 +31,19 @@ module.exports = {
      */
     iconfont: {
         src:      './src/icons/*.svg',
-        dest:     './src/fonts',
+        dest:     './src/css/fonts',
         name:     'icon',
         template: {
             css:  {
                 src:  './src/icons/template.css',
                 dest: './src/css',
                 name: 'icon',
-                ref:  '../fonts/'
+                ref:  'fonts/'
             },
             html: {
                 src:  './src/icons/template.html',
-                dest: './src',
+                dest: './src/css',
+                ref:  'icon.css',
                 name: 'icon-sample'
             }
         }

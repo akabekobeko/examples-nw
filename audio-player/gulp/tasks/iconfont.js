@@ -32,6 +32,7 @@ function template( $, config, codepoints ) {
         className: config.name,
         fontName:  config.name,
         fontPath:  config.template.css.ref,
+        cssFile:   config.template.html.ref,
         glyphs:    codepoints
     };
 

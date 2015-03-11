@@ -32,7 +32,7 @@ gulp.task( 'css-release', [ 'clean', 'css', ], function() {
  */
 gulp.task( 'copy', [ 'js-release', 'css-release', 'iconfont' ], function() {
     return gulp.src(
-            [ './src/fonts/**', './src/js/bundle.js', 'src/package.json' ],
+            [ './src/js/bundle.js', 'src/package.json', './src/css/fonts/**' ],
             { base: './src' }
         )
         .pipe( gulp.dest( './bin/src' ) );
