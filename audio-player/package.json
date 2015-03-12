@@ -41,6 +41,7 @@
     "watchify": "^2.4.0"
   },
   "dependencies": {
+    "musicmetadata": "^1.0.0",
     "react": "^0.13.0"
   }
 }
