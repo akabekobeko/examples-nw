@@ -5,15 +5,15 @@ var React = require( 'react' );
  */
 var MusicList = React.createClass( {
     /**
-     * コンポーネントの描画オブジェクトを取得します。
+     * コンポーネントを描画します。
      *
-     * @return {Object} 描画オブジェクト。
+     * @return {Object} React エレメント。
      */
     render: function() {
         var items = this.props.musics.map( function( music, index ) {
             var selected = ( this.props.current && this.props.current.id === music.id ? 'selected' : null );
             return (
-                <tr key={music.id} onClick={this._onSelect.bind( this, music )} className={selected}>
+                <tr key={music.id} onClick={this.onSelectMusic.bind( this, music )} className={selected}>
                     <td className="number">{index + 1}</td>
                     <td>{music.title}</td>
                     <td>{music.artist}</td>
@@ -43,9 +43,9 @@ var MusicList = React.createClass( {
      *
      * @param {Object} music 音楽。
      */
-    _onSelect: function( music ) {
-        if( this.props.onSelect ) {
-            this.props.onSelect( music );
+    onSelectMusic: function( music ) {
+        if( this.props.onSelectMusic ) {
+            this.props.onSelectMusic( music );
         }
     },
 
@@ -54,9 +54,9 @@ var MusicList = React.createClass( {
      *
      * @param {Object} music 音楽。
      */
-    _onPlay: function() {
-        if( this.props.onPlay ) {
-            this.props.onPlay( music );
+    onSelectPlay: function( music ) {
+        if( this.props.onSelectPlay ) {
+            this.props.onSelectPlay( music );
         }
     }
 } );

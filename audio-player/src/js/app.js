@@ -3,5 +3,6 @@ onload = function() {
     global.document  = window.document;
     global.navigator = window.navigator;
 
-    require( './vm/main.jsx' )( 'body' );
+    var main = require( './vm/main.jsx' )( 'body' );
+    main.load();
 };

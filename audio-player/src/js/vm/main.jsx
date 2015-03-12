@@ -14,30 +14,93 @@ var Main = React.createClass( {
      * @return {Object} 初期化された状態オブジェクト。
      */
     getInitialState: function() {
+        var audioPlayer = null;
+        try {
+           audioPlayer = new ( require( '../model/audio-player.js' ) )();
+        } catch( exp ) {
+            alert( exp.message );
+        }
+
         return {
-            musics: this._dummyMusics(),
+            audioPlayer: audioPlayer,
+            musics: [],
             current: null,
             db: null
         };
     },
 
     /**
-     * コンポーネントの描画オブジェクトを取得します。
+     * コンポーネントを描画します。
      *
-     * @return {Object} 描画オブジェクト。
+     * @return {Object} React エレメント。
      */
     render: function() {
         return (
             <article className="app">
                 <Toolbar
-                    music={this.state.current} />
+                    music={this.state.current}
+                    onAddFiles={this.onAddFiles} />
                 <MusicList
                     musics={this.state.musics}
                     current={this.state.current}
-                    onSelect={this._onSelect}
-                    onPlay={this._onPlay} />
+                    onSelectMusic={this.onSelectMusic}
+                    onSelectPlay={this.onSelectPlay} />
             </article>
         );
+    },
+
+    /**
+     * すべての音楽情報を読み込みます。
+     */
+    load: function() {
+        try {
+            var MusicStore = require( '../model/music-store.js' );
+            this.state.db = new MusicStore();
+
+        } catch( exp ) {
+            this.state.db = null;
+            alert( exp.message );
+            return;
+        }
+
+        this.state.db.init( function( err ) {
+            if( err ) {
+                alert( err.message );
+                return;
+            }
+
+            this.state.db.readAll( function( err, musics ) {
+                if( err ) {
+                    alert( err.message );
+                    return;
+                }
+
+                this.setState( { musics: musics } );
+
+            }.bind( this ) );
+
+
+        }.bind( this ) );
+    },
+
+    /**
+     * コンテンツ追加が要求された時に発生します。
+     *
+     * @param {FileList} files ファイル情報コレクション。input[type="file"] で読み取られた情報を指定してください。
+     */
+    onAddFiles: function( files ) {
+        if( !( files && 0 < files.length && this.state.db ) ) { return; }
+        console.dir( files );
+
+        var onAdded = function( err, newMusic ) {
+                var musics = this.state.musics.concat( [ newMusic ] );
+                this.setState( { musics: musics } );
+        }.bind( this );
+
+        // FileList は forEach が未定義なので、ベタに繰り返す
+        for( var i = 0, max = files.length; i < max; ++i ) {
+            this.state.db.add( files[ i ], onAdded );
+        }
     },
 
     /**
@@ -45,7 +108,7 @@ var Main = React.createClass( {
      *
      * @param {Object} music 音楽。
      */
-    _onSelect: function( music ) {
+    onSelectMusic: function( music ) {
 
     },
 
@@ -54,21 +117,8 @@ var Main = React.createClass( {
      *
      * @param {Object} music 音楽。
      */
-    _onPlay: function( music ) {
+    onSelectPlay: function( music ) {
 
-    },
-
-    _dummyMusics: function() {
-        return [
-            { id: 1, title: 'test1', artist: 'artist1', album: 'album1', duration: '4:52' },
-            { id: 2, title: 'test2', artist: 'artist2', album: 'album2', duration: '3:09' },
-            { id: 3, title: 'test3', artist: 'artist3', album: 'album3', duration: '5:18' },
-            { id: 4, title: 'test4', artist: 'artist4', album: 'album4', duration: '4:52' },
-            { id: 5, title: 'test5', artist: 'artist5', album: 'album5', duration: '4:52' },
-            { id: 6, title: 'test6', artist: 'artist6', album: 'album6', duration: '4:52' },
-            { id: 7, title: 'test7', artist: 'artist7', album: 'album7', duration: '6:47' },
-            { id: 8, title: 'test8', artist: 'artist8', album: 'album8', duration: '4:52' },
-        ];
     }
 } );
 
