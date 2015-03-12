@@ -90,11 +90,10 @@ var Main = React.createClass( {
      */
     onAddFiles: function( files ) {
         if( !( files && 0 < files.length && this.state.db ) ) { return; }
-        console.dir( files );
 
         var onAdded = function( err, newMusic ) {
-                var musics = this.state.musics.concat( [ newMusic ] );
-                this.setState( { musics: musics } );
+            var musics = this.state.musics.concat( [ newMusic ] );
+            this.setState( { musics: musics } );
         }.bind( this );
 
         // FileList は forEach が未定義なので、ベタに繰り返す
