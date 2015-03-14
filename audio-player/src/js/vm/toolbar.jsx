@@ -22,6 +22,7 @@ var Toolbar = React.createClass( {
      * @return {Object} React エレメント。
      */
     render: function() {
+        var title = this.props.music ? this.props.music.title : '';
         return (
             <div className="toolbar">
                 <div className="wrapper">
@@ -33,7 +34,7 @@ var Toolbar = React.createClass( {
                     </div>
                     <div className="display">
                         <div className="metadata">
-                            <div className="title">Title</div>
+                            <div className="title">{title}</div>
                         </div>
                         <input className="position" type="range" onChange={this.onPositionChange} />
                     </div>
