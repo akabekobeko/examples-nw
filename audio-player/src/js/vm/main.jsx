@@ -53,32 +53,31 @@ var Main = React.createClass( {
      * すべての音楽情報を読み込みます。
      */
     load: function() {
+        var db = null;
         try {
             var MusicStore = require( '../model/music-store.js' );
-            this.state.db = new MusicStore();
+            db = new MusicStore();
 
         } catch( exp ) {
-            this.state.db = null;
             alert( exp.message );
             return;
         }
 
-        this.state.db.init( function( err ) {
+        db.init( function( err ) {
             if( err ) {
                 alert( err.message );
                 return;
             }
 
-            this.state.db.readAll( function( err, musics ) {
+            db.readAll( function( err, musics ) {
                 if( err ) {
                     alert( err.message );
                     return;
                 }
 
-                this.setState( { musics: musics } );
+                this.setState( { db: db, musics: musics } );
 
             }.bind( this ) );
-
 
         }.bind( this ) );
     },
@@ -92,8 +91,14 @@ var Main = React.createClass( {
         if( !( files && 0 < files.length && this.state.db ) ) { return; }
 
         var onAdded = function( err, newMusic ) {
+            if( err ) {
+                console.log( err.message );
+                return;
+            }
+
             var musics = this.state.musics.concat( [ newMusic ] );
             this.setState( { musics: musics } );
+
         }.bind( this );
 
         // FileList は forEach が未定義なので、ベタに繰り返す
@@ -108,7 +113,7 @@ var Main = React.createClass( {
      * @param {Object} music 音楽。
      */
     onSelectMusic: function( music ) {
-
+        this.setState( { current: music } );
     },
 
     /**
