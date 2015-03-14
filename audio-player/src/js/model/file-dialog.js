@@ -24,8 +24,8 @@ var OpenFileDialog = function( accept, multiple, callback ) {
      * @param {Function} callback ダイアログが閉じられる時に呼び出される関数。
      */
     this.show = function( callback ) {
-        if(callback){
-            _callback=callback;
+        if( callback ) {
+            _callback = callback;
         }
 
         _element.click();
