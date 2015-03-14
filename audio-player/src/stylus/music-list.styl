@@ -1,6 +1,7 @@
 color_gray       = #bdc3c7
 color_gray_light = #ecf0f1
 color_gray_dark  = #95a5a6
+color_blue_light = #9FD6FE
 
 /**
  * 音楽リスト領域。
@@ -43,5 +44,13 @@ color_gray_dark  = #95a5a6
     padding .2em .5em
     border-right solid 1px color_gray
     text-align center
+  }
+
+  /**
+   * 選択行。
+   * tr:nth-child より詳細度を高くする必要あり。
+   */
+  tr.selected {
+    background-color color_blue_light
   }
 }
