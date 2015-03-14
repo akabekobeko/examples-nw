@@ -19,34 +19,60 @@ var DBStore = function( dbName, dbVersion, dbStoreName ) {
     var _db = null;
 
     /**
+     * 各関数でコールバックが未指定だった時、代りに実行される関数です。
+     *
+     * @param  {Error} err エラー情報。
+     *
+     * @return 常に false。カーソル系で継続可否を問い合わせるコールバックの場合、中断となる。
+     */
+    function defaultCallback( err ) {
+        if( err ) {
+            console.log( 'DB [callback]: Error, ' + err.message );
+        } else {
+            console.log( 'DB [callback]: Success' );
+        }
+
+        return false;
+    }
+
+    /**
      * データベースを開きます。
      *
+     * @param {Object}   params   パラメータ。create = createObjectStore オプション( 必須 )。
      * @param {Function} callback 処理が終了した時に呼び出される関数。
+     *
+     * @throws {Error} params.create が未指定です。
      */
-    this.open = function( callback ) {
-        var request = _indexedDB.open( dbName, dbVersion );
+    this.open = function( params, callback ) {
+        if( !( params && params.create ) ) { throw new Error( 'Invalid arguments' ); }
+
+        var onFinish = ( callback || defaultCallback );
+        var request  = _indexedDB.open( dbName, dbVersion );
 
         request.onupgradeneeded = function( ev ) {
-            console.log( 'DB [ oepn ]: Success, Upgrade' );
-
+            // ストア生成
             _db = ev.target.result;
-            var store = _db.createObjectStore( dbStoreName, { keyPath: 'id', autoIncrement: true } );
+            var store = _db.createObjectStore( dbStoreName, params.create );
+
+            // インデックス
+            if( params.index && 0 < params.index.length ) {
+                params.index.forEach( function( index ) {
+                    store.createIndex( index.name, index.keyPath, index.params );
+                } );
+            }
+
             ev.target.transaction.oncomplete = function() {
-                if( callback ) { callback( store ); }
+                onFinish();
             };
         };
 
         request.onsuccess = function( ev ) {
-            console.log( 'DB [ oepn ]: Success' );
-
             _db = ev.target.result;
-            if( callback ) { callback(); }
+            onFinish();
         };
          
         request.onerror = function( ev ) {
-            console.log( 'DB [ oepn ]: Error, ' + ev );
-
-            if( callback ) { callback( ev ); }
+            onFinish( ev.target.error );
         };
     };
 
@@ -56,22 +82,21 @@ var DBStore = function( dbName, dbVersion, dbStoreName ) {
      * @param {Function} callback 処理が終了した時に呼び出される関数。
      */
     this.dispose = function( callback ) {
-        if( !( _db ) ) { return; }
+        var onFinish = ( callback || defaultCallback );
 
-        _db.close();
+        if( _db ) {
+            _db.close();
+            _db = null;
+        }
 
         var request = _indexedDB.deleteDatabase( dbName );
         request.onsuccess = function( ev ) {
-            console.log( 'DB [ dispose ]: Success' );
-
-            _db = null;
-            if( callback ) { callback(); }
+            onFinish();
         };
          
         request.onerror = function( ev ) {
-            console.log( 'DB [ dispose ]: Error, ' + ev );
-
-            if( callback ) { callback( ev ); }
+            console.log( 'DB [ dispose ]: Error, ' + ev.target.error );
+            onFinish( ev.target.error );
         };
     };
 
@@ -83,17 +108,17 @@ var DBStore = function( dbName, dbVersion, dbStoreName ) {
     this.clear = function( callback ) {
         if( !( _db ) ) { return; }
 
+        var onFinish    = ( callback || defaultCallback );
         var transaction = _db.transaction( dbStoreName, 'readwrite' );
         var store       = transaction.objectStore( dbStoreName );
         var request     = store.clear();
 
         request.onsuccess = function( ev ) {
-            if( callback ) { callback( null ); }
+            onFinish();
         };
      
         request.onerror = function( ev ) {
-            console.log( ev );
-            if( callback ) { callback( ev ); }
+            onFinish( ev.target.error );
         };
     };
 
@@ -105,6 +130,7 @@ var DBStore = function( dbName, dbVersion, dbStoreName ) {
     this.readAll = function( callback ) {
         if( !( _db ) ) { return; }
 
+        var onFinish    = ( callback || defaultCallback );
         var transaction = _db.transaction( dbStoreName, 'readonly' );
         var store       = transaction.objectStore( dbStoreName );
         var request     = store.openCursor();
@@ -117,12 +143,12 @@ var DBStore = function( dbName, dbVersion, dbStoreName ) {
                 cursor.continue();
 
             } else {
-                callback( null, items );
+                onFinish( null, items );
             }
         };
 
         request.onerror = function( ev ) {
-            if( callback ) { callback( ev ); }
+            onFinish( ev.target.error );
         };
     };
 
@@ -134,6 +160,7 @@ var DBStore = function( dbName, dbVersion, dbStoreName ) {
     this.readSome = function( callback ) {
         if( !( _db ) ) { return; }
 
+        var onFinish    = ( callback || defaultCallback );
         var transaction = _db.transaction( dbStoreName, 'readonly' );
         var store       = transaction.objectStore( dbStoreName );
         var request     = store.openCursor();
@@ -141,16 +168,16 @@ var DBStore = function( dbName, dbVersion, dbStoreName ) {
         request.onsuccess = function( ev ) {
             var cursor = ev.target.result;
             if( cursor ) {
-                if( callback( null, cursor.value ) ) {
+                if( onFinish( null, cursor.value ) ) {
                     cursor.continue();
                 }
             } else {
-                callback( null, cursor.value );
+                onFinish( null, cursor.value );
             }
         };
 
         request.onerror = function( ev ) {
-            if( callback ) { callback( ev ); }
+            onFinish( ev.target.error );
         };
     };
 
@@ -163,18 +190,18 @@ var DBStore = function( dbName, dbVersion, dbStoreName ) {
     this.addItem = function( item, callback ) {
         if( !( _db ) ) { return; }
 
+        var onFinish    = ( callback || defaultCallback );
         var transaction = _db.transaction( dbStoreName, 'readwrite' );
         var store       = transaction.objectStore( dbStoreName );
         var request     = store.put( item );
 
         request.onsuccess = function( ev ) {
             item.id = ev.target.result;
-            if( callback ) { callback( null, item ); }
+            onFinish( null, item );
         };
      
         request.onerror = function( ev ) {
-            console.log( ev );
-            if( callback ) { callback( ev, item ); }
+            onFinish( ev.target.error, item );
         };
     };
 
@@ -187,16 +214,17 @@ var DBStore = function( dbName, dbVersion, dbStoreName ) {
     this.deleteItem = function( id, callback ) {
         if( !( _db ) ) { return; }
 
+        var onFinish    = ( callback || defaultCallback );
         var transaction = _db.transaction( dbStoreName, 'readwrite' );
         var store       = transaction.objectStore( dbStoreName );
         var request     = store.delete( id );
 
         request.onsuccess = function( ev ) {
-            if( callback ) { callback( null, id ); }
+            onFinish( null, id );
         };
      
-        request.onerror = function( ev ) {
-            if( callback ) { callback( ev, id ); }
+        request.onerror = function( wv ) {
+            onFinish( ev.target.error, id );
         };
     };
 };

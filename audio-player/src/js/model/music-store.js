@@ -21,11 +21,17 @@ var MusicStore = function() {
      * @param  {Function} callback 初期化が完了した時に呼び出される関数。
      */
     this.init = function( callback ) {
-        _db.open( function( err, store ) {
-            if( store ) {
-                store.createIndex( 'path', 'path', { unique: true } );
-            }
+        var params = {
+            create: {
+                keyPath: 'id',
+                autoIncrement: true
+            },
+            index: [
+                { name: 'path', keyPath: 'path', params: { unique: true } }
+            ]
+        };
 
+        _db.open( params, function( err ) {
             callback( err );
         } );
     };
