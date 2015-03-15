@@ -14,15 +14,7 @@ var Main = React.createClass( {
      * @return {Object} 初期化された状態オブジェクト。
      */
     getInitialState: function() {
-        var audioPlayer = null;
-        try {
-           audioPlayer = new ( require( '../model/audio-player.js' ) )();
-        } catch( exp ) {
-            alert( exp.message );
-        }
-
         return {
-            audioPlayer: audioPlayer,
             musics: [],
             current: null,
             db: null

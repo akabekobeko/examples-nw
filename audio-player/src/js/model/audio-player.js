@@ -46,10 +46,27 @@ var AudioPlayer = function() {
     var _audioBuffer = null;
 
     /**
+     * 音声が開かれたことを示す値。
+     * @type {Boolean}
+     */
+    var _isOpened = false;
+
+    /**
      * 音声再生が実行中であることを示す値。
      * @type {Boolean}
      */
     var _isPlaying = false;
+
+    /**
+     * イベント ハンドラ。
+     * @type {Object}
+     */
+    var _events = {
+        open: null,
+        start: null,
+        pause: null,
+        end: null
+    };
 
     /**
      * 再生位置 ( 秒単位 )。
@@ -73,20 +90,21 @@ var AudioPlayer = function() {
      * @param {Function}    callback 処理が完了したときに呼び出される関数。
      */
     this.open = function( buffer, callback ) {
-        _audioContext.createBufferSource(
-            buffer,
-
+        _audioContext.decodeAudioData( buffer,
             function( audioBuffer ) {
                 this.close();
 
                 _audioBuffer = audioBuffer;
                 _initSourceNode();
 
+                _isOpened = true;
                 callback();
+
             }.bind( this ),
 
-            function( err ) {
-                callback( err );
+            function() {
+                // webkitAudioContext だとエラーが取れないので自前指定
+                callback( new Error( 'Faild to decode for audio data.' ) );
             }
         );
     };
@@ -155,10 +173,14 @@ var AudioPlayer = function() {
         if( _isPlaying ) { return; }
 
         _initSourceNode();
-        this._source.start( 0, _playbackTime );
+        _sourceNode.start( 0, _playbackTime );
 
         _startTimestamp = Date.now();
         _isPlaying      = true;
+
+        if( _events.start ) {
+            _events.start();
+        }
     };
 
     /**
@@ -204,6 +226,57 @@ var AudioPlayer = function() {
     };
 
     /**
+     * 音声が再生中であることを調べます。
+     *
+     * @return {Boolean} 再生中なら true。
+     */
+    this.isPlaying = function() {
+        return _isPlaying;
+    };
+
+    /**
+     * 音声が開かれていることを調べます。
+     *
+     * @return {Boolean} 開かれているなら true。
+     */
+    this.isOpened = function() {
+        return _isOpened;
+    };
+
+    /**
+     * イベント ハンドラを設定します。
+     *
+     * @param  {String}   event    イベント名。
+     * @param  {Function} callback コールバック関数。
+     *
+     * @return {Boolean} 成功時は true。
+     */
+    this.on = function( event, callback ) {
+        switch( event ) {
+        case 'open':
+            _events.open = callback;
+            break;
+
+        case 'start':
+            _events.start = callback;
+            break;
+
+        case 'pause':
+            _events.pause = callback;
+            break;
+
+        case 'end':
+            _events.end = callback;
+            break;
+
+        default:
+            return false;
+        }
+
+        return true;
+    };
+
+    /**
      * 音声の再生を停止します。
      */
     function _stop( pause ) {
@@ -217,6 +290,10 @@ var AudioPlayer = function() {
 
         // 一時停止なら次回の再生時に復元するための位置を記録
         _playbackTime =( pause ? ( Date.now() - _startTimestamp ) / 1000 + _playbackTime : 0 );
+
+        if( pause && _events.pause ) {
+            _events.pause();
+        }
     }
 
     /**
@@ -228,6 +305,10 @@ var AudioPlayer = function() {
         }
 
         _isPlaying = false;
+
+        if( _events.end ) {
+            _events.end();
+        }
     }
 
     /**
