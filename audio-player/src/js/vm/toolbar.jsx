@@ -31,15 +31,23 @@ var Toolbar = React.createClass( {
         this._player    = new AudioPlayer();
 
         this._player.on( 'start', function( err ) {
+            this._playtimer = setInterval( function() {
+                this.setState( { playtime: ++this.state.playtime } );
+
+            }.bind( this ), 1000 );
+
             this.setState( { playState: PLAY_STATE_PLAYING } );
 
         }.bind( this ) );
 
         this._player.on( 'pause', function( err ) {
+            clearInterval( this._playtimer );
             this.setState( { playState: PLAY_STATE_PAUSED } );
+
         }.bind( this ) );
 
         this._player.on( 'end', function( err ) {
+            clearInterval( this._playtimer );
             this.setState( { playState: PLAY_STATE_STOPPED } );
 
         }.bind( this ) );
@@ -93,6 +101,7 @@ var Toolbar = React.createClass( {
                             type="range"
                             min={0}
                             max={metadata.positionMax}
+                            value={this.state.playtime}
                             onChange={this._onPositionChange} />
                     </div>
                     <div className="option">
@@ -162,6 +171,7 @@ var Toolbar = React.createClass( {
                     if( err ) {
                         alert( err.message );
                     } else {
+                        this.setState( { playtime: 0 } );
                         this._player.play();
                     }
                 }.bind( this ) );
@@ -211,7 +221,9 @@ var Toolbar = React.createClass( {
      * @param  {Object} ev イベント情報。
      */
     _onPositionChange: function( ev ) {
-
+        if( this._player.seek( ev.target.value ) ){
+            this.setState( { playtime: ev.target.value } );
+        }
     }
 } );
 

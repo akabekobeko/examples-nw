@@ -159,7 +159,7 @@ var AudioPlayer = function() {
      * 再生対象としている音声データを閉じます。
      */
     this.close = function() {
-        this._stop();
+        this.stop();
 
         _audioBuffer    = null;
         _playbackTime   = 0;
@@ -187,30 +187,34 @@ var AudioPlayer = function() {
      * 音声の再生を一時停止します。
      */
     this.pause = function() {
-        this._stop( true );
+        this.stop( true );
     };
 
     /**
      * 音声の再生位置を変更します。
      *
      * @param {Number} playbackTime 再生位置 ( 秒単位 )。
+     *
+     * @return {Boolean} 成功時は true。
      */
     this.seek = function( playbackTime ) {
-        if( playbackTime === undefined ) { return; }
+        if( playbackTime === undefined ) { return false; }
 
-        if( playbackTime > this._buffer.duration ) {
+        if( playbackTime > _audioBuffer.duration ) {
             console.log( '[ERROR] Seek time is greater than duration of audio buffer.' );
-            return;
+            return false;
         }
 
         if( _isPlaying ) {
-            this._stop();
+            this.stop();
 
             _playbackTime = playbackTime;
             this.play();
         } else {
             _playbackTime = playbackTime;
         }
+
+        return true;
     };
 
     /**
@@ -317,7 +321,7 @@ var AudioPlayer = function() {
     /**
      * 音声の再生を停止します。
      */
-    this._stop = function( pause ) {
+    this.stop = function( pause ) {
         if( !( _isPlaying ) ) { return; }
         _isPlaying = false;
 
@@ -355,7 +359,6 @@ var AudioPlayer = function() {
     function _initSourceNode() {
         _sourceNode = _audioContext.createBufferSource();
         _sourceNode.buffer  = _audioBuffer;
-        _sourceNode.onended = this._onPlaybackEnd;
         _sourceNode.connect( _analyserNode );
 
         var onEnded = _onEnded.bind( this );
