@@ -24,29 +24,28 @@ var PLAY_STATE_PAUSED  = 2;
  */
 var Toolbar = React.createClass( {
     /**
-     * 音声プレーヤーを初期化します。
-     *
-     * @return {AudioPlayer} 音声プレーヤー。
+     * コンポーネントが配置される時に発生します。
      */
-    _initPlayer: function() {
+    componentDidMount: function() {
         var AudioPlayer = require( '../model/audio-player.js' );
-        var player      = new AudioPlayer();
+        this._player    = new AudioPlayer();
 
-        player.on( 'start', function( err ) {
+        this._player.on( 'start', function( err ) {
             this.setState( { playState: PLAY_STATE_PLAYING } );
 
         }.bind( this ) );
 
-        player.on( 'pause', function( err ) {
+        this._player.on( 'pause', function( err ) {
             this.setState( { playState: PLAY_STATE_PAUSED } );
         }.bind( this ) );
 
-        player.on( 'end', function( err ) {
+        this._player.on( 'end', function( err ) {
             this.setState( { playState: PLAY_STATE_STOPPED } );
 
         }.bind( this ) );
 
-        return player;
+        var FileDialog = require( '../model/file-dialog.js' );
+        this._openFileDialog = FileDialog.openFileDialog( 'audio/*', true, this._onAddFiles );
     },
 
     /**
@@ -55,13 +54,10 @@ var Toolbar = React.createClass( {
      * @return {Object} 初期化された状態オブジェクト。
      */
     getInitialState: function() {
-        var FileDialog = require( '../model/file-dialog.js' );
         return {
             playState: PLAY_STATE_STOPPED,
-            player: this._initPlayer(),
             playtime: 0,
             volume: 100,
-            openFileDialog: FileDialog.openFileDialog( 'audio/*', true, this._onAddFiles )
         };
     },
 
@@ -158,22 +154,22 @@ var Toolbar = React.createClass( {
     _onPressButton: function( type ) {
         switch( type ) {
         case 'play':
-            if( this.state.player.isOpened() ) {
-                this.state.player.play();
+            if( this._player.isOpened() ) {
+                this._player.play();
 
             } else if( this.props.music ) {
-                this.state.player.openFromFile( this.props.music.path, function( err ) {
+                this._player.openFromFile( this.props.music.path, function( err ) {
                     if( err ) {
                         alert( err.message );
                     } else {
-                        this.state.player.play();
+                        this._player.play();
                     }
                 }.bind( this ) );
             }
             break;
 
         case 'pause':
-            this.state.player.pause();
+            this._player.pause();
             break;
 
         case 'prev':
@@ -183,7 +179,7 @@ var Toolbar = React.createClass( {
             break;
 
         case 'add':
-            this.state.openFileDialog.show();
+            this._openFileDialog.show();
             break;
         }
     },
@@ -205,7 +201,7 @@ var Toolbar = React.createClass( {
      * @param  {Object} ev イベント情報。
      */
     _onVolumeChange: function( ev ) {
-        this.state.player.setVolume( ev.target.value );
+        this._player.setVolume( ev.target.value );
         this.setState( { volume: ev.target.value } );
     },
 
