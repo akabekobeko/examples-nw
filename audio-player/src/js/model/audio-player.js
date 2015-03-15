@@ -244,6 +244,26 @@ var AudioPlayer = function() {
     };
 
     /**
+     * 音量を取得します。
+     *
+     * @return {Number} 音量。範囲は 0 〜 100 となります。
+     */
+    this.volume = function() {
+        return ( _gainNode.gain.value * 100 );
+    };
+
+    /**
+     * 音量を設定します。
+     *
+     * @param {Number} value 音量。範囲は 0 〜 100 となります。
+     */
+    this.setVolume = function( value ) {
+        if( 0 <= value && value <= 100 ) {
+            _gainNode.gain.value = ( value / 100 );
+        }
+    };
+
+    /**
      * 音声が再生中であることを調べます。
      *
      * @return {Boolean} 再生中なら true。

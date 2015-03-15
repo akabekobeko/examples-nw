@@ -1,4 +1,5 @@
-var React = require( 'react' );
+var React    = require( 'react' );
+var TextUtil = require( '../model/utility/text-util.js' );
 
 /**
  * 音声プレーヤーが停止していることを示す値。
@@ -58,6 +59,8 @@ var Toolbar = React.createClass( {
         return {
             playState: PLAY_STATE_STOPPED,
             player: this._initPlayer(),
+            playtime: 0,
+            volume: 100,
             openFileDialog: FileDialog.openFileDialog( 'audio/*', true, this._onAddFiles )
         };
     },
@@ -68,27 +71,33 @@ var Toolbar = React.createClass( {
      * @return {Object} React エレメント。
      */
     render: function() {
-        var title = ( this.props.music ? this.props.music.title : '' );
-        var play  = ( this.state.playState === PLAY_STATE_PLAYING ? 'pause' : 'play' );
-        var playbackTime = '00:00';
-        var duration     = '00:00';
-
+        var metadata = this._metadata();
         return (
             <div className="toolbar">
                 <div className="wrapper">
                     <div className="player">
                         {this._renderButton( 'prev' )}
-                        {this._renderButton( play )}
+                        {this._renderButton( metadata.playIcon )}
                         {this._renderButton( 'next' )}
-                        <input type="range" onChange={this.onVolumeChange} />
+                        <input
+                            type="range"
+                            min={0}
+                            max={100}
+                            value={this.state.volume}
+                            onChange={this._onVolumeChange} />
                     </div>
                     <div className="display">
                         <div className="metadata">
-                            <div className="time playtime">{playbackTime}</div>
-                            <div className="title">{title}</div>
-                            <div className="time duration">{duration}</div>
+                            <div className="time playtime">{metadata.playtime}</div>
+                            <div className="title">{metadata.title}</div>
+                            <div className="time duration">{metadata.duration}</div>
                         </div>
-                        <input className="position" type="range" onChange={this.onPositionChange} />
+                        <input
+                            className="position"
+                            type="range"
+                            min={0}
+                            max={metadata.positionMax}
+                            onChange={this._onPositionChange} />
                     </div>
                     <div className="option">
                         <div className="wrapper">
@@ -98,6 +107,32 @@ var Toolbar = React.createClass( {
                 </div>
             </div>
         );
+    },
+
+    /**
+     * 表示用メタデータを生成します。
+     *
+     * @return {Object} メタデータ。
+     */
+    _metadata: function() {
+        var playIcon = ( this.state.playState === PLAY_STATE_PLAYING ? 'pause' : 'play' );
+        var playtime = TextUtil.secondsToString( this.state.playtime );
+
+        return this.props.music ?
+            {
+                playIcon:    playIcon,
+                playtime:    playtime,
+                title:       this.props.music.title,
+                positionMax: this.props.music.duration,
+                duration:    TextUtil.secondsToString( this.props.music.duration )
+            } :
+            {
+                playIcon:    playIcon,
+                playtime:    playtime,
+                title:       '--',
+                positionMax: 0,
+                duration:    '00:00'
+            };
     },
 
     /**
@@ -162,6 +197,25 @@ var Toolbar = React.createClass( {
         if( this.props.onAddFiles ) {
             this.props.onAddFiles( files );
         }
+    },
+
+    /**
+     * 音量が変更された時に発生します。
+     *
+     * @param  {Object} ev イベント情報。
+     */
+    _onVolumeChange: function( ev ) {
+        this.state.player.setVolume( ev.target.value );
+        this.setState( { volume: ev.target.value } );
+    },
+
+    /**
+     * 再生位置が変更された時に発生します。
+     *
+     * @param  {Object} ev イベント情報。
+     */
+    _onPositionChange: function( ev ) {
+
     }
 } );
 

@@ -1,25 +1,5 @@
-var React = require( 'react' );
-
-/**
- * 演奏時間を文字列化します。
- *
- * @param {Number} duration 演奏時間 ( 秒単位 )。
- *
- * @return {String} 文字列化された演奏時間。
- */
-function durationToString( duration ) {
-    var h = ( duration / 3600 | 0 );
-    var m = ( ( duration % 3600 ) / 60 | 0 );
-    var s = ( duration % 60 );
-
-    function padding( num ) {
-        return ( '0' + num ).slice( -2 );
-    }
-
-    return ( 0 < h ? h + ':' + padding( m ) + ':' + padding( s ) :
-             0 < m ?                      m + ':' + padding( s ) :
-                                             '0:' + padding( s ) );
-}
+var React    = require( 'react' );
+var TextUtil = require( '../model/utility/text-util.js' );
 
 /**
  * 音楽リストの Model - View を仲介するコンポーネントです。
@@ -43,7 +23,7 @@ var MusicList = React.createClass( {
                     <td>{music.title}</td>
                     <td>{music.artist}</td>
                     <td>{music.album}</td>
-                    <td>{durationToString( music.duration )}</td>
+                    <td>{TextUtil.secondsToString( music.duration )}</td>
                 </tr>
             );
 
