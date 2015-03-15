@@ -159,7 +159,7 @@ var AudioPlayer = function() {
      * 再生対象としている音声データを閉じます。
      */
     this.close = function() {
-        _stop();
+        this._stop();
 
         _audioBuffer    = null;
         _playbackTime   = 0;
@@ -187,7 +187,7 @@ var AudioPlayer = function() {
      * 音声の再生を一時停止します。
      */
     this.pause = function() {
-        _stop( true );
+        this._stop( true );
     };
 
     /**
@@ -204,7 +204,7 @@ var AudioPlayer = function() {
         }
 
         if( _isPlaying ) {
-            _stop();
+            this._stop();
 
             _playbackTime = playbackTime;
             this.play();
@@ -317,7 +317,7 @@ var AudioPlayer = function() {
     /**
      * 音声の再生を停止します。
      */
-    function _stop( pause ) {
+    this._stop = function( pause ) {
         if( !( _isPlaying ) ) { return; }
         _isPlaying = false;
 
@@ -332,7 +332,7 @@ var AudioPlayer = function() {
         if( pause && _events.pause ) {
             _events.pause();
         }
-    }
+    };
 
     /**
      * 音声再生が終了した時に発生します。
