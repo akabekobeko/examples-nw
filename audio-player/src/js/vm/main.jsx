@@ -30,29 +30,9 @@ var Main = React.createClass( {
     },
 
     /**
-     * コンポーネントを描画します。
-     *
-     * @return {Object} React エレメント。
+     * コンポーネントが配置される時に発生します。
      */
-    render: function() {
-        return (
-            <article className="app">
-                <Toolbar
-                    music={this.state.current}
-                    onAddFiles={this.onAddFiles} />
-                <MusicList
-                    musics={this.state.musics}
-                    current={this.state.current}
-                    onSelectMusic={this.onSelectMusic}
-                    onSelectPlay={this.onSelectPlay} />
-            </article>
-        );
-    },
-
-    /**
-     * すべての音楽情報を読み込みます。
-     */
-    load: function() {
+    componentDidMount: function() {
         var db = null;
         try {
             var MusicStore = require( '../model/music-store.js' );
@@ -83,11 +63,31 @@ var Main = React.createClass( {
     },
 
     /**
+     * コンポーネントを描画します。
+     *
+     * @return {Object} React エレメント。
+     */
+    render: function() {
+        return (
+            <article className="app">
+                <Toolbar
+                    music={this.state.current}
+                    onAddFiles={this._onAddFiles} />
+                <MusicList
+                    musics={this.state.musics}
+                    current={this.state.current}
+                    onSelectMusic={this._onSelectMusic}
+                    onSelectPlay={this._onSelectPlay} />
+            </article>
+        );
+    },
+
+    /**
      * コンテンツ追加が要求された時に発生します。
      *
      * @param {FileList} files ファイル情報コレクション。input[type="file"] で読み取られた情報を指定してください。
      */
-    onAddFiles: function( files ) {
+    _onAddFiles: function( files ) {
         if( !( files && 0 < files.length && this.state.db ) ) { return; }
 
         var onAdded = function( err, newMusic ) {
@@ -112,7 +112,7 @@ var Main = React.createClass( {
      *
      * @param {Object} music 音楽。
      */
-    onSelectMusic: function( music ) {
+    _onSelectMusic: function( music ) {
         this.setState( { current: music } );
     },
 
@@ -121,7 +121,7 @@ var Main = React.createClass( {
      *
      * @param {Object} music 音楽。
      */
-    onSelectPlay: function( music ) {
+    _onSelectPlay: function( music ) {
 
     }
 } );

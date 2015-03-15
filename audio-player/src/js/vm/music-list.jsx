@@ -34,7 +34,11 @@ var MusicList = React.createClass( {
         var items = this.props.musics.map( function( music, index ) {
             var selected = ( this.props.current && this.props.current.id === music.id ? 'selected' : null );
             return (
-                <tr key={music.id} onClick={this.onSelectMusic.bind( this, music )} className={selected}>
+                <tr 
+                    key={music.id}
+                    className={selected}
+                    onClick={this._onSelectMusic.bind( this, music )}
+                    onDoubleClick={this._onSelectPlay.bind( this, music )}>
                     <td className="number">{index + 1}</td>
                     <td>{music.title}</td>
                     <td>{music.artist}</td>
@@ -64,10 +68,8 @@ var MusicList = React.createClass( {
      *
      * @param {Object} music 音楽。
      */
-    onSelectMusic: function( music ) {
-        if( this.props.onSelectMusic ) {
-            this.props.onSelectMusic( music );
-        }
+    _onSelectMusic: function( music ) {
+        this.props.onSelectMusic( music );
     },
 
     /**
@@ -75,10 +77,8 @@ var MusicList = React.createClass( {
      *
      * @param {Object} music 音楽。
      */
-    onSelectPlay: function( music ) {
-        if( this.props.onSelectPlay ) {
-            this.props.onSelectPlay( music );
-        }
+    _onSelectPlay: function( music ) {
+        this.props.onSelectPlay( music );
     }
 } );
 

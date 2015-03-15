@@ -12,7 +12,7 @@ var Toolbar = React.createClass( {
     getInitialState: function() {
         var FileDialog = require( '../model/file-dialog.js' );
         return {
-            openFileDialog: FileDialog.openFileDialog( 'audio/*', true, this.onAddFiles )
+            openFileDialog: FileDialog.openFileDialog( 'audio/*', true, this._onAddFiles )
         };
     },
 
@@ -27,9 +27,9 @@ var Toolbar = React.createClass( {
             <div className="toolbar">
                 <div className="wrapper">
                     <div className="player">
-                        <div className="button" onClick={this.onPressPrevButton}><i className="icon-prev"></i></div>
-                        <div className="button" onClick={this.onPressPlayButton}><i className="icon-play"></i></div>
-                        <div className="button" onClick={this.onPressNextButton}><i className="icon-next"></i></div>
+                        {this._renderButton( 'prev' )}
+                        {this._renderButton( 'play' )}
+                        {this._renderButton( 'next' )}
                         <input type="range" onChange={this.onVolumeChange} />
                     </div>
                     <div className="display">
@@ -40,7 +40,7 @@ var Toolbar = React.createClass( {
                     </div>
                     <div className="option">
                         <div className="wrapper">
-                            <div className="button add" onClick={this.onPressAddButton}><i className="icon-add"></i></div>
+                            {this._renderButton( 'add' )}
                         </div>
                     </div>
                 </div>
@@ -49,53 +49,43 @@ var Toolbar = React.createClass( {
     },
 
     /**
-     * 追加ボタンが押された時に発生します。
+     * ボタンを描画します。
      *
-     * @param {Object} ev イベント情報。
+     * @param {String} type ボタン種別。
+     *
+     * @return {Object} React エレメント。
      */
-    onPressAddButton: function( ev ) {
-        //FileDialog.selectFiles();
-        this.state.openFileDialog.show();
+    _renderButton: function( type ) {
+        return (
+            <div className="button" onClick={this._onPressButton.bind( this, type )}>
+                <i className={'icon-' + type}></i>
+            </div>
+        );
     },
 
     /**
-     * 再生ボタンが押された時に発生します。
+     * ボタンが押された時に発生します。
      *
-     * @param {Object} ev イベント情報。
+     * @param {String} type ボタン種別。
      */
-    onPressPlayButton: function( ev ) {
-    },
+    _onPressButton: function( type ) {
+        switch( type ) {
+        case 'play':
+            break;
 
-    /**
-     * 前へボタンが押された時に発生します。
-     *
-     * @param {Object} ev イベント情報。
-     */
-    onPressPrevButton: function( ev ) {
-    },
+        case 'pause':
+            break;
 
-    /**
-     * 次へボタンが押された時に発生します。
-     *
-     * @param {Object} ev イベント情報。
-     */
-    onPressNextButton: function( ev ) {
-    },
+        case 'prev':
+            break;
 
-    /**
-     * 音声ボリュームが変更された時に発生します。
-     *
-     * @param {Object} ev イベント情報。
-     */
-    onVolumeChange: function( ev ) {
-    },
+        case 'next':
+            break;
 
-    /**
-     * 再生位置が変更された時に発生します。
-     *
-     * @param {Object} ev イベント情報。
-     */
-    onPositionChange: function( ev ) {
+        case 'add':
+            this.state.openFileDialog.show();
+            break;
+        }
     },
 
     /**
@@ -103,7 +93,7 @@ var Toolbar = React.createClass( {
      *
      * @param  {FileList} files ファイル情報コレクション。
      */
-    onAddFiles: function( files ) {
+    _onAddFiles: function( files ) {
         if( this.props.onAddFiles ) {
             this.props.onAddFiles( files );
         }
