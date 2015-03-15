@@ -214,6 +214,24 @@ var AudioPlayer = function() {
     };
 
     /**
+     * 演奏時間を取得します。
+     *
+     * @return {Number} 演奏時間 ( 秒単位 )。
+     */
+    this.duration = function() {
+        return ( _audioBuffer ? _audioBuffer.duration : 0 );
+    };
+
+    /**
+     * 再生位置を取得します。
+     *
+     * @return {Number} 再生位置 ( 秒単位 )。
+     */
+    this.playbackTime = function() {
+        return ( ( ( Date.now() - _startTimestamp ) / 1000 ) + _playbackTime );
+    };
+
+    /**
      * 音声の周波数スペクトルを取得します。
      *
      * @return {Array} スペクトル。
@@ -289,7 +307,7 @@ var AudioPlayer = function() {
         }
 
         // 一時停止なら次回の再生時に復元するための位置を記録
-        _playbackTime =( pause ? ( Date.now() - _startTimestamp ) / 1000 + _playbackTime : 0 );
+        _playbackTime = ( pause ? this.playbackTime() : 0 );
 
         if( pause && _events.pause ) {
             _events.pause();

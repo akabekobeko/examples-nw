@@ -92,18 +92,41 @@ option_width      = 256px
     background-color color_gray_light_ex
     text-align center
 
-    display_metadata_height = 32px
-    display_position_height = 16px
-
     /**
      * メタデータ表示。
      */
     .metadata {
+        position relative
         width 100%
-        height display_metadata_height
-        text-align center
+        height 32px
+
+        .time {
+            position absolute
+            bottom 0
+            width 4em
+            font-size .8em
+            color color_gray_dark
+        }
+
+        .playtime {
+            left 0
+            padding-left .2em
+            text-align left
+
+        }
+        
+        .duration {
+            right 0
+            padding-right .2em
+            text-align right
+        }
 
         .title {
+            position absolute
+            left 4em
+            right 4em
+            top 0.2em
+            text-align center
         }
     }
 
@@ -115,7 +138,7 @@ option_width      = 256px
         margin 0
         padding 0
         width 100%
-        height display_position_height
+        height 16px
         background-color transparent
 
         &:focus {

@@ -68,8 +68,11 @@ var Toolbar = React.createClass( {
      * @return {Object} React エレメント。
      */
     render: function() {
-        var title = this.props.music ? this.props.music.title : '';
-        var play  = ( this.state.playState === PLAY_STATE_PLAYING ? 'pause' : 'play' ); 
+        var title = ( this.props.music ? this.props.music.title : '' );
+        var play  = ( this.state.playState === PLAY_STATE_PLAYING ? 'pause' : 'play' );
+        var playbackTime = '00:00';
+        var duration     = '00:00';
+
         return (
             <div className="toolbar">
                 <div className="wrapper">
@@ -81,7 +84,9 @@ var Toolbar = React.createClass( {
                     </div>
                     <div className="display">
                         <div className="metadata">
+                            <div className="time playtime">{playbackTime}</div>
                             <div className="title">{title}</div>
+                            <div className="time duration">{duration}</div>
                         </div>
                         <input className="position" type="range" onChange={this.onPositionChange} />
                     </div>
