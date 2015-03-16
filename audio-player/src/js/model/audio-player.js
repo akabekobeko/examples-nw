@@ -1,3 +1,5 @@
+var PlayState = require( './play-state.js' );
+
 /**
  * 音声プレーヤーを提供します。
  *
@@ -52,10 +54,10 @@ var AudioPlayer = function() {
     var _isOpened = false;
 
     /**
-     * 音声再生が実行中であることを示す値。
-     * @type {Boolean}
+     * 音声状態を示す値。
+     * @type {PlayState}
      */
-    var _isPlaying = false;
+    var _playState = PlayState.STOPPED;
 
     /**
      * イベント ハンドラ。
@@ -170,13 +172,14 @@ var AudioPlayer = function() {
      * 音声の再生を開始します。
      */
     this.play = function() {
-        if( _isPlaying ) { return; }
+        console.log( '[play]' );
+        if( _playState === PlayState.PLAYING ) { return; }
 
         _initSourceNode();
         _sourceNode.start( 0, _playbackTime );
 
         _startTimestamp = Date.now();
-        _isPlaying      = true;
+        _playState      = PlayState.PLAYING;
 
         if( _events.start ) {
             _events.start();
@@ -187,7 +190,43 @@ var AudioPlayer = function() {
      * 音声の再生を一時停止します。
      */
     this.pause = function() {
-        this.stop( true );
+        console.log( '[pause]' );
+        if( _playState === PlayState.PLAYING ) {
+            this.stop( true );
+        }
+    };
+
+    /**
+     * 音声の再生を停止します。
+     */
+    this.stop = function( pause ) {
+        console.log( '[stop]' );
+        if( _playState === PlayState.STOPPED ) { return; }
+
+        if( _sourceNode ) {
+            // seek から呼ばれたなら、すぐに play されるので onended を無効化する
+            // この処理がないと play の後に onended が遅延実行され、再生状態がおかしくなる
+            //  
+            if( _playState === PlayState.SEEKING ) {
+                _sourceNode.onended = null;
+            }
+
+            _sourceNode.stop();
+            _sourceNode = null;
+        }
+
+        // 一時停止なら次回の再生時に復元するための位置を記録
+        _playbackTime = ( pause ? this.playbackTime() : 0 );
+
+        if( pause ) {
+            _playState = PlayState.PAUSED;
+            if( _events.pause ) {
+                _events.pause();
+            }
+
+        } else {
+            _playState = PlayState.STOPPED;
+        }
     };
 
     /**
@@ -198,6 +237,7 @@ var AudioPlayer = function() {
      * @return {Boolean} 成功時は true。
      */
     this.seek = function( playbackTime ) {
+        console.log( '[seek]' );
         if( playbackTime === undefined ) { return false; }
 
         if( playbackTime > _audioBuffer.duration ) {
@@ -205,7 +245,8 @@ var AudioPlayer = function() {
             return false;
         }
 
-        if( _isPlaying ) {
+        if( _playState === PlayState.PLAYING ) {
+            _playState = PlayState.SEEKING;
             this.stop();
 
             _playbackTime = playbackTime;
@@ -268,12 +309,12 @@ var AudioPlayer = function() {
     };
 
     /**
-     * 音声が再生中であることを調べます。
+     * 再生状態を示す値を取得します。
      *
-     * @return {Boolean} 再生中なら true。
+     * @return {PlayState} 再生状態。
      */
-    this.isPlaying = function() {
-        return _isPlaying;
+    this.playState = function() {
+        return _playState;
     };
 
     /**
@@ -319,34 +360,12 @@ var AudioPlayer = function() {
     };
 
     /**
-     * 音声の再生を停止します。
-     */
-    this.stop = function( pause ) {
-        if( !( _isPlaying ) ) { return; }
-        _isPlaying = false;
-
-        if( _sourceNode ) {
-            _sourceNode.stop();
-            _sourceNode = null;
-        }
-
-        // 一時停止なら次回の再生時に復元するための位置を記録
-        _playbackTime = ( pause ? this.playbackTime() : 0 );
-
-        if( pause && _events.pause ) {
-            _events.pause();
-        }
-    };
-
-    /**
      * 音声再生が終了した時に発生します。
      */
     function _onEnded() {
-        if( _isPlaying ) {
-            _playbackTime = 0;
-        }
-
-        _isPlaying = false;
+        console.log( '[onend]' );
+        _playbackTime = 0;
+        _playState    = PlayState.STOPPED;
 
         if( _events.end ) {
             _events.end();

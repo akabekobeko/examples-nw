@@ -1,23 +1,6 @@
-var React    = require( 'react' );
-var TextUtil = require( '../model/utility/text-util.js' );
-
-/**
- * 音声プレーヤーが停止していることを示す値。
- * @type {Number}
- */
-var PLAY_STATE_STOPPED = 0;
-
-/**
- * 音声プレーヤーが再生中であることを示す値。
- * @type {Number}
- */
-var PLAY_STATE_PLAYING = 1;
-
-/**
- * 音声プレーヤーが一時停止していることを示す値。
- * @type {Number}
- */
-var PLAY_STATE_PAUSED  = 2;
+var React     = require( 'react' );
+var TextUtil  = require( '../model/utility/text-util.js' );
+var PlayState = require( '../model/play-state.js' );
 
 /**
  * ツールバー用コンポーネントです。
@@ -31,24 +14,25 @@ var Toolbar = React.createClass( {
         this._player    = new AudioPlayer();
 
         this._player.on( 'start', function( err ) {
+            clearInterval( this._playtimer );
             this._playtimer = setInterval( function() {
                 this.setState( { playtime: ++this.state.playtime } );
 
             }.bind( this ), 1000 );
 
-            this.setState( { playState: PLAY_STATE_PLAYING } );
+            this.setState( { playState: PlayState.PLAYING } );
 
         }.bind( this ) );
 
         this._player.on( 'pause', function( err ) {
             clearInterval( this._playtimer );
-            this.setState( { playState: PLAY_STATE_PAUSED } );
+            this.setState( { playState: PlayState.PAUSED } );
 
         }.bind( this ) );
 
         this._player.on( 'end', function( err ) {
             clearInterval( this._playtimer );
-            this.setState( { playState: PLAY_STATE_STOPPED } );
+            this.setState( { playState: PlayState.STOPPED } );
 
         }.bind( this ) );
 
@@ -63,7 +47,7 @@ var Toolbar = React.createClass( {
      */
     getInitialState: function() {
         return {
-            playState: PLAY_STATE_STOPPED,
+            playState: PlayState.STOPPED,
             playtime: 0,
             volume: 100,
         };
@@ -120,7 +104,7 @@ var Toolbar = React.createClass( {
      * @return {Object} メタデータ。
      */
     _metadata: function() {
-        var playIcon = ( this.state.playState === PLAY_STATE_PLAYING ? 'pause' : 'play' );
+        var playIcon = ( this.state.playState === PlayState.PLAYING ? 'pause' : 'play' );
         var playtime = TextUtil.secondsToString( this.state.playtime );
 
         return this.props.music ?
