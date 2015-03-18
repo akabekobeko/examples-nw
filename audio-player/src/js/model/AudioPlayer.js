@@ -1,4 +1,4 @@
-var PlayState = require( './play-state.js' );
+var PlayState = require( './constants/AudioPlayerConstants.js' ).PlayState;
 
 /**
  * 音声プレーヤーを提供します。

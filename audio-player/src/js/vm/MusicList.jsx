@@ -1,5 +1,7 @@
-var React    = require( 'react' );
-var TextUtil = require( '../model/utility/text-util.js' );
+var React              = require( 'react' );
+var TextUtil           = require( '../model/util/TextUtility.js' );
+var MusicListActions   = require( '../model/actions/MusicListActions.js' );
+var AudioPlayerActions = require( '../model/actions/AudioPlayerActions.js' );
 
 /**
  * 音楽リストの Model - View を仲介するコンポーネントです。
@@ -49,7 +51,7 @@ var MusicList = React.createClass( {
      * @param {Object} music 音楽。
      */
     _onSelectMusic: function( music ) {
-        this.props.onSelectMusic( music );
+        MusicListActions.select( music );
     },
 
     /**
@@ -58,7 +60,7 @@ var MusicList = React.createClass( {
      * @param {Object} music 音楽。
      */
     _onSelectPlay: function( music ) {
-        this.props.onSelectPlay( music );
+        AudioPlayerActions.play( music.path );
     }
 } );
 

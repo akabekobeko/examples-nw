@@ -3,5 +3,5 @@ onload = function() {
     global.document  = window.document;
     global.navigator = window.navigator;
 
-    require( './vm/main.jsx' )( 'body' );
+    require( './vm/AudioPlayerApp.jsx' )( 'body' );
 };

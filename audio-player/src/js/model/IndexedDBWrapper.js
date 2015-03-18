@@ -1,11 +1,11 @@
 /**
- * データベース ( IndexedDB ) ストアを提供します。
+ * IndexedDB を操作しやすくするためのユーティリティです。
  *
  * @param {String} dbName      データベース名。
  * @param {Number} dbVersion   データベースのバージョン番号。
  * @param {String} dbStoreName ストア名。
  */
-var DBStore = function( dbName, dbVersion, dbStoreName ) {
+var IndexedDBWrapper = function( dbName, dbVersion, dbStoreName ) {
     // IndexedDB チェック
     var _indexedDB = ( window.indexedDB || window.mozIndexedDB || window.msIndexedDB || window.webkitIndexedDB );
     if( !( _indexedDB ) ) {
@@ -187,7 +187,7 @@ var DBStore = function( dbName, dbVersion, dbStoreName ) {
      * @param {Object}   item     アイテム。id プロパティが有効値 ( 1 以上の整数 ) なら既存アイテムを更新します。
      * @param {Function} callback 処理が終了した時に呼び出される関数。
      */
-    this.addItem = function( item, callback ) {
+    this.add = function( item, callback ) {
         if( !( _db ) ) { return; }
 
         var onFinish    = ( callback || defaultCallback );
@@ -211,7 +211,7 @@ var DBStore = function( dbName, dbVersion, dbStoreName ) {
      * @param {Number}   id       音楽情報の識別子。
      * @param {Function} callback 処理が終了した時に呼び出される関数。
      */
-    this.deleteItem = function( id, callback ) {
+    this.remove = function( id, callback ) {
         if( !( _db ) ) { return; }
 
         var onFinish    = ( callback || defaultCallback );
@@ -229,4 +229,4 @@ var DBStore = function( dbName, dbVersion, dbStoreName ) {
     };
 };
 
-module.exports = DBStore;
+module.exports = IndexedDBWrapper;

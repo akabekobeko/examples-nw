@@ -1,6 +1,8 @@
-var React     = require( 'react' );
-var TextUtil  = require( '../model/utility/text-util.js' );
-var PlayState = require( '../model/play-state.js' );
+var React              = require( 'react' );
+var TextUtil           = require( '../model/util/TextUtility.js' );
+var PlayState          = require( '../model/constants/AudioPlayerConstants.js' ).PlayState;
+var MusicListActions   = require( '../model/actions/MusicListActions.js' );
+var AudioPlayerActions = require( '../model/actions/AudioPlayerActions.js' );
 
 /**
  * ツールバー用コンポーネントです。
@@ -10,6 +12,7 @@ var Toolbar = React.createClass( {
      * コンポーネントが配置される時に発生します。
      */
     componentDidMount: function() {
+        /*
         var AudioPlayer = require( '../model/audio-player.js' );
         this._player    = new AudioPlayer();
 
@@ -38,6 +41,7 @@ var Toolbar = React.createClass( {
 
         var FileDialog = require( '../model/file-dialog.js' );
         this._openFileDialog = FileDialog.openFileDialog( 'audio/*', true, this._onAddFiles );
+        */
     },
 
     /**
@@ -48,8 +52,8 @@ var Toolbar = React.createClass( {
     getInitialState: function() {
         return {
             playState: PlayState.STOPPED,
-            playtime: 0,
-            volume: 100,
+            playtime:  0,
+            volume:    100,
         };
     },
 
@@ -147,6 +151,7 @@ var Toolbar = React.createClass( {
     _onPressButton: function( type ) {
         switch( type ) {
         case 'play':
+            /*
             if( this._player.isOpened() ) {
                 this._player.play();
 
@@ -159,11 +164,11 @@ var Toolbar = React.createClass( {
                         this._player.play();
                     }
                 }.bind( this ) );
-            }
+            }*/
             break;
 
         case 'pause':
-            this._player.pause();
+            //this._player.pause();
             break;
 
         case 'prev':
@@ -184,8 +189,10 @@ var Toolbar = React.createClass( {
      * @param  {FileList} files ファイル情報コレクション。
      */
     _onAddFiles: function( files ) {
-        if( this.props.onAddFiles ) {
-            this.props.onAddFiles( files );
+        if( !( files && 0 < files.length ) ) { return; }
+
+        for( var i = 0, max = files.length; i < max; ++i ) {
+            MusicListActions.add( files[ i ] );
         }
     },
 

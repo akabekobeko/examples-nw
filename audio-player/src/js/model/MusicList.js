@@ -1,8 +1,8 @@
 
 /**
- * 音楽情報を管理します。
+ * 音楽情報リストを管理します。
  */
-var MusicStore = function() {
+var MusicList = function() {
     /**
      * オーディオ要素。
      * @type {Element}
@@ -13,7 +13,7 @@ var MusicStore = function() {
      * データベース。
      * @type {PouchDB}
      */
-    var _db = new ( require( './db-store.js' ) )( 'music_db', 1, 'musics' );
+    var _db = new ( require( './IndexedDBWrapper.js' ) )( 'music_db', 1, 'musics' );
 
     /**
      * データベースを初期化します。
@@ -48,9 +48,19 @@ var MusicStore = function() {
                 callback( err );
 
             } else {
-                _db.addItem( music, callback );
+                _db.add( music, callback );
             }
         } );
+    };
+
+    /**
+     * 音楽情報を削除します。
+     *
+     * @param {Number}   musicId  削除対象となる音楽情報の識別子。
+     * @param {Function} callback コールバック関数。
+     */
+    this.remove = function( musicId, callback ) {
+        _db.remove( musicId, callback );
     };
 
     /**
@@ -97,4 +107,4 @@ var MusicStore = function() {
     }
 };
 
-module.exports = MusicStore;
+module.exports = MusicList;
