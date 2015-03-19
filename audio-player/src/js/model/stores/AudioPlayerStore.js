@@ -38,7 +38,52 @@ var AudioPlayerStore = assign( {}, EventEmitter.prototype, {
     },
 
     /**
-     * 音声ファイルが開かれていることを調べます。
+     * 演奏時間を取得します。
+     *
+     * @return {Number} 演奏時間 ( 秒単位 )。
+     */
+    duration: function() {
+        return _audioPlayer.duration();
+    },
+
+    /**
+     * 再生位置を取得します。
+     *
+     * @return {Number} 再生位置 ( 秒単位 )。
+     */
+    playbackTime: function() {
+        return _audioPlayer.playbackTime();
+    },
+
+    /**
+     * 音声の周波数スペクトルを取得します。
+     *
+     * @return {Array} スペクトル。
+     */
+    spectrums: function() {
+        return _audioPlayer.spectrums();
+    },
+
+    /**
+     * 音量を取得します。
+     *
+     * @return {Number} 音量。範囲は 0 〜 100 となります。
+     */
+    volume: function() {
+        return _audioPlayer.volume();
+    },
+
+    /**
+     * 再生状態を示す値を取得します。
+     *
+     * @return {PlayState} 再生状態。
+     */
+    playState: function() {
+        return _audioPlayer.playState();
+    },
+
+    /**
+     * 音声が開かれていることを調べます。
      *
      * @return {Boolean} 開かれているなら true。
      */
@@ -90,7 +135,7 @@ function play( music, callback ) {
             }
         } );
 
-    } else if( audioPlayer.playState === PlayState.PAUSED ) {
+    } else if( _audioPlayer.playState === PlayState.PAUSED ) {
         _audioPlayer.play();
         callback();
     }

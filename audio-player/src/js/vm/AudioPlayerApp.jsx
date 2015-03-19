@@ -5,6 +5,7 @@ var MusicListActions   = require( '../model/actions/MusicListActions.js' );
 var MusicStore         = require( '../model/stores/MusicListStore.js' );
 var AudioPlayerActions = require( '../model/actions/AudioPlayerActions.js' );
 var AudioPlayerStore   = require( '../model/stores/AudioPlayerStore.js' );
+var PlayState          = require( '../model/constants/AudioPlayerConstants.js' ).PlayState;
 
 /**
  * アプリケーションのエントリー ポイントになるコンポーネントです。
@@ -21,7 +22,13 @@ var AudioPlayerApp = React.createClass( {
         return {
             musics:      [],
             current:     null,
-            currentPlay: null
+            currentPlay: {
+                music:        null,
+                playState:    PlayState.STOPPED,
+                duration:     0,
+                playbackTime: 0,
+                volume:       1.0
+            }
         };
     },
 
@@ -51,12 +58,10 @@ var AudioPlayerApp = React.createClass( {
     render: function() {
         return (
             <article className="app">
-                <Toolbar music={this.state.current} />
+                <Toolbar currentPlay={this.state.currentPlay} />
                 <MusicList
                     musics={this.state.musics}
-                    current={this.state.current}
-                    onSelectMusic={this._onSelectMusic}
-                    onSelectPlay={this._onSelectPlay} />
+                    current={this.state.current} />
             </article>
         );
     },
@@ -65,31 +70,45 @@ var AudioPlayerApp = React.createClass( {
      * 音楽リストが更新された時に発生します。
      */
     _onMusicListChange: function() {
-        this.setState( { musics: MusicStore.getAll(), current: MusicStore.current() } );
+        this.setState( {
+            musics:      MusicStore.getAll(),
+            current:     MusicStore.current(),
+            currentPlay: this._currentPlay()
+        } );
+    },
+
+    /**
+     * 最新の再生情報を取得します。
+     *
+     * @return {Object} 再生情報。
+     */
+    _currentPlay: function() {
+        if( AudioPlayerStore.playState() === PlayState.STOPPED ) {
+            var music = ( AudioPlayerStore.current() || MusicStore.current() );
+            return {
+                music:        ( AudioPlayerStore.current() || MusicStore.current() ),
+                playState:    PlayState.STOPPED,
+                duration:     ( music ? music.duration : 0 ),
+                playbackTime: 0,
+                volume:       AudioPlayerStore.volume()
+            };
+
+        } else {
+            return {
+                music:        ( AudioPlayerStore.current() || MusicStore.current() ),
+                playState:    AudioPlayerStore.playState(),
+                duration:     AudioPlayerStore.duration(),
+                playbackTime: AudioPlayerStore.playbackTime(),
+                volume:       AudioPlayerStore.volume()
+            };
+        }
     },
 
     /**
      * 音楽リストが更新された時に発生します。
      */
     _onAudioPlayerChange: function() {
-    },
-
-    /**
-     * 音楽が選択された時に発生します。
-     *
-     * @param {Object} music 音楽。
-     */
-    _onSelectMusic: function( music ) {
-        this.setState( { current: music } );
-    },
-
-    /**
-     * 音楽が再生対象として選択された時に発生します。
-     *
-     * @param {Object} music 音楽。
-     */
-    _onSelectPlay: function( music ) {
-
+        this.setState( { currentPlay: this._currentPlay() } );
     }
 } );
 
