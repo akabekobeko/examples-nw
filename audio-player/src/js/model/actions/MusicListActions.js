@@ -31,13 +31,10 @@ var MusicListActions = {
 
     /**
      * 音楽を追加します。
-     *
-     * @param {File} file ファイル情報。
      */
-    add: function( file ) {
+    add: function() {
         AppDispatcher.dispatch( {
-            actionType: ActionTypes.ADD,
-            file:       file
+            actionType: ActionTypes.ADD
         } );
     },
 

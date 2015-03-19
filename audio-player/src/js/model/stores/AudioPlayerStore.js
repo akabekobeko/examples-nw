@@ -38,6 +38,15 @@ var AudioPlayerStore = assign( {}, EventEmitter.prototype, {
     },
 
     /**
+     * 音声ファイルが開かれていることを調べます。
+     *
+     * @return {Boolean} 開かれているなら true。
+     */
+    isOpened: function() {
+        return _audioPlayer.isOpened();
+    },
+
+    /**
      * 更新を通知します。
      */
     emitChange: function() {

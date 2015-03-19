@@ -1,6 +1,7 @@
 var AppDispatcher      = require( '../dispatcher/AppDispatcher.js' );
 var MusicListConstants = require( '../constants/MusicListConstants.js' );
 var ActionTypes        = MusicListConstants.ActionTypes;
+var FileDialog         = require( '../util/FileDialog.js' );
 var EventEmitter       = require( 'events' ).EventEmitter;
 var assign             = require( 'object-assign' );
 
@@ -27,6 +28,27 @@ var _musics = [];
  * @type {Music}
  */
 var _current = null;
+
+/**
+ * ファイル選択ダイアログ。
+ * @type {OpenFileDialog}
+ */
+var _openFileDialog = FileDialog.openFileDialog( 'audio/*', true, function( files ) {
+    if( !( files && 0 < files.length ) ) { return; }
+
+    function onAdded( err, music ) {
+        if( err ) {
+            console.error( err );
+        } else {
+            _musics.push( music );
+            MusicListStore.emitChange();
+        }
+    }
+
+    for( var i = 0, max = files.length; i < max; ++i ) {
+        _musicList.add( files[ i ], onAdded );        
+    }
+} );
 
 /**
  * 音楽リストを操作します。
@@ -125,19 +147,9 @@ function select( music ) {
 
 /**
  * 音声ファイルを追加します。
- *
- * @param {File}     file     ファイル情報。input[type="file"] で読み取った情報を指定してください。
- * @param {Function} callback 処理が完了した時に呼び出される関数。
  */
-function add( file, callback ) {
-    _musicList.add( file, function( err, music ) {
-        if( err ) {
-            callback( err );
-        } else {
-            _musics.push( music );
-            callback();
-        }
-    } );
+function add() {
+    _openFileDialog.show();
 }
 
 /**
@@ -190,7 +202,7 @@ AppDispatcher.register( function( action ) {
         break;
 
     case ActionTypes.ADD:
-        add( action.file, callback );
+        add();
         break;
 
     case ActionTypes.REMOVE:

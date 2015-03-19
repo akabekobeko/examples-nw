@@ -9,42 +9,6 @@ var AudioPlayerActions = require( '../model/actions/AudioPlayerActions.js' );
  */
 var Toolbar = React.createClass( {
     /**
-     * コンポーネントが配置される時に発生します。
-     */
-    componentDidMount: function() {
-        /*
-        var AudioPlayer = require( '../model/audio-player.js' );
-        this._player    = new AudioPlayer();
-
-        this._player.on( 'start', function( err ) {
-            clearInterval( this._playtimer );
-            this._playtimer = setInterval( function() {
-                this.setState( { playtime: ++this.state.playtime } );
-
-            }.bind( this ), 1000 );
-
-            this.setState( { playState: PlayState.PLAYING } );
-
-        }.bind( this ) );
-
-        this._player.on( 'pause', function( err ) {
-            clearInterval( this._playtimer );
-            this.setState( { playState: PlayState.PAUSED } );
-
-        }.bind( this ) );
-
-        this._player.on( 'end', function( err ) {
-            clearInterval( this._playtimer );
-            this.setState( { playState: PlayState.STOPPED } );
-
-        }.bind( this ) );
-
-        var FileDialog = require( '../model/file-dialog.js' );
-        this._openFileDialog = FileDialog.openFileDialog( 'audio/*', true, this._onAddFiles );
-        */
-    },
-
-    /**
      * コンポーネントの状態を初期化します。
      *
      * @return {Object} 初期化された状態オブジェクト。
@@ -151,24 +115,11 @@ var Toolbar = React.createClass( {
     _onPressButton: function( type ) {
         switch( type ) {
         case 'play':
-            /*
-            if( this._player.isOpened() ) {
-                this._player.play();
-
-            } else if( this.props.music ) {
-                this._player.openFromFile( this.props.music.path, function( err ) {
-                    if( err ) {
-                        alert( err.message );
-                    } else {
-                        this.setState( { playtime: 0 } );
-                        this._player.play();
-                    }
-                }.bind( this ) );
-            }*/
+            AudioPlayerActions.play();
             break;
 
         case 'pause':
-            //this._player.pause();
+            AudioPlayerActions.pause();
             break;
 
         case 'prev':
@@ -178,21 +129,8 @@ var Toolbar = React.createClass( {
             break;
 
         case 'add':
-            this._openFileDialog.show();
+            MusicListActions.add();
             break;
-        }
-    },
-
-    /**
-     * ファイルが追加される時に発生します。
-     *
-     * @param  {FileList} files ファイル情報コレクション。
-     */
-    _onAddFiles: function( files ) {
-        if( !( files && 0 < files.length ) ) { return; }
-
-        for( var i = 0, max = files.length; i < max; ++i ) {
-            MusicListActions.add( files[ i ] );
         }
     },
 
@@ -202,8 +140,7 @@ var Toolbar = React.createClass( {
      * @param  {Object} ev イベント情報。
      */
     _onVolumeChange: function( ev ) {
-        this._player.setVolume( ev.target.value );
-        this.setState( { volume: ev.target.value } );
+        AudioPlayerActions.volume( ev.target.value );
     },
 
     /**
@@ -212,9 +149,7 @@ var Toolbar = React.createClass( {
      * @param  {Object} ev イベント情報。
      */
     _onPositionChange: function( ev ) {
-        if( this._player.seek( ev.target.value ) ){
-            this.setState( { playtime: ev.target.value } );
-        }
+        AudioPlayerActions.seek( ev.target.value );
     }
 } );
 
