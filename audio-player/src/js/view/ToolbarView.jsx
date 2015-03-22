@@ -10,8 +10,9 @@ var PlayState = require( '../model/constants/AudioPlayerConstants.js' ).PlayStat
  * @return {ReactElement}  React エレメント。
  */
 module.exports = function( component ) {
-    var player = component.state;
-    var music  = ( player.music || component.props.music );
+    var player   = component.state;
+    var music    = ( player.music || component.props.music );
+    var duration = ( player.duration === 0 ? ( music ? music.duration : 0 ) : player.duration );
     return (
         <div className="toolbar">
             <div className="wrapper">
@@ -30,13 +31,13 @@ module.exports = function( component ) {
                     <div className="metadata">
                         <div className="time playtime">{TextUtil.secondsToString( player.playbackTime )}</div>
                         <div className="title">{( music ? music.title : '--' )}</div>
-                        <div className="time duration">{TextUtil.secondsToString( player.duration )}</div>
+                        <div className="time duration">{TextUtil.secondsToString( duration )}</div>
                     </div>
                     <input
                         className="position"
                         type="range"
                         min={0}
-                        max={player.duration}
+                        max={duration}
                         value={player.playbackTime}
                         onChange={component._onPositionChange} />
                 </div>

@@ -185,8 +185,6 @@ var AudioPlayer = function() {
      */
     this.stop = function( pause ) {
         console.log( '[stop]' );
-        _isPlaying = false;
-
         if( pause ) {
             // 一時停止呼ならば onended を無効化しておく
             // この処理がないと play の後に onended が遅延実行され、再生状態がおかしくなる
@@ -198,7 +196,7 @@ var AudioPlayer = function() {
             }
 
             // 次回の再生時に復元するための位置を記録
-            _playbackTime = ( pause ? this.playbackTime() : 0 );
+            _playbackTime = this.playbackTime();
 
         } else {
             if( _sourceNode ) {
@@ -206,6 +204,9 @@ var AudioPlayer = function() {
                 _sourceNode = null;
             }
         }
+
+        // this.playbackTime() 内で現在位置を算出してからフラグを無効化する
+        _isPlaying = false;
     };
 
     /**
@@ -219,7 +220,9 @@ var AudioPlayer = function() {
         console.log( '[seek]' );
         if( playbackTime === undefined ) { return false; }
 
-        if( playbackTime > _audioBuffer.duration ) {
+        // 時間指定が文字列になる現象を避けるため、ここで強制的に数値化しておく
+        playbackTime = Number( playbackTime );
+        if( _audioBuffer.duration < playbackTime ) {
             console.log( '[ERROR] Seek time is greater than duration of audio buffer.' );
             return false;
         }
@@ -250,7 +253,11 @@ var AudioPlayer = function() {
      * @return {Number} 再生位置 ( 秒単位 )。
      */
     this.playbackTime = function() {
-        return ( ( ( Date.now() - _startTimestamp ) / 1000 ) + _playbackTime );
+        if( _isPlaying ) {
+            return ( Math.round( ( Date.now() - _startTimestamp ) / 1000 ) + _playbackTime );
+        } else {
+            return _playbackTime;
+        }
     };
 
     /**

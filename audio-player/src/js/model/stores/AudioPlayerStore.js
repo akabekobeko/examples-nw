@@ -55,7 +55,8 @@ var AudioPlayerStore = assign( {}, EventEmitter.prototype, {
      * @return {Number} 演奏時間 ( 秒単位 )。
      */
     duration: function() {
-        return _audioPlayer.duration();
+        var d = _audioPlayer.duration();
+        return ( d === 0 ? ( _current ? _current.duration : 0 ) : d );
     },
 
     /**
