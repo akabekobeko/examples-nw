@@ -123,10 +123,10 @@ var AudioPlayerStore = assign( {}, EventEmitter.prototype, {
 /**
  * 再生時間と演奏終了を監視するためのタイマーを開始・停止します。
  *
- * @param {Boolean} stop タイマーを停止させる場合は true。
+ * @param {Boolean} isStop タイマーを停止させる場合は true。
  */
-function playTimer( stop ) {
-    if( stop ) {
+function playTimer( isStop ) {
+    if( isStop ) {
         clearInterval( _timer );
     } else {
         _timer = setInterval( function() {
