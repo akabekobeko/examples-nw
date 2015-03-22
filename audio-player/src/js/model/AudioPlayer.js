@@ -1,5 +1,3 @@
-var PlayState = require( './constants/AudioPlayerConstants.js' ).PlayState;
-
 /**
  * 音声プレーヤーを提供します。
  *
@@ -48,27 +46,10 @@ var AudioPlayer = function() {
     var _audioBuffer = null;
 
     /**
-     * 音声が開かれたことを示す値。
+     * 音声が再生中であることを示す値。
      * @type {Boolean}
      */
-    var _isOpened = false;
-
-    /**
-     * 音声状態を示す値。
-     * @type {PlayState}
-     */
-    var _playState = PlayState.STOPPED;
-
-    /**
-     * イベント ハンドラ。
-     * @type {Object}
-     */
-    var _events = {
-        open: null,
-        start: null,
-        pause: null,
-        end: null
-    };
+    var _isPlaying = false;
 
     /**
      * 再生位置 ( 秒単位 )。
@@ -99,7 +80,6 @@ var AudioPlayer = function() {
                 _audioBuffer = audioBuffer;
                 _initSourceNode();
 
-                _isOpened = true;
                 callback();
 
             }.bind( this ),
@@ -170,62 +150,61 @@ var AudioPlayer = function() {
 
     /**
      * 音声の再生を開始します。
+     *
+     * @return {Boolean} 成功時は true。
      */
     this.play = function() {
         console.log( '[play]' );
-        if( _playState === PlayState.PLAYING ) { return; }
+        if( _isPlaying ) { return false; }
 
         _initSourceNode();
         _sourceNode.start( 0, _playbackTime );
-
         _startTimestamp = Date.now();
-        _playState      = PlayState.PLAYING;
+        _isPlaying      = true;
 
-        if( _events.start ) {
-            _events.start();
-        }
+        return true;
     };
 
     /**
      * 音声の再生を一時停止します。
+     *
+     * @return {Boolean} 成功時は true。
      */
     this.pause = function() {
         console.log( '[pause]' );
-        if( _playState === PlayState.PLAYING ) {
-            this.stop( true );
-        }
+        if( !( _isPlaying ) ) { return false; }
+
+        this.stop( true );
+        return true;
     };
 
     /**
      * 音声の再生を停止します。
+     *
+     * @param {Boolean}
      */
     this.stop = function( pause ) {
         console.log( '[stop]' );
-        if( _playState === PlayState.STOPPED ) { return; }
-
-        if( _sourceNode ) {
-            // seek から呼ばれたなら、すぐに play されるので onended を無効化する
-            // この処理がないと play の後に onended が遅延実行され、再生状態がおかしくなる
-            //  
-            if( _playState === PlayState.SEEKING ) {
-                _sourceNode.onended = null;
-            }
-
-            _sourceNode.stop();
-            _sourceNode = null;
-        }
-
-        // 一時停止なら次回の再生時に復元するための位置を記録
-        _playbackTime = ( pause ? this.playbackTime() : 0 );
+        _isPlaying = false;
 
         if( pause ) {
-            _playState = PlayState.PAUSED;
-            if( _events.pause ) {
-                _events.pause();
+            // 一時停止呼ならば onended を無効化しておく
+            // この処理がないと play の後に onended が遅延実行され、再生状態がおかしくなる
+            // 
+            if( _sourceNode ) {
+                _sourceNode.onended = null;
+                _sourceNode.stop();
+                _sourceNode = null;
             }
 
+            // 次回の再生時に復元するための位置を記録
+            _playbackTime = ( pause ? this.playbackTime() : 0 );
+
         } else {
-            _playState = PlayState.STOPPED;
+            if( _sourceNode ) {
+                _sourceNode.stop();
+                _sourceNode = null;
+            }
         }
     };
 
@@ -245,10 +224,8 @@ var AudioPlayer = function() {
             return false;
         }
 
-        if( _playState === PlayState.PLAYING ) {
-            _playState = PlayState.SEEKING;
-            this.stop();
-
+        if( _isPlaying ) {
+            this.pause();
             _playbackTime = playbackTime;
             this.play();
         } else {
@@ -309,67 +286,11 @@ var AudioPlayer = function() {
     };
 
     /**
-     * 再生状態を示す値を取得します。
-     *
-     * @return {PlayState} 再生状態。
-     */
-    this.playState = function() {
-        return _playState;
-    };
-
-    /**
-     * 音声が開かれていることを調べます。
-     *
-     * @return {Boolean} 開かれているなら true。
-     */
-    this.isOpened = function() {
-        return _isOpened;
-    };
-
-    /**
-     * イベント ハンドラを設定します。
-     *
-     * @param  {String}   event    イベント名。
-     * @param  {Function} callback コールバック関数。
-     *
-     * @return {Boolean} 成功時は true。
-     */
-    this.on = function( event, callback ) {
-        switch( event ) {
-        case 'open':
-            _events.open = callback;
-            break;
-
-        case 'start':
-            _events.start = callback;
-            break;
-
-        case 'pause':
-            _events.pause = callback;
-            break;
-
-        case 'end':
-            _events.end = callback;
-            break;
-
-        default:
-            return false;
-        }
-
-        return true;
-    };
-
-    /**
      * 音声再生が終了した時に発生します。
      */
     function _onEnded() {
         console.log( '[onend]' );
         _playbackTime = 0;
-        _playState    = PlayState.STOPPED;
-
-        if( _events.end ) {
-            _events.end();
-        }
     }
 
     /**

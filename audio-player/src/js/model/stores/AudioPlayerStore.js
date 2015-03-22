@@ -18,6 +18,18 @@ var CHANGE_EVENT = 'change';
 var _audioPlayer = new ( require( '../AudioPlayer.js' ) )();
 
 /**
+ * 再生状態。
+ * @type {PlayState}
+ */
+var _playState = PlayState.STOPPED;
+
+/**
+ * 再生時間と演奏終了を監視するためのタイマー。
+ * @type {Number}
+ */
+var _timer = null;
+
+/**
  * 再生対象となる音楽情報。
  * @type {Music}
  */
@@ -79,16 +91,7 @@ var AudioPlayerStore = assign( {}, EventEmitter.prototype, {
      * @return {PlayState} 再生状態。
      */
     playState: function() {
-        return _audioPlayer.playState();
-    },
-
-    /**
-     * 音声が開かれていることを調べます。
-     *
-     * @return {Boolean} 開かれているなら true。
-     */
-    isOpened: function() {
-        return _audioPlayer.isOpened();
+        return _playState;
     },
 
     /**
@@ -118,6 +121,28 @@ var AudioPlayerStore = assign( {}, EventEmitter.prototype, {
 } );
 
 /**
+ * 再生時間と演奏終了を監視するためのタイマーを開始・停止します。
+ *
+ * @param {Boolean} stop タイマーを停止させる場合は true。
+ */
+function playTimer( stop ) {
+    if( stop ) {
+        clearInterval( _timer );
+    } else {
+        _timer = setInterval( function() {
+            if( _audioPlayer.duration() <= _audioPlayer.playbackTime() ) {
+                // 再生終了
+                clearInterval( _timer );
+                stop();
+            } else {
+                AudioPlayerStore.emitChange();
+            }
+
+        }, 1000 );
+    }
+}
+
+/**
  * 再生を開始します。
  *
  * @param {Music} music 再生対象となる音楽情報。
@@ -129,14 +154,18 @@ function play( music ) {
                 console.log( err.message );
             } else {
                 _current = music;
-                _audioPlayer.play();
-                AudioPlayerStore.emitChange();
+                if( _audioPlayer.play() ) {
+                    _playState = PlayState.PLAYING;
+                    AudioPlayerStore.emitChange();
+                    playTimer();
+                }
             }
         } );
 
-    } else if( _audioPlayer.playState() === PlayState.PAUSED ) {
-        _audioPlayer.play();
+    } else if( _playState !== PlayState.PLAYING && _audioPlayer.play() ) {
+        _playState = PlayState.PLAYING;
         AudioPlayerStore.emitChange();
+        playTimer();
     }
 }
 
@@ -144,20 +173,22 @@ function play( music ) {
  * 再生を一時停止します。
  */
 function pause() {
-    if( _audioPlayer.playState() === PlayState.PLAYING ) {
-        _audioPlayer.pause();
+    if( _playState === PlayState.PLAYING && _audioPlayer.pause() ) {
+        playTimer( true );
+        _playState = PlayState.PAUSED;
         AudioPlayerStore.emitChange();
     }
 }
 
 /**
  * 再生を停止します。
+ * 状態管理を簡素化するため、この操作は再生状態に関わらず常に強制実行されるようにしています。
  */
 function stop() {
-    if( _audioPlayer.playState() !== PlayState.STOP ) { 
-        _audioPlayer.stop();
-        AudioPlayerStore.emitChange();
-    }
+    playTimer( true );
+    _playState = PlayState.STOPPED; 
+    _audioPlayer.stop();
+    AudioPlayerStore.emitChange();
 }
 
 /**

@@ -44,10 +44,7 @@ module.exports = {
         PAUSED: null,
 
         /** 停止。 */
-        STOPPED: null,
-
-        /** 再生位置を変更中。 */
-        SEEKING: null
+        STOPPED: null
     } )
 };
 
