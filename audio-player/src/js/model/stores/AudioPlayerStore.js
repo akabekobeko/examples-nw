@@ -205,6 +205,16 @@ function seek( playbackTime ) {
 }
 
 /**
+ * 音量を設定します。
+ *
+ * @param {Number} value 音量。範囲は 0 〜 100 となります。
+ */
+function volume( value ) {
+    _audioPlayer.setVolume( value );
+    AudioPlayerStore.emitChange();
+}
+
+/**
  * アクションを処理します。
  * 
  * @param  {Object} action AudioPlayerConstants に定義されたアクション。
@@ -225,6 +235,10 @@ AppDispatcher.register( function( action ) {
 
     case ActionTypes.SEEK:
         seek( action.playbackTime );
+        break;
+
+    case ActionTypes.VOLUME:
+        volume( action.volume );
         break;
 
     case ActionTypes.PREV:
