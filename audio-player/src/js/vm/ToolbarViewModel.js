@@ -22,7 +22,7 @@ var ToolbarViewModel = React.createClass( {
             playState:    PlayState.STOPPED,
             duration:     0,
             playbackTime: 0,
-            volume:       1.0
+            volume:       100
         };
     },
 
