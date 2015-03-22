@@ -1,18 +1,18 @@
 var React              = require( 'react' );
-var Toolbar            = require( './Toolbar.jsx' );
-var MusicList          = require( './MusicList.jsx' );
 var MusicListActions   = require( '../model/actions/MusicListActions.js' );
 var MusicStore         = require( '../model/stores/MusicListStore.js' );
-var AudioPlayerActions = require( '../model/actions/AudioPlayerActions.js' );
 var AudioPlayerStore   = require( '../model/stores/AudioPlayerStore.js' );
 var PlayState          = require( '../model/constants/AudioPlayerConstants.js' ).PlayState;
+var MainView           = require( '../view/MainView.jsx' );
+var ToolbarViewModel   = require( './ToolbarViewModel.js' );
+var MusicListViewModel = require( './MusicListViewModel.js' );
 
 /**
  * アプリケーションのエントリー ポイントになるコンポーネントです。
  *
- * @type {Object}
+ * @type {ReactClass}
  */
-var AudioPlayerApp = React.createClass( {
+var MainViewModel = React.createClass( {
     /**
      * コンポーネントの状態を初期化します。
      *
@@ -56,14 +56,7 @@ var AudioPlayerApp = React.createClass( {
      * @return {Object} React エレメント。
      */
     render: function() {
-        return (
-            <article className="app">
-                <Toolbar player={this.state.player} />
-                <MusicList
-                    musics={this.state.musics}
-                    current={this.state.current} />
-            </article>
-        );
+        return MainView( this, ToolbarViewModel, MusicListViewModel );
     },
 
     /**
@@ -121,7 +114,7 @@ var AudioPlayerApp = React.createClass( {
  */
 module.exports = function( query ) {
     return React.render(
-        <AudioPlayerApp />,
+        <MainViewModel />,
         document.querySelector( query )
     );
 };
