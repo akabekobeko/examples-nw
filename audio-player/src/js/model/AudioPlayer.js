@@ -203,6 +203,8 @@ var AudioPlayer = function() {
                 _sourceNode.stop();
                 _sourceNode = null;
             }
+
+            _playbackTime = 0;
         }
 
         // this.playbackTime() 内で現在位置を算出してからフラグを無効化する
@@ -222,7 +224,7 @@ var AudioPlayer = function() {
 
         // 時間指定が文字列になる現象を避けるため、ここで強制的に数値化しておく
         playbackTime = Number( playbackTime );
-        if( _audioBuffer.duration < playbackTime ) {
+        if( this.duration() < playbackTime ) {
             console.log( '[ERROR] Seek time is greater than duration of audio buffer.' );
             return false;
         }
@@ -244,7 +246,7 @@ var AudioPlayer = function() {
      * @return {Number} 演奏時間 ( 秒単位 )。
      */
     this.duration = function() {
-        return ( _audioBuffer ? _audioBuffer.duration : 0 );
+        return ( _audioBuffer ? Math.round( _audioBuffer.duration ) : 0 );
     };
 
     /**
@@ -297,7 +299,6 @@ var AudioPlayer = function() {
      */
     function _onEnded() {
         console.log( '[onend]' );
-        _playbackTime = 0;
     }
 
     /**
