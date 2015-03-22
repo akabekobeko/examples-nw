@@ -33,7 +33,7 @@ var MusicListViewModel = React.createClass( {
      * @param {Object} music 音楽。
      */
     _onSelectPlay: function( music ) {
-        AudioPlayerActions.play( music.path );
+        AudioPlayerActions.play( music );
     }
 } );
 
