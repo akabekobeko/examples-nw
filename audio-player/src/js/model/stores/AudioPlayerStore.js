@@ -120,49 +120,44 @@ var AudioPlayerStore = assign( {}, EventEmitter.prototype, {
 /**
  * 再生を開始します。
  *
- * @param {String}   filePath 再生対象となるファイルのパス情報。
- * @param {Function} callback コールバック関数。
+ * @param {Music} music 再生対象となる音楽情報。
  */
-function play( music, callback ) {
+function play( music ) {
     if( music ) {
         _audioPlayer.openFromFile( music.path, function( err ) {
             if( err ) {
-                callback( err );
+                console.log( err.message );
             } else {
                 _current = music;
                 _audioPlayer.play();
-                callback();
+                AudioPlayerStore.emitChange();
             }
         } );
 
-    } else if( _audioPlayer.playState === PlayState.PAUSED ) {
+    } else if( _audioPlayer.playState() === PlayState.PAUSED ) {
         _audioPlayer.play();
-        callback();
+        AudioPlayerStore.emitChange();
     }
 }
 
 /**
  * 再生を一時停止します。
- *
- * @return {Boolean} 成功時は true。
  */
 function pause() {
-    if( _audioPlayer.playState !== PlayState.PLAYING ) { return false; }
-
-    _audioPlayer.pause();
-    return true;
+    if( _audioPlayer.playState() === PlayState.PLAYING ) {
+        _audioPlayer.pause();
+        AudioPlayerStore.emitChange();
+    }
 }
 
 /**
  * 再生を停止します。
- *
- * @return {Boolean} 成功時は true。
  */
-function pause() {
-    if( _audioPlayer.playState === PlayState.STOP ) { return false; }
-
-    _audioPlayer.stop();
-    return true;
+function stop() {
+    if( _audioPlayer.playState() !== PlayState.STOP ) { 
+        _audioPlayer.stop();
+        AudioPlayerStore.emitChange();
+    }
 }
 
 /**
@@ -173,7 +168,9 @@ function pause() {
  * @return {Boolean} 成功時は true。
  */
 function seek( playbackTime ) {
-    return _audioPlayer.seek( playbackTime );
+    if( _audioPlayer.seek( playbackTime ) ) {
+        AudioPlayerStore.emitChange();
+    }
 }
 
 /**
@@ -184,31 +181,19 @@ function seek( playbackTime ) {
 AppDispatcher.register( function( action ) {
     switch( action.actionType ) {
     case ActionTypes.PLAY:
-        play( action.music, function( err ) {
-            if( err ) {
-                console.error( err.message );
-            } else {
-                AudioPlayerStore.emitChange();
-            }
-        } );
+        play( action.music );
         break;
 
     case ActionTypes.PAUSE:
-        if( pause() ) {
-            AudioPlayerStore.emitChange();
-        }
+        pause();
         break;
 
     case ActionTypes.STOP:
-        if( stop() ) {
-             AudioPlayerStore.emitChange();
-        }
+        stop();
         break;
 
     case ActionTypes.SEEK:
-        if( seek( action.playbackTime ) ) {
-            AudioPlayerStore.emitChange();
-        }
+        seek( action.playbackTime );
         break;
 
     case ActionTypes.PREV:

@@ -3,7 +3,6 @@ var TextUtil           = require( '../model/util/TextUtility.js' );
 var PlayState          = require( '../model/constants/AudioPlayerConstants.js' ).PlayState;
 var MusicListActions   = require( '../model/actions/MusicListActions.js' );
 var AudioPlayerActions = require( '../model/actions/AudioPlayerActions.js' );
-var AudioPlayerStore   = require( '../model/stores/AudioPlayerStore.js' );
 
 /**
  * ツールバー用コンポーネントです。
@@ -15,18 +14,13 @@ var Toolbar = React.createClass( {
      * @return {Object} React エレメント。
      */
     render: function() {
-        var player       = this.props.currentPlay;
-        var playIcon     = ( player.playState === PlayState.PLAYING ? 'pause' : 'play' );
-        var playbackTime = TextUtil.secondsToString( player.playbackTime );
-        var duration     = TextUtil.secondsToString( player.duration );
-        var music        = this.props.currentPlay.music;
-        
+        var player = this.props.player;
         return (
             <div className="toolbar">
                 <div className="wrapper">
                     <div className="player">
                         {this._renderButton( 'prev' )}
-                        {this._renderButton( playIcon )}
+                        {this._renderButton( ( player.playState === PlayState.PLAYING ? 'pause' : 'play' ) )}
                         {this._renderButton( 'next' )}
                         <input
                             type="range"
@@ -37,9 +31,9 @@ var Toolbar = React.createClass( {
                     </div>
                     <div className="display">
                         <div className="metadata">
-                            <div className="time playtime">{playbackTime}</div>
-                            <div className="title">{music ? music.title : '--'}</div>
-                            <div className="time duration">{duration}</div>
+                            <div className="time playtime">{TextUtil.secondsToString( player.playbackTime )}</div>
+                            <div className="title">{( player.music ? player.music.title : '--' )}</div>
+                            <div className="time duration">{TextUtil.secondsToString( player.duration )}</div>
                         </div>
                         <input
                             className="position"
@@ -82,8 +76,8 @@ var Toolbar = React.createClass( {
     _onPressButton: function( type ) {
         switch( type ) {
         case 'play':
-            if( AudioPlayerStore.isOpened() === PlayState.STOPPED ) {
-                AudioPlayerActions.play( this.props.currentPlay.music );
+            if( this.props.player.playState === PlayState.STOPPED ) {
+                AudioPlayerActions.play( this.props.player.music );
             } else {
                 AudioPlayerActions.play();
             }

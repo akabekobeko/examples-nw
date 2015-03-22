@@ -22,7 +22,7 @@ var AudioPlayerApp = React.createClass( {
         return {
             musics:      [],
             current:     null,
-            currentPlay: {
+            player: {
                 music:        null,
                 playState:    PlayState.STOPPED,
                 duration:     0,
@@ -58,7 +58,7 @@ var AudioPlayerApp = React.createClass( {
     render: function() {
         return (
             <article className="app">
-                <Toolbar currentPlay={this.state.currentPlay} />
+                <Toolbar player={this.state.player} />
                 <MusicList
                     musics={this.state.musics}
                     current={this.state.current} />
@@ -71,18 +71,25 @@ var AudioPlayerApp = React.createClass( {
      */
     _onMusicListChange: function() {
         this.setState( {
-            musics:      MusicStore.getAll(),
-            current:     MusicStore.current(),
-            currentPlay: this._currentPlay()
+            musics:  MusicStore.getAll(),
+            current: MusicStore.current(),
+            player:  this._currentPlayer()
         } );
     },
 
     /**
-     * 最新の再生情報を取得します。
+     * 音楽リストが更新された時に発生します。
+     */
+    _onAudioPlayerChange: function() {
+        this.setState( { player: this._currentPlayer() } );
+    },
+
+    /**
+     * 最新の音声プレーヤー情報を取得します。
      *
      * @return {Object} 再生情報。
      */
-    _currentPlay: function() {
+    _currentPlayer: function() {
         if( AudioPlayerStore.playState() === PlayState.STOPPED ) {
             var music = ( AudioPlayerStore.current() || MusicStore.current() );
             return {
@@ -103,13 +110,6 @@ var AudioPlayerApp = React.createClass( {
             };
         }
     },
-
-    /**
-     * 音楽リストが更新された時に発生します。
-     */
-    _onAudioPlayerChange: function() {
-        this.setState( { currentPlay: this._currentPlay() } );
-    }
 } );
 
 /**
