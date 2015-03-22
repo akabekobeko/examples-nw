@@ -12,7 +12,8 @@ var React = require( 'react' );
 module.exports = function( component, ToolbarViewModel, MusicListViewModel ) {
     return (
         <article className="app">
-            <ToolbarViewModel player={component.state.player} />
+            <ToolbarViewModel
+                music={component.state.current} />
             <MusicListViewModel
                 musics={component.state.musics}
                 current={component.state.current} />
