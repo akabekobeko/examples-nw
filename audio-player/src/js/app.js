@@ -3,5 +3,9 @@ onload = function() {
     global.document  = window.document;
     global.navigator = window.navigator;
 
-    require( './vm/MainViewModel.js' )( 'body' );
+    if( window.testDesignMode ) {
+        require( './vm/DesignViewModel.js' )( 'body' );
+    } else {
+        require( './vm/MainViewModel.js' )( 'body' );
+    }
 };

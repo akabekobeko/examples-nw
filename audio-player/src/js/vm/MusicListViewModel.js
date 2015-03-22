@@ -15,7 +15,7 @@ var MusicListViewModel = React.createClass( {
      * @return {Object} React エレメント。
      */
     render: function() {
-        return MusicListView( this );
+        return MusicListView( this, this.props.musics, this.props.current );
     },
 
     /**

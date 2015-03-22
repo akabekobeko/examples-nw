@@ -6,11 +6,11 @@ var TextUtil = require( '../model/util/TextUtility.js' );
  *
  * @param {ReactClass} component コンポーネント。
  *
- * @return {ReactElement}  React エレメント。
+ * @return {ReactElement} React エレメント。
  */
-module.exports = function( component ) {
-    var items = component.props.musics.map( function( music, index ) {
-        var selected = ( component.props.current && component.props.current.id === music.id ? 'selected' : null );
+module.exports = function( component, musics, current ) {
+    var items = musics.map( function( music, index ) {
+        var selected = ( current && current.id === music.id ? 'selected' : null );
         return item( component, index, music, selected );
     }, component );
 
@@ -36,7 +36,7 @@ module.exports = function( component ) {
  * @param {Music}      music     音楽情報。
  * @param {Boolean}    selected  音楽情報が選択されているなら true。
  *
- * @return {ReactElement}  React エレメント。
+ * @return {ReactElement} React エレメント。
  */
 function item( component, index, music, selected ) {
     return (

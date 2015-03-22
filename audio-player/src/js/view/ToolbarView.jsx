@@ -9,8 +9,7 @@ var PlayState = require( '../model/constants/AudioPlayerConstants.js' ).PlayStat
  *
  * @return {ReactElement}  React エレメント。
  */
-module.exports = function( component ) {
-    var player   = component.state;
+module.exports = function( component, player ) {
     var music    = ( player.music || component.props.music );
     var duration = ( player.duration === 0 ? ( music ? music.duration : 0 ) : player.duration );
     return (

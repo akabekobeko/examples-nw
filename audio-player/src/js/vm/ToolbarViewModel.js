@@ -46,7 +46,7 @@ var ToolbarViewModel = React.createClass( {
      * @return {Object} React エレメント。
      */
     render: function() {
-        return ToolbarView( this );
+        return ToolbarView( this, this.state );
     },
 
     /**
