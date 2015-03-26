@@ -56,7 +56,7 @@ gulp.task( 'build', [ 'js', 'css', 'iconfont' ] );
  */
 gulp.task( 'watch', [ 'css', 'iconfont', 'watchify' ], function () {
     gulp.watch( [ './src/stylus/*.styl', '!./src/css/*.css' ], [ 'css' ] );
-    gulp.watch( [ './icons/*.svg' ], [ 'iconfont' ] );
+    gulp.watch( [ './src/icons/*.svg' ], [ 'iconfont' ] );
 } );
 
 /**
