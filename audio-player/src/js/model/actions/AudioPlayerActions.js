@@ -60,24 +60,6 @@ var AudioPlayerActions = {
             actionType: ActionTypes.VOLUME,
             volume:     volume
         } );
-    },
-
-    /**
-     * 前の曲を再生対象として要求します。
-     */
-    prev: function() {
-        AppDispatcher.dispatch( {
-            actionType: ActionTypes.PREV
-        } );
-    },
-
-    /**
-     * 次の曲を再生対象として要求します。
-     */
-    next: function() {
-        AppDispatcher.dispatch( {
-            actionType: ActionTypes.NEXT
-        } );
     }
 };
 

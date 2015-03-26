@@ -26,7 +26,7 @@ var MainViewModel = React.createClass( {
             current: musics[ 0 ],
 
             // ツールバー
-            music:        musics[ 0 ],
+            currentPLay:  musics[ 0 ],
             playState:    PlayState.STOPPED,
             duration:     200,
             playbackTime: 0,

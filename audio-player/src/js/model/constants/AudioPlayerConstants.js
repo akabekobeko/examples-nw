@@ -23,13 +23,7 @@ module.exports = {
         SEEK: null,
 
         /** 音量変更。 */
-        VOLUME: null,
-
-        /** 前の曲を再生対象とする。 */
-        PREV: null,
-
-        /** 次の曲を再生対象とする。 */
-        NEXT: null
+        VOLUME: null
     } ),
 
     /**
@@ -47,32 +41,3 @@ module.exports = {
         STOPPED: null
     } )
 };
-
-
-
-
-
-
-
- keyMirror( {
-    /** 再生。 */
-    AUDIOPLAYER_PLAY: null,
-
-    /** 一時停止。 */
-    AUDIOPLAYER_PAUSE: null,
-
-    /** 停止。 */
-    AUDIOPLAYER_STOP: null,
-
-    /** 再生位置の移動。 */
-    AUDIOPLAYER_SEEK: null,
-
-    /** 音量変更。 */
-    AUDIOPLAYER_VOLUME: null,
-
-    /** 前の曲を再生対象とする。 */
-    AUDIOPLAYER_PREV: null,
-
-    /** 次の曲を再生対象とする。 */
-    AUDIOPLAYER_NEXT: null
-} );

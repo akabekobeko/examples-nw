@@ -4,21 +4,24 @@ var TextUtil = require( '../model/util/TextUtility.js' );
 /**
  * 音楽リスト用コンポーネントを描画します。
  *
- * @param {ReactClass} component コンポーネント。
+ * @param {Object} comp コンポーネント。
  *
  * @return {ReactElement} React エレメント。
  */
-module.exports = function( component, musics, current ) {
-    var items = musics.map( function( music, index ) {
-        var selected = ( current && current.id === music.id ? 'selected' : null );
-        return item( component, index, music, selected );
-    }, component );
+module.exports = function( comp ) {
+    var items = comp.musics.map( function( music, index ) {
+        var selected = ( comp.current && comp.current.id === music.id );
+        var playing  = ( comp.playing && comp.currentPlay && comp.currentPlay.id === music.id  );
+        return item( comp, index, music, selected, playing );
+    }, comp.self );
+
+    var style = { width: '1em' };
 
     return (
         <div className="music-list">
             <table className="musics">
                 <thead>
-                    <tr><th>#</th><th>Title</th><th>Artis</th><th>Album</th><th>Duration</th></tr>
+                    <tr><th style={style}></th><th>#</th><th>Title</th><th>Artis</th><th>Album</th><th>Duration</th></tr>
                 </thead>
                 <tbody>
                     {items}
@@ -31,20 +34,22 @@ module.exports = function( component, musics, current ) {
 /**
  * 音楽リストのアイテムを描画します。
  *
- * @param {ReactClass} component コンポーネント。
- * @param {Numbet}     index     リスト上のインデックス。
- * @param {Music}      music     音楽情報。
- * @param {Boolean}    selected  音楽情報が選択されているなら true。
+ * @param {Object}  comp     コンポーネント。
+ * @param {Numbet}  index    リスト上のインデックス。
+ * @param {Music}   music    音楽情報。
+ * @param {Boolean} selected 曲がリスト上で選択されているなら true。
+ * @param {Boolean} playing  曲が再生中なら true。
  *
  * @return {ReactElement} React エレメント。
  */
-function item( component, index, music, selected ) {
+function item( comp, index, music, selected, playing ) {
     return (
         <tr 
             key={music.id}
-            className={selected}
-            onClick={component._onSelectMusic.bind( component, music )}
-            onDoubleClick={component._onSelectPlay.bind( component, music )}>
+            className={selected ? 'selected' : null}
+            onClick={comp.onSelectMusic.bind( comp.self, music )}
+            onDoubleClick={comp.onSelectPlay.bind( comp.self, music )}>
+            <td>{playing ? playingMarker() : null}</td>
             <td className="number">{index + 1}</td>
             <td>{music.title}</td>
             <td>{music.artist}</td>
@@ -52,4 +57,13 @@ function item( component, index, music, selected ) {
             <td>{TextUtil.secondsToString( music.duration )}</td>
         </tr>
     );
+}
+
+/**
+ * 曲が再生中であることを示すアイコンを描画します。
+ *
+ * @return {ReactElement} React エレメント。
+ */
+function playingMarker() {
+    return ( <i className="icon-speaker"></i> );
 }

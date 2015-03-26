@@ -3,20 +3,25 @@ var React = require( 'react' );
 /**
  * アプリケーションのメイン UI を描画します。
  *
- * @param {ReactClass} component          メイン UI コンポーネント。
- * @param {ReactClass} ToolbarViewModel   ツールバー用コンポーネント。
- * @param {ReactClass} MusicListViewModel 音楽リスト用コンポーネント。
+ * @param {Object} comp コンポーネント。
  *
  * @return {ReactElement}  React エレメント。
  */
-module.exports = function( component, ToolbarViewModel, MusicListViewModel ) {
+module.exports = function( comp ) {
     return (
         <article className="app">
-            <ToolbarViewModel
-                music={component.state.current} />
-            <MusicListViewModel
-                musics={component.state.musics}
-                current={component.state.current} />
+            <comp.ToolbarViewModel
+                currentPlay={comp.currentPlay}
+                playState={comp.playState}
+                duration={comp.duration}
+                playbackTime={comp.playbackTime}
+                volume={comp.volume}
+                 />
+            <comp.MusicListViewModel
+                musics={comp.musics}
+                current={comp.current}
+                currentPlay={comp.currentPlay}
+                playState={comp.playState} />
         </article>
     );
 };

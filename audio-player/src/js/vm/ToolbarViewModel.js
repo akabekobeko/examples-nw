@@ -1,8 +1,8 @@
 var React              = require( 'react' );
 var PlayState          = require( '../model/constants/AudioPlayerConstants.js' ).PlayState;
 var MusicListActions   = require( '../model/actions/MusicListActions.js' );
+var MusicListStore     = require( '../model/stores/MusicListStore.js' );
 var AudioPlayerActions = require( '../model/actions/AudioPlayerActions.js' );
-var AudioPlayerStore   = require( '../model/stores/AudioPlayerStore.js' );
 var ToolbarView        = require( '../view/ToolbarView.jsx' );
 
 /**
@@ -12,53 +12,21 @@ var ToolbarView        = require( '../view/ToolbarView.jsx' );
 */
 var ToolbarViewModel = React.createClass( {
     /**
-     * コンポーネントの状態を初期化します。
-     *
-     * @return {Object} 初期化された状態オブジェクト。
-     */
-    getInitialState: function() {
-        return {
-            music:        null,
-            playState:    PlayState.STOPPED,
-            duration:     0,
-            playbackTime: 0,
-            volume:       100
-        };
-    },
-
-    /**
-     * コンポーネントが配置される時に発生します。
-     */
-    componentDidMount: function() {
-        AudioPlayerStore.addChangeListener( this._onAudioPlayerChange );
-    },
-
-    /**
-     * コンポーネント配置が解除される時に発生します。
-     */
-    componentWillUnmount: function() {
-        AudioPlayerStore.removeChangeListener( this._onAudioPlayerChange );
-    },
-
-    /**
      * コンポーネントを描画します。
      *
      * @return {Object} React エレメント。
      */
     render: function() {
-        return ToolbarView( this, this.state );
-    },
-
-    /**
-     * 音楽リストが更新された時に発生します。
-     */
-    _onAudioPlayerChange: function() {
-        this.setState( {
-            music:        ( AudioPlayerStore.current() || this.props.music ),
-            playState:    AudioPlayerStore.playState(),
-            duration:     AudioPlayerStore.duration(),
-            playbackTime: AudioPlayerStore.playbackTime(),
-            volume:       AudioPlayerStore.volume()
+        return ToolbarView( {
+            self:             this,
+            currentPlay:      this.props.currentPlay,
+            playState:        this.props.playState,
+            duration:         this.props.duration,
+            playbackTime:     this.props.playbackTime,
+            volume:           this.props.volume,
+            onPressButton:    this._onPressButton,
+            onVolumeChange:   this._onVolumeChange,
+            onPositionChange: this._onPositionChange
         } );
     },
 
@@ -70,8 +38,8 @@ var ToolbarViewModel = React.createClass( {
     _onPressButton: function( type ) {
         switch( type ) {
         case 'play':
-            if( this.state.playState === PlayState.STOPPED ) {
-                AudioPlayerActions.play( this.state.music || this.props.music );
+            if( this.props.playState === PlayState.STOPPED ) {
+                AudioPlayerActions.play( this.props.currentPlay );
             } else {
                 AudioPlayerActions.play();
             }
@@ -82,9 +50,11 @@ var ToolbarViewModel = React.createClass( {
             break;
 
         case 'prev':
+            this._moveNext( true );
             break;
 
         case 'next':
+            this._moveNext();
             break;
 
         case 'add':
@@ -109,6 +79,22 @@ var ToolbarViewModel = React.createClass( {
      */
     _onPositionChange: function( ev ) {
         AudioPlayerActions.seek( ev.target.value );
+    },
+
+    /**
+     * 曲選択を変更します。
+     *
+     * @param  {Boolan} prev 前の曲を選ぶなら true。
+     */
+    _moveNext: function( prev ) {
+        var music = MusicListStore.next( this.props.currentPlay, prev );
+        if( !( music ) ) { return; }
+
+        if( this.props.playState === PlayState.STOPPED ) {
+            MusicListActions.select( music );
+        } else {
+            AudioPlayerActions.play( music );
+        }
     }
 } );
 

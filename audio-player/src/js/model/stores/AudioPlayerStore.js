@@ -1,12 +1,13 @@
 var AppDispatcher        = require( '../dispatcher/AppDispatcher.js' );
 var AudioPlayerConstants = require( '../constants/AudioPlayerConstants.js' );
+var MusicListStore       = require( './MusicListStore.js' );
 var ActionTypes          = AudioPlayerConstants.ActionTypes;
 var PlayState            = AudioPlayerConstants.PlayState;
 var EventEmitter         = require( 'events' ).EventEmitter;
 var assign               = require( 'object-assign' );
 
 /**
- * イベント種別。
+ * 変更イベントを示す値。
  * @type {String}
  */
 var CHANGE_EVENT = 'change';
@@ -135,9 +136,16 @@ function playTimer( isStop ) {
                 // 再生終了
                 clearInterval( _timer );
                 stop();
-            } else {
-                AudioPlayerStore.emitChange();
+
+                var music = MusicListStore.next( _current );
+                if( music ) {
+                    // 次の曲を再生 ( 更新は play 内で通知される )
+                    play( music );
+                    return;
+                }
             }
+
+            AudioPlayerStore.emitChange();
 
         }, 1000 );
     }
@@ -240,12 +248,6 @@ AppDispatcher.register( function( action ) {
 
     case ActionTypes.VOLUME:
         volume( action.volume );
-        break;
-
-    case ActionTypes.PREV:
-        break;
-
-    case ActionTypes.NEXT:
         break;
 
     default:

@@ -2,6 +2,7 @@ var React              = require( 'react' );
 var MusicListActions   = require( '../model/actions/MusicListActions.js' );
 var AudioPlayerActions = require( '../model/actions/AudioPlayerActions.js' );
 var MusicListView      = require('../view/MusicListView.jsx');
+var PlayState          = require( '../model/constants/AudioPlayerConstants.js' ).PlayState;
 
 /**
  * 音楽リストの Model - View を仲介するコンポーネントです。
@@ -15,7 +16,15 @@ var MusicListViewModel = React.createClass( {
      * @return {Object} React エレメント。
      */
     render: function() {
-        return MusicListView( this, this.props.musics, this.props.current );
+        return MusicListView( {
+            self:          this,
+            musics:        this.props.musics,
+            current:       this.props.current,
+            currentPlay:   this.props.currentPlay,
+            playing:       ( this.props.playState !== PlayState.STOPPED ),
+            onSelectMusic: this._onSelectMusic,
+            onSelectPlay:  this._onSelectPlay
+        } );
     },
 
     /**

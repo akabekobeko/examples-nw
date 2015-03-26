@@ -12,19 +12,19 @@ var assign             = require( 'object-assign' );
 var CHANGE_EVENT = 'change';
 
 /**
- * 唯一の音楽リスト操作オブジェクト。
+ * 唯一の曲リスト操作オブジェクト。
  * @type {MusicList}
  */
 var _musicList = new ( require( '../MusicList.js' ) )();
 
 /**
- * 唯一の音楽リスト。
+ * 唯一の曲リスト。
  * @type {Array.<Music>}
  */
 var _musics = [];
 
 /**
- * 現在選択されている音楽情報。
+ * リスト上で選択されている曲。
  * @type {Music}
  */
 var _current = null;
@@ -51,26 +51,52 @@ var _openFileDialog = FileDialog.openFileDialog( 'audio/*', true, function( file
 } );
 
 /**
- * 音楽リストを操作します。
+ * 曲リストを操作します。
  * @type {MusicListStore}
  */
 var MusicListStore = assign( {}, EventEmitter.prototype, {
     /**
-     * すべての音楽を取得します。
+     * すべての曲を取得します。
      *
-     * @return {Array.<Music>} 音楽情報コレクション。
+     * @return {Array.<Music>} 曲情報コレクション。
      */
     getAll: function() {
         return _musics;
     },
 
     /**
-     * 現在選択されている音楽情報を取得します。
+     * 現在選択されている曲を取得します。
      *
-     * @return {Music} 音楽情報。何も選択されていない場合は null。
+     * @return {Music} 曲情報。何も選択されていない場合は null。
      */
     current: function() {
         return _current;
+    },
+
+    /**
+     * 次の曲を取得します。
+     *
+     * music が未指定の場合、曲リストで選択されているものの前の曲を取得します。
+     * 指定された曲、または選択されている曲がリストの末尾だった場合は null を返します。
+     *
+     * @param {Music}   music 基準となる曲。
+     * @param {Boolean} prev  前の曲を得る場合は true。既定は false。
+     *
+     * @return {Music} 成功時は曲情報。それ以外は null。
+     */
+    next: function( music, prev ) {
+        var current = ( music ? music : _current );
+        if( !( current ) ) { return null; }
+
+        var index = -1;
+        for( var i = 0, max = _musics.length; i < max; ++i ) {
+            if( _musics[ i ].id === current.id ) {
+                index = ( prev ? i - 1 : i + 1 );
+                break;
+            }
+        }
+
+        return ( 0 <= index && index < _musics.length ? _musics[ index ] : null );
     },
 
     /**
@@ -126,9 +152,9 @@ function init( callback ) {
 }
 
 /**
- * 音楽を選択します。
+ * 曲を選択します。
  *
- * @param {Music} music 選択対象となる音楽情報。
+ * @param {Music} music 選択対象となる曲。
  *
  * @return {Boolean} 成功時は true。
  */
@@ -153,9 +179,9 @@ function add() {
 }
 
 /**
- * 音楽情報を削除します。
+ * 曲を削除します。
  *
- * @param {Number}   musicId  削除対象となる音楽情報の識別子。
+ * @param {Number}   musicId  削除対象となる曲の識別子。
  * @param {Function} callback コールバック関数。
  */
 function remove( musicId, callback ) {
