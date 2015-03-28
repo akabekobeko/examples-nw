@@ -23,7 +23,10 @@ module.exports = {
         SEEK: null,
 
         /** 音量変更。 */
-        VOLUME: null
+        VOLUME: null,
+
+        /** 再生対象としている曲の選択を解除。 */
+        UNSELECT: null
     } ),
 
     /**

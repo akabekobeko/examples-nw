@@ -60,6 +60,15 @@ var AudioPlayerActions = {
             actionType: ActionTypes.VOLUME,
             volume:     volume
         } );
+    },
+
+    /**
+     * 再生対象としている曲の選択を解除します。
+     */
+    unselect: function() {
+        AppDispatcher.dispatch( {
+            actionType: ActionTypes.UNSELECT
+        } );
     }
 };
 

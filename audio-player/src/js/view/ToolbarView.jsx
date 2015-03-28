@@ -1,5 +1,5 @@
 var React     = require( 'react' );
-var TextUtil  = require( '../model/util/TextUtility.js' );
+var Util      = require( '../model/util/Utility.js' );
 var PlayState = require( '../model/constants/AudioPlayerConstants.js' ).PlayState;
 
 /**
@@ -10,16 +10,18 @@ var PlayState = require( '../model/constants/AudioPlayerConstants.js' ).PlayStat
  * @return {ReactElement}  React エレメント。
  */
 module.exports = function( comp ) {
-    var music    = comp.currentPlay;
-    var title    = ( music ? music.title : '--' );
-    var duration = ( comp.duration === 0 ? ( music ? music.duration : 0 ) : comp.duration );
+    var music     = comp.currentPlay;
+    var title     = ( music ? music.title : '--' );
+    var duration  = ( comp.duration === 0 ? ( music ? music.duration : 0 ) : comp.duration );
+    var playpause = ( comp.playState === PlayState.PLAYING ? 'pause' : 'play' );
+
     return (
         <div className="toolbar">
             <div className="wrapper">
                 <div className="player">
-                    {renderButton( 'prev', comp )}
-                    {renderButton( ( comp.playState === PlayState.PLAYING ? 'pause' : 'play' ), comp )}
-                    {renderButton( 'next', comp )}
+                    {renderButton( comp, 'prev' )}
+                    {renderButton( comp, playpause )}
+                    {renderButton( comp, 'next' )}
                     <input
                         type="range"
                         min={0}
@@ -29,9 +31,9 @@ module.exports = function( comp ) {
                 </div>
                 <div className="display">
                     <div className="metadata">
-                        <div className="time playtime">{TextUtil.secondsToString( comp.playbackTime )}</div>
+                        <div className="time playtime">{Util.secondsToString( comp.playbackTime )}</div>
                         <div className="title">{title}</div>
-                        <div className="time duration">{TextUtil.secondsToString( duration )}</div>
+                        <div className="time duration">{Util.secondsToString( duration )}</div>
                     </div>
                     <input
                         className="position"
@@ -43,7 +45,8 @@ module.exports = function( comp ) {
                 </div>
                 <div className="option">
                     <div className="wrapper">
-                        {renderButton( 'add', comp )}
+                        {renderButton( comp, 'remove' )}
+                        {renderButton( comp, 'add' )}
                     </div>
                 </div>
             </div>
@@ -54,12 +57,12 @@ module.exports = function( comp ) {
 /**
  * ボタンを描画します。
  *
- * @param {String} type ボタン種別。
  * @param {Object} comp コンポーネント。
+ * @param {String} type ボタン種別。
  *
  * @return {ReactElement}  React エレメント。
  */
-function renderButton( type, comp ) {
+function renderButton( comp, type ) {
     return (
         <div className="button" onClick={comp.onPressButton.bind( comp.self, type )}>
             <i className={'icon-' + type}></i>

@@ -1,11 +1,13 @@
-var React              = require( 'react' );
-var AudioPlayerStore   = require( '../model/stores/AudioPlayerStore.js' );
-var MusicListActions   = require( '../model/actions/MusicListActions.js' );
-var MusicStore         = require( '../model/stores/MusicListStore.js' );
-var PlayState          = require( '../model/constants/AudioPlayerConstants.js' ).PlayState;
-var MainView           = require( '../view/MainView.jsx' );
-var ToolbarViewModel   = require( './ToolbarViewModel.js' );
-var MusicListViewModel = require( './MusicListViewModel.js' );
+var React                = require( 'react' );
+var AudioPlayerStore     = require( '../model/stores/AudioPlayerStore.js' );
+var MusicListActions     = require( '../model/actions/MusicListActions.js' );
+var MusicListStore       = require( '../model/stores/MusicListStore.js' );
+var MusicListActionTypes = require( '../model/constants/MusicListConstants.js' ).ActionTypes;
+var PlayState            = require( '../model/constants/AudioPlayerConstants.js' ).PlayState;
+var MainView             = require( '../view/MainView.jsx' );
+var ToolbarViewModel     = require( './ToolbarViewModel.js' );
+var MusicListViewModel   = require( './MusicListViewModel.js' );
+var Util                 = require( '../model/util/Utility.js' );
 
 /**
  * アプリケーションのエントリー ポイントになるコンポーネントです。
@@ -35,7 +37,7 @@ var MainViewModel = React.createClass( {
      */
     componentDidMount: function() {
         AudioPlayerStore.addChangeListener( this._onAudioPlayerChange );
-        MusicStore.addChangeListener( this._onMusicListChange );
+        MusicListStore.addChangeListener( this._onMusicListChange );
         MusicListActions.init();
     },
 
@@ -44,7 +46,7 @@ var MainViewModel = React.createClass( {
      */
     componentWillUnmount: function() {
         AudioPlayerStore.removeChangeListener( this._onAudioPlayerChange );
-        MusicStore.removeChangeListener( this._onMusicListChange );
+        MusicListStore.removeChangeListener( this._onMusicListChange );
     },
 
     /**
@@ -53,17 +55,10 @@ var MainViewModel = React.createClass( {
      * @return {Object} React エレメント。
      */
     render: function() {
-        return MainView( {
-            musics:             this.state.musics,
-            current:            this.state.current,
-            currentPlay:        this.state.currentPlay,
-            playState:          this.state.playState,
-            duration:           this.state.duration,
-            playbackTime:       this.state.playbackTime,
-            volume:             this.state.volume,
+        return MainView( Util.mixin( this.state, {
             ToolbarViewModel:   ToolbarViewModel,
             MusicListViewModel: MusicListViewModel
-        } );
+        } ) );
     },
 
     /**
@@ -85,14 +80,14 @@ var MainViewModel = React.createClass( {
     _onMusicListChange: function() {
         if( this.state.playState === PlayState.STOPPED ) {
             this.setState( {
-                musics:      MusicStore.getAll(),
-                current:     MusicStore.current(),
-                currentPlay: MusicStore.current()
+                musics:      MusicListStore.getAll(),
+                current:     MusicListStore.current(),
+                currentPlay: MusicListStore.current()
             } );
         } else {
             this.setState( {
-                musics:  MusicStore.getAll(),
-                current: MusicStore.current()
+                musics:  MusicListStore.getAll(),
+                current: MusicListStore.current()
             } );
         }
     }

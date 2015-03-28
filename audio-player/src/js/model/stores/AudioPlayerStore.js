@@ -37,92 +37,6 @@ var _timer = null;
 var _current = null;
 
 /**
- * 音声プレーヤーを操作します。
- * @type {Object}
- */
-var AudioPlayerStore = assign( {}, EventEmitter.prototype, {
-    /**
-     * 再生対象となる音楽情報を取得します。
-     *
-     * @return {Music} 音楽情報。
-     */
-    current: function() {
-        return _current;
-    },
-
-    /**
-     * 演奏時間を取得します。
-     *
-     * @return {Number} 演奏時間 ( 秒単位 )。
-     */
-    duration: function() {
-        var d = _audioPlayer.duration();
-        return ( d === 0 ? ( _current ? _current.duration : 0 ) : d );
-    },
-
-    /**
-     * 再生位置を取得します。
-     *
-     * @return {Number} 再生位置 ( 秒単位 )。
-     */
-    playbackTime: function() {
-        return _audioPlayer.playbackTime();
-    },
-
-    /**
-     * 音声の周波数スペクトルを取得します。
-     *
-     * @return {Array} スペクトル。
-     */
-    spectrums: function() {
-        return _audioPlayer.spectrums();
-    },
-
-    /**
-     * 音量を取得します。
-     *
-     * @return {Number} 音量。範囲は 0 〜 100 となります。
-     */
-    volume: function() {
-        return _audioPlayer.volume();
-    },
-
-    /**
-     * 再生状態を示す値を取得します。
-     *
-     * @return {PlayState} 再生状態。
-     */
-    playState: function() {
-        return _playState;
-    },
-
-    /**
-     * 更新を通知します。
-     */
-    emitChange: function() {
-        this.emit( CHANGE_EVENT );
-    },
-
-    /**
-     * イベント リスナーを登録します。
-     *
-     * @param {Function} callback イベント リスナーとなる関数。
-     */
-    addChangeListener: function( callback ) {
-        this.on( CHANGE_EVENT, callback );
-    },
-
-    /**
-     * イベント リスナーの登録を解除します。
-     *
-     * @param {Function} callback イベント リスナーとなっている関数。
-     */
-    removeChangeListener: function( callback ) {
-        this.removeListener( CHANGE_EVENT, callback );
-    }
-} );
-
-/**
  * 再生時間と演奏終了を監視するためのタイマーを開始・停止します。
  *
  * @param {Boolean} isStop タイマーを停止させる場合は true。
@@ -224,6 +138,20 @@ function volume( value ) {
 }
 
 /**
+ * 再生対象としている曲の選択状態を解除します。
+ */
+function unselect() {
+    if( !( _current ) ) { return; }
+
+    if( _playState !== PlayState.STOPPED ) {
+        stop();
+    }
+
+    _current = null;
+    AudioPlayerStore.emitChange();
+}
+
+/**
  * アクションを処理します。
  * 
  * @param  {Object} action AudioPlayerConstants に定義されたアクション。
@@ -250,8 +178,98 @@ AppDispatcher.register( function( action ) {
         volume( action.volume );
         break;
 
+    case ActionTypes.UNSELECT:
+        unselect();
+        break;
+
     default:
         break;
+    }
+} );
+
+/**
+ * 音声プレーヤーを操作します。
+ * @type {Object}
+ */
+var AudioPlayerStore = assign( {}, EventEmitter.prototype, {
+    /**
+     * 再生対象となる音楽情報を取得します。
+     *
+     * @return {Music} 音楽情報。
+     */
+    current: function() {
+        return _current;
+    },
+
+    /**
+     * 演奏時間を取得します。
+     *
+     * @return {Number} 演奏時間 ( 秒単位 )。
+     */
+    duration: function() {
+        var d = _audioPlayer.duration();
+        return ( d === 0 ? ( _current ? _current.duration : 0 ) : d );
+    },
+
+    /**
+     * 再生位置を取得します。
+     *
+     * @return {Number} 再生位置 ( 秒単位 )。
+     */
+    playbackTime: function() {
+        return _audioPlayer.playbackTime();
+    },
+
+    /**
+     * 音声の周波数スペクトルを取得します。
+     *
+     * @return {Array} スペクトル。
+     */
+    spectrums: function() {
+        return _audioPlayer.spectrums();
+    },
+
+    /**
+     * 音量を取得します。
+     *
+     * @return {Number} 音量。範囲は 0 〜 100 となります。
+     */
+    volume: function() {
+        return _audioPlayer.volume();
+    },
+
+    /**
+     * 再生状態を示す値を取得します。
+     *
+     * @return {PlayState} 再生状態。
+     */
+    playState: function() {
+        return _playState;
+    },
+
+    /**
+     * 更新を通知します。
+     */
+    emitChange: function() {
+        this.emit( CHANGE_EVENT );
+    },
+
+    /**
+     * イベント リスナーを登録します。
+     *
+     * @param {Function} callback イベント リスナーとなる関数。
+     */
+    addChangeListener: function( callback ) {
+        this.on( CHANGE_EVENT, callback );
+    },
+
+    /**
+     * イベント リスナーの登録を解除します。
+     *
+     * @param {Function} callback イベント リスナーとなっている関数。
+     */
+    removeChangeListener: function( callback ) {
+        this.removeListener( CHANGE_EVENT, callback );
     }
 } );
 

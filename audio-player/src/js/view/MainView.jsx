@@ -11,6 +11,7 @@ module.exports = function( comp ) {
     return (
         <article className="app">
             <comp.ToolbarViewModel
+                current={comp.current}
                 currentPlay={comp.currentPlay}
                 playState={comp.playState}
                 duration={comp.duration}

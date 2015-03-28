@@ -1,5 +1,5 @@
-var React    = require( 'react' );
-var TextUtil = require( '../model/util/TextUtility.js' );
+var React = require( 'react' );
+var Util  = require( '../model/util/Utility.js' );
 
 /**
  * 音楽リスト用コンポーネントを描画します。
@@ -54,7 +54,7 @@ function item( comp, index, music, selected, playing ) {
             <td>{music.title}</td>
             <td>{music.artist}</td>
             <td>{music.album}</td>
-            <td>{TextUtil.secondsToString( music.duration )}</td>
+            <td>{Util.secondsToString( music.duration )}</td>
         </tr>
     );
 }

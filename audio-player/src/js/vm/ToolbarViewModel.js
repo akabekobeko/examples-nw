@@ -4,6 +4,7 @@ var MusicListActions   = require( '../model/actions/MusicListActions.js' );
 var MusicListStore     = require( '../model/stores/MusicListStore.js' );
 var AudioPlayerActions = require( '../model/actions/AudioPlayerActions.js' );
 var ToolbarView        = require( '../view/ToolbarView.jsx' );
+var Util               = require( '../model/util/Utility.js' );
 
 /**
  * ツールバー用コンポーネントです。
@@ -17,17 +18,12 @@ var ToolbarViewModel = React.createClass( {
      * @return {Object} React エレメント。
      */
     render: function() {
-        return ToolbarView( {
+        return ToolbarView( Util.mixin( this.props, {
             self:             this,
-            currentPlay:      this.props.currentPlay,
-            playState:        this.props.playState,
-            duration:         this.props.duration,
-            playbackTime:     this.props.playbackTime,
-            volume:           this.props.volume,
             onPressButton:    this._onPressButton,
             onVolumeChange:   this._onVolumeChange,
             onPositionChange: this._onPositionChange
-        } );
+        } ) );
     },
 
     /**
@@ -38,11 +34,7 @@ var ToolbarViewModel = React.createClass( {
     _onPressButton: function( type ) {
         switch( type ) {
         case 'play':
-            if( this.props.playState === PlayState.STOPPED ) {
-                AudioPlayerActions.play( this.props.currentPlay );
-            } else {
-                AudioPlayerActions.play();
-            }
+            this._play();
             break;
 
         case 'pause':
@@ -59,6 +51,10 @@ var ToolbarViewModel = React.createClass( {
 
         case 'add':
             MusicListActions.add();
+            break;
+
+        case 'remove':
+            this._remove();
             break;
         }
     },
@@ -82,6 +78,17 @@ var ToolbarViewModel = React.createClass( {
     },
 
     /**
+     * 曲を再生します。
+     */
+    _play: function() {
+        if( this.props.playState === PlayState.STOPPED ) {
+            AudioPlayerActions.play( this.props.currentPlay );
+        } else {
+            AudioPlayerActions.play();
+        }
+    },
+
+    /**
      * 曲選択を変更します。
      *
      * @param  {Boolan} prev 前の曲を選ぶなら true。
@@ -94,6 +101,27 @@ var ToolbarViewModel = React.createClass( {
             MusicListActions.select( music );
         } else {
             AudioPlayerActions.play( music );
+        }
+    },
+
+    /**
+     * 選択している曲を削除します。
+     */
+    _remove: function() {
+        // リスト上の曲を対象とする
+        var current = this.props.current;
+        if( !( current ) ) { return; }
+
+        var currentPlay = this.props.currentPlay;
+        if( currentPlay && currentPlay.id === current.id ) {
+            if( this.props.playState === PlayState.STOPPED ) {
+                MusicListActions.remove( current.id );
+            } else {
+                alert( 'Failed to remove the music, is playing.' );
+            }
+
+        } else {
+            MusicListActions.remove( current.id );
         }
     }
 } );

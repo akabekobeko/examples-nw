@@ -2,6 +2,7 @@ var React         = require( 'react' );
 var ToolbarView   = require( '../view/ToolbarView.jsx' );
 var MusicListView = require( '../view/MusicListView.jsx' );
 var PlayState     = require( '../model/constants/AudioPlayerConstants.js' ).PlayState;
+var Util          = require('../model/util/Utility.js');
 
 /**
  * アプリケーションのエントリー ポイントになるコンポーネントです。
@@ -22,15 +23,20 @@ var MainViewModel = React.createClass( {
 
         return {
             // 音楽リスト
-            musics:  musics,
-            current: musics[ 0 ],
+            musics:        musics,
+            current:       musics[ 0 ],
+            onSelectMusic: this._onSelectMusic,
+            onSelectPlay:  this._onSelectPlay,
 
             // ツールバー
-            currentPLay:  musics[ 0 ],
-            playState:    PlayState.STOPPED,
-            duration:     200,
-            playbackTime: 0,
-            volume:       100
+            currentPlay:      musics[ 0 ],
+            playState:        PlayState.STOPPED,
+            duration:         musics[ 0 ].duration,
+            playbackTime:     0,
+            volume:           100,
+            onPressButton:    this._onPressButton,
+            onVolumeChange:   this._onVolumeChange,
+            onPositionChange: this._onPositionChange
         };
     },
 
@@ -40,10 +46,11 @@ var MainViewModel = React.createClass( {
      * @return {Object} React エレメント。
      */
     render: function() {
+        var comp = Util.mixin( this.state, { self: this } );
         return (
             <article className="app">
-                {ToolbarView( this, this.state )}
-                {MusicListView( this, this.state.musics, this.state.current )}
+                {ToolbarView( comp )}
+                {MusicListView( comp )}
             </article>
         );
     },
@@ -55,7 +62,7 @@ var MainViewModel = React.createClass( {
      */
     _onSelectMusic: function( music ) {
         console.log( '_onSelectMusic' );
-        this.setState( { current: music, music: music } );
+        this.setState( { current: music, currentPlay: music, duration: music.duration } );
     },
 
     /**
@@ -95,7 +102,6 @@ var MainViewModel = React.createClass( {
         console.log( '_onPositionChange: value = ' + ev.target.value );
         this.setState( { playbackTime: ev.target.value } );
     }
-
 } );
 
 /**
