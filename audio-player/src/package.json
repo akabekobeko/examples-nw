@@ -1,0 +1,34 @@
+{
+    "name": "AudioPlayer",
+    "version": "1.0.0",
+    "description": "Example of the audio player in nw.js.",
+    "main": "index.html",
+    "window": {
+        "title": "Audio Player",
+        "toolbar": true,
+        "frame": true,
+        "resizable": true,
+        "width": 1024,
+        "height": 640,
+        "min_width": 800,
+        "min_height": 480,
+        "position": "mouse"
+    },
+    "platformOverrides": {
+        "osx": {
+            "window": {
+                "toolbar": false
+            }
+        },
+        "win": {
+            "window": {
+                "toolbar": false
+            }
+        },
+        "linux": {
+            "window": {
+                "toolbar": false
+            }
+        }
+    }
+}

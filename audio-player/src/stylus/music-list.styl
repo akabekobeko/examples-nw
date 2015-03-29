@@ -1,0 +1,66 @@
+color_gray       = #bdc3c7
+color_gray_light = #ecf0f1
+color_gray_dark  = #95a5a6
+color_blue_light = #9FD6FE
+
+/**
+ * 音楽リスト領域。
+ */
+.music-list {
+  position absolute
+  left 0
+  right 0
+  top 3em
+  bottom 0
+  overflow auto
+}
+
+/**
+ * 音楽リスト。
+ */
+.music-list > .musics {
+  
+  width 100%
+  border-collapse collapse
+  border-spacing 0
+
+  tr:nth-child( even ) {
+    background-color color_gray_light
+  }
+
+  thead {
+    position sticky
+  }
+
+  th {
+    padding .3em
+    border-right solid 1px color_gray
+    border-bottom solid 1px color_gray
+    font-weight normal
+    font-size .9em
+  }
+
+  td {
+    padding .2em .5em
+    border-right solid 1px color_gray
+    text-align center
+  }
+
+  .title {
+    text-align left
+  }
+
+  /**
+   * 選択行。
+   * tr:nth-child より詳細度を高くする必要あり。
+   */
+  tr.selected {
+    background-color color_blue_light
+  }
+
+  .icon-speaker {
+    font-size .7em
+  }
+
+
+}
