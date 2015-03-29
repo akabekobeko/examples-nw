@@ -51,7 +51,7 @@ function item( comp, index, music, selected, playing ) {
             onDoubleClick={comp.onSelectPlay.bind( comp.self, music )}>
             <td>{playing ? playingMarker() : null}</td>
             <td className="number">{index + 1}</td>
-            <td>{music.title}</td>
+            <td className="title">{music.title}</td>
             <td>{music.artist}</td>
             <td>{music.album}</td>
             <td>{Util.secondsToString( music.duration )}</td>
