@@ -1,9 +1,8 @@
-var AppDispatcher      = require( '../dispatcher/AppDispatcher.js' );
-var MusicListConstants = require( '../constants/MusicListConstants.js' );
-var ActionTypes        = MusicListConstants.ActionTypes;
-var FileDialog         = require( '../util/FileDialog.js' );
-var EventEmitter       = require( 'events' ).EventEmitter;
-var assign             = require( 'object-assign' );
+import AppDispatcher    from '../dispatcher/AppDispatcher.js';
+import {ActionTypes}    from '../constants/MusicListConstants.js';
+import {OpenFileDialog} from '../util/FileDialog.js';
+import {EventEmitter}   from 'events';
+import assign           from 'object-assign';
 
 /**
  * イベント種別。
@@ -33,7 +32,7 @@ var _current = null;
  * ファイル選択ダイアログ。
  * @type {OpenFileDialog}
  */
-var _openFileDialog = FileDialog.openFileDialog( 'audio/*', true, function( files ) {
+var _openFileDialog = new OpenFileDialog( 'audio/*', true, function( files ) {
     if( !( files && 0 < files.length ) ) { return; }
 
     function onAdded( err, music ) {
@@ -232,4 +231,4 @@ var MusicListStore = assign( {}, EventEmitter.prototype, {
     }
 } );
 
-module.exports = MusicListStore;
+export default MusicListStore;

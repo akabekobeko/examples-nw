@@ -1,27 +1,27 @@
-var React                = require( 'react' );
-var AudioPlayerStore     = require( '../model/stores/AudioPlayerStore.js' );
-var MusicListActions     = require( '../model/actions/MusicListActions.js' );
-var MusicListStore       = require( '../model/stores/MusicListStore.js' );
-var MusicListActionTypes = require( '../model/constants/MusicListConstants.js' ).ActionTypes;
-var PlayState            = require( '../model/constants/AudioPlayerConstants.js' ).PlayState;
-var MainView             = require( '../view/MainView.jsx' );
-var ToolbarViewModel     = require( './ToolbarViewModel.js' );
-var MusicListViewModel   = require( './MusicListViewModel.js' );
-var Util                 = require( '../model/util/Utility.js' );
+import React              from 'react';
+import AudioPlayerStore   from '../model/stores/AudioPlayerStore.js';
+import MusicListActions   from '../model/actions/MusicListActions.js';
+import MusicListStore     from '../model/stores/MusicListStore.js';
+import {PlayState}        from '../model/constants/AudioPlayerConstants.js';
+import MainView           from '../view/MainView.jsx';
+import ToolbarViewModel   from './ToolbarViewModel.js';
+import MusicListViewModel from './MusicListViewModel.js';
+import Util               from '../model/util/Utility.js';
 
 /**
  * アプリケーションのエントリー ポイントになるコンポーネントです。
  *
  * @type {ReactClass}
  */
-var MainViewModel = React.createClass( {
+class MainViewModel extends React.Component {
     /**
-     * コンポーネントの状態を初期化します。
+     * コンポーネントを初期化します。
      *
-     * @return {Object} 初期化された状態オブジェクト。
+     * @param {Object} props プロパティ。
      */
-    getInitialState: function() {
-        return {
+    constructor( props ) {
+        super( props );
+        this.state = {
             musics:       [],
             current:      null,
             currentPlay:  null,
@@ -30,41 +30,41 @@ var MainViewModel = React.createClass( {
             playbackTime: 0,
             volume:       100
         };
-    },
+    }
 
     /**
      * コンポーネントが配置される時に発生します。
      */
-    componentDidMount: function() {
-        AudioPlayerStore.addChangeListener( this._onAudioPlayerChange );
-        MusicListStore.addChangeListener( this._onMusicListChange );
+    componentDidMount() {
+        AudioPlayerStore.addChangeListener( this._onAudioPlayerChange.bind( this ) );
+        MusicListStore.addChangeListener( this._onMusicListChange.bind( this ) );
         MusicListActions.init();
-    },
+    }
 
     /**
      * コンポーネント配置が解除される時に発生します。
      */
-    componentWillUnmount: function() {
-        AudioPlayerStore.removeChangeListener( this._onAudioPlayerChange );
-        MusicListStore.removeChangeListener( this._onMusicListChange );
-    },
+    componentWillUnmount() {
+        AudioPlayerStore.removeChangeListener( this._onAudioPlayerChange.bind( this ) );
+        MusicListStore.removeChangeListener( this._onMusicListChange.bind( this ) );
+    }
 
     /**
      * コンポーネントを描画します。
      *
      * @return {Object} React エレメント。
      */
-    render: function() {
+    render() {
         return MainView( Util.mixin( this.state, {
             ToolbarViewModel:   ToolbarViewModel,
             MusicListViewModel: MusicListViewModel
         } ) );
-    },
+    }
 
     /**
      * 音楽プレーヤーが更新された時に発生します。
      */
-    _onAudioPlayerChange: function() {
+    _onAudioPlayerChange() {
         this.setState( {
             currentPlay:  AudioPlayerStore.current(),
             playState:    AudioPlayerStore.playState(),
@@ -72,12 +72,12 @@ var MainViewModel = React.createClass( {
             playbackTime: AudioPlayerStore.playbackTime(),
             volume:       AudioPlayerStore.volume()
         } );
-    },
+    }
 
     /**
      * 音楽リストが更新された時に発生します。
      */
-    _onMusicListChange: function() {
+    _onMusicListChange() {
         if( this.state.playState === PlayState.STOPPED ) {
             this.setState( {
                 musics:      MusicListStore.getAll(),
@@ -91,7 +91,7 @@ var MainViewModel = React.createClass( {
             } );
         }
     }
-} );
+}
 
 /**
  * コンポーネント処理を開始します。
@@ -100,9 +100,9 @@ var MainViewModel = React.createClass( {
  *
  * @return {Object} コンポーネント。
  */
-module.exports = function( query ) {
+export default function( query ) {
     return React.render(
         <MainViewModel />,
         document.querySelector( query )
     );
-};
+}

@@ -4,7 +4,7 @@
  * 
  * @type {Object}
  */
-module.exports = {
+var Util = {
     /**
      * 複数オブジェクトを結合します。
      *
@@ -46,3 +46,5 @@ module.exports = {
                                                  '0:' + padding( s ) );
     }
 };
+
+export default Util;

@@ -1,11 +1,13 @@
+import MainViewModel from './vm/DesignViewModel.js';
+import DesignViewModel from './vm/MainViewModel.js';
 
 onload = function() {
     global.document  = window.document;
     global.navigator = window.navigator;
 
     if( window.testDesignMode ) {
-        require( './vm/DesignViewModel.js' )( 'body' );
+        MainViewModel( 'body' );
     } else {
-        require( './vm/MainViewModel.js' )( 'body' );
+        DesignViewModel( 'body' );
     }
 };

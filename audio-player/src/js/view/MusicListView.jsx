@@ -1,5 +1,5 @@
-var React = require( 'react' );
-var Util  = require( '../model/util/Utility.js' );
+import React from 'react';
+import Util  from '../model/util/Utility.js';
 
 /**
  * 音楽リスト用コンポーネントを描画します。

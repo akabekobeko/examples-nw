@@ -16,13 +16,14 @@
   "author": "akabeko",
   "license": "MIT",
   "devDependencies": {
+    "babelify": "^5.0.4",
     "browserify": "^9.0.3",
     "del": "^1.1.1",
     "gulp": "^3.8.11",
     "gulp-consolidate": "^0.1.2",
     "gulp-iconfont": "^1.0.0",
     "gulp-if": "^1.2.5",
-    "gulp-load-plugins": "^0.8.1",
+    "gulp-load-plugins": "^0.9.0",
     "gulp-minify-css": "^1.0.0",
     "gulp-notify": "^2.2.0",
     "gulp-plumber": "^1.0.0",
@@ -34,19 +35,18 @@
     "gulp-useref": "^1.1.1",
     "gulp-utf8ize-sourcemaps": "^0.1.0",
     "gulp-util": "^3.0.4",
-    "lodash": "^3.5.0",
+    "lodash": "^3.6.0",
     "node-webkit-builder": "^1.0.11",
     "pretty-hrtime": "^1.0.0",
-    "reactify": "^1.1.0",
-    "require-dir": "^0.1.0",
+    "require-dir": "^0.3.0",
     "run-sequence": "^1.0.2",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
-    "watchify": "^2.4.0"
+    "watchify": "^3.0.0"
   },
   "dependencies": {
     "flux": "^2.0.1",
-    "musicmetadata": "^1.0.0",
+    "musicmetadata": "^1.0.1",
     "object-assign": "^2.0.0",
     "react": "^0.13.1"
   }

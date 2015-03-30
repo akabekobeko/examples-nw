@@ -1,6 +1,6 @@
-var React     = require( 'react' );
-var Util      = require( '../model/util/Utility.js' );
-var PlayState = require( '../model/constants/AudioPlayerConstants.js' ).PlayState;
+import React       from 'react';
+import Util        from '../model/util/Utility.js';
+import {PlayState} from '../model/constants/AudioPlayerConstants.js';
 
 /**
  * ツールバー用コンポーネントを描画します。

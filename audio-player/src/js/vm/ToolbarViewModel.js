@@ -1,37 +1,46 @@
-var React              = require( 'react' );
-var PlayState          = require( '../model/constants/AudioPlayerConstants.js' ).PlayState;
-var MusicListActions   = require( '../model/actions/MusicListActions.js' );
-var MusicListStore     = require( '../model/stores/MusicListStore.js' );
-var AudioPlayerActions = require( '../model/actions/AudioPlayerActions.js' );
-var ToolbarView        = require( '../view/ToolbarView.jsx' );
-var Util               = require( '../model/util/Utility.js' );
+import React              from 'react';
+import {PlayState}        from '../model/constants/AudioPlayerConstants.js';
+import MusicListActions   from '../model/actions/MusicListActions.js';
+import MusicListStore     from '../model/stores/MusicListStore.js';
+import AudioPlayerActions from '../model/actions/AudioPlayerActions.js';
+import ToolbarView        from '../view/ToolbarView.jsx';
+import Util               from '../model/util/Utility.js';
 
 /**
  * ツールバー用コンポーネントです。
  *
  * @type {ReactClass}
 */
-var ToolbarViewModel = React.createClass( {
+export default class ToolbarViewModel extends React.Component {
+    /**
+     * コンポーネントを初期化します。
+     *
+     * @param {Object} props プロパティ。
+     */
+    constructor( props ) {
+        super( props );
+    }
+
     /**
      * コンポーネントを描画します。
      *
      * @return {Object} React エレメント。
      */
-    render: function() {
+    render() {
         return ToolbarView( Util.mixin( this.props, {
             self:             this,
             onPressButton:    this._onPressButton,
             onVolumeChange:   this._onVolumeChange,
             onPositionChange: this._onPositionChange
         } ) );
-    },
+    }
 
     /**
      * ボタンが押された時に発生します。
      *
      * @param {String} type ボタン種別。
      */
-    _onPressButton: function( type ) {
+    _onPressButton( type ) {
         switch( type ) {
         case 'play':
             this._play();
@@ -57,43 +66,43 @@ var ToolbarViewModel = React.createClass( {
             this._remove();
             break;
         }
-    },
+    }
 
     /**
      * 音量が変更された時に発生します。
      *
      * @param  {Object} ev イベント情報。
      */
-    _onVolumeChange: function( ev ) {
+    _onVolumeChange( ev ) {
         AudioPlayerActions.volume( ev.target.value );
-    },
+    }
 
     /**
      * 再生位置が変更された時に発生します。
      *
      * @param  {Object} ev イベント情報。
      */
-    _onPositionChange: function( ev ) {
+    _onPositionChange( ev ) {
         AudioPlayerActions.seek( ev.target.value );
-    },
+    }
 
     /**
      * 曲を再生します。
      */
-    _play: function() {
+    _play() {
         if( this.props.playState === PlayState.STOPPED ) {
             AudioPlayerActions.play( this.props.currentPlay );
         } else {
             AudioPlayerActions.play();
         }
-    },
+    }
 
     /**
      * 曲選択を変更します。
      *
      * @param  {Boolan} prev 前の曲を選ぶなら true。
      */
-    _moveNext: function( prev ) {
+    _moveNext( prev ) {
         var music = MusicListStore.next( this.props.currentPlay, prev );
         if( !( music ) ) { return; }
 
@@ -102,12 +111,12 @@ var ToolbarViewModel = React.createClass( {
         } else {
             AudioPlayerActions.play( music );
         }
-    },
+    }
 
     /**
      * 選択している曲を削除します。
      */
-    _remove: function() {
+    _remove() {
         // リスト上の曲を対象とする
         var current = this.props.current;
         if( !( current ) ) { return; }
@@ -124,6 +133,4 @@ var ToolbarViewModel = React.createClass( {
             MusicListActions.remove( current.id );
         }
     }
-} );
-
-module.exports = ToolbarViewModel;
+};
