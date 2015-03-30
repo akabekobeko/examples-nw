@@ -1,13 +1,11 @@
-
-var AppDispatcher        = require( '../dispatcher/AppDispatcher.js' );
-var AudioPlayerConstants = require( '../constants/AudioPlayerConstants.js' );
-var ActionTypes          = AudioPlayerConstants.ActionTypes;
+import AppDispatcher from '../dispatcher/AppDispatcher.js';
+import {ActionTypes} from '../constants/AudioPlayerConstants.js';
 
 /**
  * 音声プレーヤー操作を定義します。
  * @type {Object}
  */
-var AudioPlayerActions = {
+export default {
     /**
      * 音声を再生します。
      *
@@ -71,5 +69,3 @@ var AudioPlayerActions = {
         } );
     }
 };
-
-module.exports = AudioPlayerActions;

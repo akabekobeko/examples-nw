@@ -1,15 +1,15 @@
-var keyMirror = require( 'react/lib/keyMirror' );
+import keyMirror from 'react/lib/keyMirror';
 
 /**
  * 音声プレーヤー用の定数を定義します。
  * @type {Object}
  */
-module.exports = {
+export default {
     /**
      * アクション種別を定義します。
      * @type {Object}
      */
-    ActionTypes:  keyMirror( {
+    ActionTypes: keyMirror( {
         /** 再生。 */
         PLAY: null,
 

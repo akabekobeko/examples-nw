@@ -1,4 +1,4 @@
-import MainViewModel from './vm/DesignViewModel.js';
+import MainViewModel   from './vm/DesignViewModel.js';
 import DesignViewModel from './vm/MainViewModel.js';
 
 onload = function() {

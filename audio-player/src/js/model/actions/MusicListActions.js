@@ -1,13 +1,11 @@
-
-var AppDispatcher      = require( '../dispatcher/AppDispatcher.js' );
-var MusicListConstants = require( '../constants/MusicListConstants.js' );
-var ActionTypes        = MusicListConstants.ActionTypes;
+import AppDispatcher from '../dispatcher/AppDispatcher.js';
+import {ActionTypes} from '../constants/MusicListConstants.js';
 
 /**
  * 音声プレーヤー操作を定義します。
  * @type {Object}
  */
-var MusicListActions = {
+export default {
     /**
      * 音楽リストを初期化します。
      */
@@ -59,5 +57,3 @@ var MusicListActions = {
         } );
     }
 };
-
-module.exports = MusicListActions;

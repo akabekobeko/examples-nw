@@ -1,10 +1,9 @@
-var AppDispatcher        = require( '../dispatcher/AppDispatcher.js' );
-var AudioPlayerConstants = require( '../constants/AudioPlayerConstants.js' );
-var MusicListStore       = require( './MusicListStore.js' );
-var ActionTypes          = AudioPlayerConstants.ActionTypes;
-var PlayState            = AudioPlayerConstants.PlayState;
-var EventEmitter         = require( 'events' ).EventEmitter;
-var assign               = require( 'object-assign' );
+import AppDispatcher  from '../dispatcher/AppDispatcher.js';
+import MusicListStore from './MusicListStore.js';
+import {ActionTypes}  from '../constants/AudioPlayerConstants.js';
+import {PlayState}    from '../constants/AudioPlayerConstants.js';
+import {EventEmitter} from 'events';
+import assign         from 'object-assign';
 
 /**
  * 変更イベントを示す値。
@@ -273,4 +272,4 @@ var AudioPlayerStore = assign( {}, EventEmitter.prototype, {
     }
 } );
 
-module.exports = AudioPlayerStore;
+export default AudioPlayerStore;
