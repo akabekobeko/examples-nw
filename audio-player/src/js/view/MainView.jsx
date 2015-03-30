@@ -7,7 +7,7 @@ import React from 'react';
  *
  * @return {ReactElement}  React エレメント。
  */
-module.exports = function( comp ) {
+export default ( comp ) => {
     return (
         <article className="app">
             <comp.ToolbarViewModel
@@ -25,4 +25,4 @@ module.exports = function( comp ) {
                 playState={comp.playState} />
         </article>
     );
-};
+}

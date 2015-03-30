@@ -3,6 +3,7 @@ import {ActionTypes}    from '../constants/MusicListConstants.js';
 import {OpenFileDialog} from '../util/FileDialog.js';
 import {EventEmitter}   from 'events';
 import assign           from 'object-assign';
+import MusicList        from '../MusicList.js';
 
 /**
  * イベント種別。
@@ -14,7 +15,7 @@ var CHANGE_EVENT = 'change';
  * 唯一の曲リスト操作オブジェクト。
  * @type {MusicList}
  */
-var _musicList = new ( require( '../MusicList.js' ) )();
+var _musicList = new MusicList();
 
 /**
  * 唯一の曲リスト。
@@ -32,7 +33,7 @@ var _current = null;
  * ファイル選択ダイアログ。
  * @type {OpenFileDialog}
  */
-var _openFileDialog = new OpenFileDialog( 'audio/*', true, function( files ) {
+var _openFileDialog = new OpenFileDialog( 'audio/*', true, ( files ) => {
     if( !( files && 0 < files.length ) ) { return; }
 
     function onAdded( err, music ) {
@@ -55,11 +56,11 @@ var _openFileDialog = new OpenFileDialog( 'audio/*', true, function( files ) {
  * @param {Function} callback コールバック関数。
  */
 function init() {
-    _musicList.init( function( err ) {
+    _musicList.init( ( err ) => {
         if( err ) {
             MusicListStore.emitChange( err, ActionTypes.INIT );
         } else {
-            _musicList.readAll( function( err, musics ) {
+            _musicList.readAll( ( err, musics ) => {
                 if( err ) {
                     MusicListStore.emitChange( err, ActionTypes.INIT );
                 } else {
@@ -110,7 +111,7 @@ function add() {
  * @param {Number} musicId  削除対象となる曲の識別子。
  */
 function remove( musicId ) {
-    _musicList.remove( musicId, function( err ){
+    _musicList.remove( musicId, ( err ) => {
         if( err ) {
             MusicListStore.emitChange( err, ActionTypes.REMOVE, musicId );
         } else {
@@ -133,7 +134,7 @@ function remove( musicId ) {
  * 
  * @param {Object} action AudioPlayerConstants に定義されたアクション。
  */
-AppDispatcher.register( function( action ) {
+AppDispatcher.register( ( action ) => {
     switch( action.actionType ) {
     case ActionTypes.INIT:
         init();

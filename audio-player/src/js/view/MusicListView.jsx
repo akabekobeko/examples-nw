@@ -8,15 +8,14 @@ import Util  from '../model/util/Utility.js';
  *
  * @return {ReactElement} React エレメント。
  */
-module.exports = function( comp ) {
-    var items = comp.musics.map( function( music, index ) {
+export default ( comp ) => {
+    var items = comp.musics.map( ( music, index ) => {
         var selected = ( comp.current && comp.current.id === music.id );
         var playing  = ( comp.playing && comp.currentPlay && comp.currentPlay.id === music.id  );
         return item( comp, index, music, selected, playing );
     }, comp.self );
 
     var style = { width: '1em' };
-
     return (
         <div className="music-list">
             <table className="musics">

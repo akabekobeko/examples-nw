@@ -14,7 +14,7 @@ export default class AudioPlayer {
          * 音声操作コンテキスト。
          * @type {AudioContext|webkitAudioContext}
          */
-        this._audioContext = ( function() {
+        this._audioContext = ( () => {
             var audioContext = ( window.AudioContext || window.webkitAudioContext );
             if( audioContext ) { return new audioContext(); }
 
@@ -79,7 +79,7 @@ export default class AudioPlayer {
      */
     open( buffer, callback ) {
         this._audioContext.decodeAudioData( buffer,
-            function( audioBuffer ) {
+            ( audioBuffer ) => {
                 this.close();
 
                 this._audioBuffer = audioBuffer;
@@ -89,7 +89,7 @@ export default class AudioPlayer {
 
             }.bind( this ),
 
-            function() {
+            () => {
                 // webkitAudioContext だとエラーが取れないので自前指定
                 callback( new Error( 'Faild to decode for audio data.' ) );
             }
@@ -108,7 +108,7 @@ export default class AudioPlayer {
         if( !( filePath && callback ) ) { throw new Error( 'Arguments is not defined.' ); }
 
         var fs = window.require( 'fs' );
-        fs.readFile( filePath, function( err, data ) {
+        fs.readFile( filePath, ( err, data ) => {
             if( err ) {
                 callback( err );
 
@@ -133,11 +133,11 @@ export default class AudioPlayer {
         request.open( 'GET', url );
         request.responseType = 'arraybuffer'; 
 
-        request.onload = function() {
+        request.onload = () => {
             this.open( request.response, callback );
         }.bind( this );
 
-        request.onerror = function( err ) {
+        request.onerror = ( err ) => {
             callback( err );
         };
     }

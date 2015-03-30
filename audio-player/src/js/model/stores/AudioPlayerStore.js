@@ -4,6 +4,7 @@ import {ActionTypes}  from '../constants/AudioPlayerConstants.js';
 import {PlayState}    from '../constants/AudioPlayerConstants.js';
 import {EventEmitter} from 'events';
 import assign         from 'object-assign';
+import AudioPlayer    from '../AudioPlayer.js';
 
 /**
  * 変更イベントを示す値。
@@ -15,7 +16,7 @@ var CHANGE_EVENT = 'change';
  * 唯一の音声プレーヤー。
  * @type {AudioPlayer}
  */
-var _audioPlayer = new ( require( '../AudioPlayer.js' ) )();
+var _audioPlayer = new AudioPlayer();
 
 /**
  * 再生状態。
@@ -44,7 +45,7 @@ function playTimer( isStop ) {
     if( isStop ) {
         clearInterval( _timer );
     } else {
-        _timer = setInterval( function() {
+        _timer = setInterval( () => {
             if( _audioPlayer.duration() <= _audioPlayer.playbackTime() ) {
                 // 再生終了
                 clearInterval( _timer );
@@ -71,7 +72,7 @@ function playTimer( isStop ) {
  */
 function play( music ) {
     if( music ) {
-        _audioPlayer.openFromFile( music.path, function( err ) {
+        _audioPlayer.openFromFile( music.path, ( err ) => {
             if( err ) {
                 console.log( err.message );
             } else {
@@ -155,7 +156,7 @@ function unselect() {
  * 
  * @param  {Object} action AudioPlayerConstants に定義されたアクション。
  */
-AppDispatcher.register( function( action ) {
+AppDispatcher.register( ( action ) => {
     switch( action.actionType ) {
     case ActionTypes.PLAY:
         play( action.music );

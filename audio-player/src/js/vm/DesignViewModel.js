@@ -113,7 +113,7 @@ class MainViewModel extends React.Component {
  *
  * @return {Object} コンポーネント。
  */
-export default function( query ) {
+export default ( query ) => {
     return React.render(
         <MainViewModel />,
         document.querySelector( query )

@@ -17,7 +17,7 @@ export class OpenFileDialog {
          */
         this._element = document.createElement( 'input' );
         this._element.setAttribute( 'type', 'file' );
-        this._element.addEventListener( 'change', function( ev ) {
+        this._element.addEventListener( 'change', ( ev ) => {
             if( _callback ) {
                 _callback( ev.target.file || ev.target.files );
             }

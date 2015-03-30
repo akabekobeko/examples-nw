@@ -37,7 +37,7 @@ export default class MusicList {
             ]
         };
 
-        this._db.open( params, function( err ) {
+        this._db.open( params, ( err ) => {
             callback( err );
         } );
     }
@@ -49,7 +49,7 @@ export default class MusicList {
      * @param {Function} callback 処理が完了した時に呼び出される関数。
      */
     add( file, callback ) {
-        this._readMetadata( file, function( err, music ) {
+        this._readMetadata( file, ( err, music ) => {
             if( err ) {
                 callback( err );
 
@@ -95,10 +95,9 @@ export default class MusicList {
         var fs     = window.require( 'fs' );
         var stream = fs.createReadStream( file.path );
 
-        mm( stream, { duration: true }, function( err, metadata ) {
+        mm( stream, { duration: true }, ( err, metadata ) => {
             if( err ) {
                 callback( err );
-
             } else {
                 callback( null, {
                     type:     file.type,

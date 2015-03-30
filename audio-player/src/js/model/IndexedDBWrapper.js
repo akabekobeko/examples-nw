@@ -72,7 +72,7 @@ export default class IndexedDBWrapper {
         var onFinish = ( callback || this._defaultCallback );
         var request  = this._indexedDB.open( this._dbName, this._dbVersion );
 
-        request.onupgradeneeded = function( ev ) {
+        request.onupgradeneeded = ( ev ) => {
             // ストア生成
             this._db = ev.target.result;
             var store = this._db.createObjectStore( this._dbStoreName, params.create );
@@ -84,17 +84,17 @@ export default class IndexedDBWrapper {
                 } );
             }
 
-            ev.target.transaction.oncomplete = function() {
+            ev.target.transaction.oncomplete = () => {
                 onFinish();
             };
         }.bind( this );
 
-        request.onsuccess = function( ev ) {
+        request.onsuccess = ( ev ) => {
             this._db = ev.target.result;
             onFinish();
         }.bind( this );
          
-        request.onerror = function( ev ) {
+        request.onerror = ( ev ) => {
             onFinish( ev.target.error );
         };
     };
@@ -113,11 +113,11 @@ export default class IndexedDBWrapper {
         }
 
         var request = this._indexedDB.deleteDatabase( this._dbName );
-        request.onsuccess = function( ev ) {
+        request.onsuccess = ( ev ) => {
             onFinish();
         };
          
-        request.onerror = function( ev ) {
+        request.onerror = ( ev ) => {
             console.log( 'DB [ dispose ]: Error, ' + ev.target.error );
             onFinish( ev.target.error );
         };
@@ -136,11 +136,11 @@ export default class IndexedDBWrapper {
         var store       = transaction.objectStore( this._dbStoreName );
         var request     = store.clear();
 
-        request.onsuccess = function( ev ) {
+        request.onsuccess = ( ev ) => {
             onFinish();
         };
      
-        request.onerror = function( ev ) {
+        request.onerror = ( ev ) => {
             onFinish( ev.target.error );
         };
     }
@@ -159,7 +159,7 @@ export default class IndexedDBWrapper {
         var request     = store.openCursor();
         var items       = [];
 
-        request.onsuccess = function( ev ) {
+        request.onsuccess = ( ev ) => {
             var cursor = ev.target.result;
             if( cursor ) {
                 items.push( cursor.value );
@@ -170,7 +170,7 @@ export default class IndexedDBWrapper {
             }
         };
 
-        request.onerror = function( ev ) {
+        request.onerror = ( ev ) => {
             onFinish( ev.target.error );
         };
     }
@@ -188,7 +188,7 @@ export default class IndexedDBWrapper {
         var store       = transaction.objectStore( this._dbStoreName );
         var request     = store.openCursor();
 
-        request.onsuccess = function( ev ) {
+        request.onsuccess = ( ev ) => {
             var cursor = ev.target.result;
             if( cursor ) {
                 if( onFinish( null, cursor.value ) ) {
@@ -199,7 +199,7 @@ export default class IndexedDBWrapper {
             }
         };
 
-        request.onerror = function( ev ) {
+        request.onerror = ( ev ) => {
             onFinish( ev.target.error );
         };
     }
@@ -218,12 +218,12 @@ export default class IndexedDBWrapper {
         var store       = transaction.objectStore( this._dbStoreName );
         var request     = store.put( item );
 
-        request.onsuccess = function( ev ) {
+        request.onsuccess = ( ev ) => {
             item.id = ev.target.result;
             onFinish( null, item );
         };
      
-        request.onerror = function( ev ) {
+        request.onerror = ( ev ) => {
             onFinish( ev.target.error, item );
         };
     }
@@ -242,11 +242,11 @@ export default class IndexedDBWrapper {
         var store       = transaction.objectStore( this._dbStoreName );
         var request     = store.delete( id );
 
-        request.onsuccess = function( ev ) {
+        request.onsuccess = ( ev ) => {
             onFinish( null, id );
         };
      
-        request.onerror = function( wv ) {
+        request.onerror = ( wv ) => {
             onFinish( ev.target.error, id );
         };
     }

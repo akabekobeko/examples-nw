@@ -9,7 +9,7 @@ import {PlayState} from '../model/constants/AudioPlayerConstants.js';
  *
  * @return {ReactElement}  React エレメント。
  */
-module.exports = function( comp ) {
+export default ( comp ) => {
     var music     = comp.currentPlay;
     var title     = ( music ? music.title : '--' );
     var duration  = ( comp.duration === 0 ? ( music ? music.duration : 0 ) : comp.duration );
