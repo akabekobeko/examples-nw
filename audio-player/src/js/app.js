@@ -1,13 +1,21 @@
-import MainViewModel   from './vm/DesignViewModel.js';
-import DesignViewModel from './vm/MainViewModel.js';
+import React           from 'react';
+import MainViewModel   from './vm/MainViewModel.js';
+import DesignViewModel from './vm/DesignViewModel.js';
 
-onload = function() {
-    global.document  = window.document;
-    global.navigator = window.navigator;
+/**
+ * アプリケーションのエントリー ポイントです。
+ */
+onload = () => {
+    const render = ( vm ) => {
+        React.render(
+            React.createElement( vm, null ),
+            document.querySelector( 'body' )
+        );
+    };
 
     if( window.testDesignMode ) {
-        MainViewModel( 'body' );
+        render( DesignViewModel );
     } else {
-        DesignViewModel( 'body' );
+        render( MainViewModel );
     }
 };

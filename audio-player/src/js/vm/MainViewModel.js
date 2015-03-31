@@ -13,7 +13,7 @@ import Util               from '../model/util/Utility.js';
  *
  * @type {ReactClass}
  */
-class MainViewModel extends React.Component {
+export default class MainViewModel extends React.Component {
     /**
      * コンポーネントを初期化します。
      *
@@ -91,18 +91,4 @@ class MainViewModel extends React.Component {
             } );
         }
     }
-}
-
-/**
- * コンポーネント処理を開始します。
- *
- * @param {Object} query コンポーネントの配置対象となる DOM を示すクエリ。
- *
- * @return {Object} コンポーネント。
- */
-export default ( query ) => {
-    return React.render(
-        <MainViewModel />,
-        document.querySelector( query )
-    );
 }

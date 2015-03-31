@@ -5,11 +5,11 @@ import {PlayState}   from '../model/constants/AudioPlayerConstants.js';
 import Util          from '../model/util/Utility.js';
 
 /**
- * アプリケーションのエントリー ポイントになるコンポーネントです。
+ * アプリケーションのエントリー ポイントになるコンポーネント ( デザイン確認用 ) です。
  *
  * @type {ReactClass}
  */
-class MainViewModel extends React.Component {
+export default class DesignViewModel extends React.Component {
     /**
      * コンポーネントを初期化します。
      *
@@ -18,7 +18,7 @@ class MainViewModel extends React.Component {
     constructor( props ) {
         super( props );
 
-        var musics = [
+        const musics = [
             { id: 1, title: 'test1', artist: 'artist1', album: 'album1', duration: 150 },
             { id: 2, title: 'test2', artist: 'artist2', album: 'album2', duration: 120 }
         ];
@@ -36,9 +36,9 @@ class MainViewModel extends React.Component {
             duration:         musics[ 0 ].duration,
             playbackTime:     0,
             volume:           100,
-            onPressButton:    this._onPressButton.bind( this ),
-            onVolumeChange:   this._onVolumeChange.bind( this ),
-            onPositionChange: this._onPositionChange.bind( this )
+            onPressButton:    this._onPressButton,
+            onVolumeChange:   this._onVolumeChange,
+            onPositionChange: this._onPositionChange
         };
     }
 
@@ -48,16 +48,16 @@ class MainViewModel extends React.Component {
      * @return {Object} React エレメント。
      */
     render() {
-        var comp = Util.mixin( this.state, { self: this } );
-        return (
-            <article className="app">
-                {ToolbarView( comp )}
-                {MusicListView( comp )}
-            </article>
+        const comp = Util.mixin( this.state, { self: this } );
+        return React.createElement(
+            "article",
+            { className: "app" },
+            ToolbarView( comp ),
+            MusicListView( comp )
         );
     }
 
-        /**
+    /**
      * 音楽が選択された時に発生します。
      *
      * @param {Object} music 音楽。
@@ -104,18 +104,4 @@ class MainViewModel extends React.Component {
         console.log( '_onPositionChange: value = ' + ev.target.value );
         this.setState( { playbackTime: ev.target.value } );
     }
-};
-
-/**
- * コンポーネント処理を開始します。
- *
- * @param {Object} query コンポーネントの配置対象となる DOM を示すクエリ。
- *
- * @return {Object} コンポーネント。
- */
-export default ( query ) => {
-    return React.render(
-        <MainViewModel />,
-        document.querySelector( query )
-    );
 }
