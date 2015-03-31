@@ -1,4 +1,5 @@
 var gulp = require( 'gulp' );
+var $    = require( 'gulp-load-plugins' )();
 
 /**
  * JavaScript の依存関係を解決し、単一ファイルにコンパイルします。
@@ -40,13 +41,12 @@ gulp.task( 'watchify', function() {
  */
 function compile( isUglify, isWatch ) {
     var config     = require( '../config.js' ).js;
-    var $          = require( 'gulp-load-plugins' )();
     var errorUtil  = require( '../util/error' );
     var browserify = require( 'browserify' );
     var source     = require( 'vinyl-source-stream' );
     var buffer     = require( 'vinyl-buffer' );
     var watchify   = require( 'watchify' );
-    var logger     = new bundleLogger( $, config );
+    var logger     = new bundleLogger( config.src, config.bundle );
 
     var bundler = null;
     if( isWatch ) {
@@ -87,27 +87,27 @@ function compile( isUglify, isWatch ) {
 }
 
 /**
- * Browserify によるJavaScript コンパイルの進捗をコンソールに出力します。
+ * Browserify による JavaScript コンパイルの進捗をコンソールに出力します。
  *
- * @param {Object} config タスク設定。
+ * @param {String} src    コンパイルの起点となるファイル。
+ * @param {String} bundle コンパイル結果となるファイル。
  */
-var bundleLogger = function( $, config ) {
+var bundleLogger = function( src, bundle ) {
     var prettyHrtime = require( 'pretty-hrtime' );
     var beginTime;
 
     this.begin = function() {
         beginTime = process.hrtime();
-        $.util.log( 'Bundling', $.util.colors.green( config.bundle ) + '...' );
+        $.util.log( 'Bundling', $.util.colors.green( src ) + '...' );
     };
 
     this.watch = function() {
-        $.util.log( 'Watching files required by', $.util.colors.yellow( config.src ) );
+        $.util.log( 'Watching files required by', $.util.colors.yellow( src ) );
     };
 
     this.end = function() {
         var taskTime   = process.hrtime( beginTime );
         var prettyTime = prettyHrtime( taskTime );
-        $.util.log( 'Bundled', $.util.colors.green( config.bundle ), 'in', $.util.colors.magenta( prettyTime ) );
-
+        $.util.log( 'Bundled', $.util.colors.green( bundle ), 'in', $.util.colors.magenta( prettyTime ) );
     };
 };
