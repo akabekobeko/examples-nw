@@ -9,31 +9,31 @@ import MusicList        from '../MusicList.js';
  * イベント種別。
  * @type {String}
  */
-var CHANGE_EVENT = 'change';
+const CHANGE_EVENT = 'change';
 
 /**
  * 唯一の曲リスト操作オブジェクト。
  * @type {MusicList}
  */
-var _musicList = new MusicList();
+const _musicList = new MusicList();
 
 /**
  * 唯一の曲リスト。
  * @type {Array.<Music>}
  */
-var _musics = [];
+let _musics = [];
 
 /**
  * リスト上で選択されている曲。
  * @type {Music}
  */
-var _current = null;
+let _current = null;
 
 /**
  * ファイル選択ダイアログ。
  * @type {OpenFileDialog}
  */
-var _openFileDialog = new OpenFileDialog( 'audio/*', true, ( files ) => {
+const _openFileDialog = new OpenFileDialog( 'audio/*', true, ( files ) => {
     if( !( files && 0 < files.length ) ) { return; }
 
     function onAdded( err, music ) {
@@ -45,7 +45,8 @@ var _openFileDialog = new OpenFileDialog( 'audio/*', true, ( files ) => {
         }
     }
 
-    for( var i = 0, max = files.length; i < max; ++i ) {
+    // FileList は Array ではないため forEach を利用できない
+    for( let i = 0, max = files.length; i < max; ++i ) {
         _musicList.add( files[ i ], onAdded );        
     }
 } );
@@ -86,8 +87,8 @@ function init() {
 function select( music ) {
     if( _current && music && _current.id === music.id ) { return false; }
 
-    var err = new Error( 'Failed to select the music, not found.' );
-    for( var i = 0, max = _musics.length; i < max; ++i ) {
+    let err = new Error( 'Failed to select the music, not found.' );
+    for( let i = 0, max = _musics.length; i < max; ++i ) {
         if( music.id === _musics[ i ].id ) {
             err      = null;
             _current = music;
@@ -116,7 +117,7 @@ function remove( musicId ) {
             MusicListStore.emitChange( err, ActionTypes.REMOVE, musicId );
         } else {
             err = new Error( 'Failed to remove the music, not found.' );
-            for( var i = 0, max = _musics.length; i < max; ++i ) {
+            for( let i = 0, max = _musics.length; i < max; ++i ) {
                 if( _musics[ i ].id === musicId ) {
                     err = null;
                     _musics.splice( i, 1 );
@@ -161,13 +162,13 @@ AppDispatcher.register( ( action ) => {
  * 曲リストを操作します。
  * @type {MusicListStore}
  */
-var MusicListStore = assign( {}, EventEmitter.prototype, {
+const MusicListStore = assign( {}, EventEmitter.prototype, {
     /**
      * すべての曲を取得します。
      *
      * @return {Array.<Music>} 曲情報コレクション。
      */
-    getAll: function() {
+    getAll() {
         return _musics;
     },
 
@@ -176,7 +177,7 @@ var MusicListStore = assign( {}, EventEmitter.prototype, {
      *
      * @return {Music} 曲情報。何も選択されていない場合は null。
      */
-    current: function() {
+    current() {
         return _current;
     },
 
@@ -191,12 +192,12 @@ var MusicListStore = assign( {}, EventEmitter.prototype, {
      *
      * @return {Music} 成功時は曲情報。それ以外は null。
      */
-    next: function( music, prev ) {
-        var current = ( music ? music : _current );
+    next( music, prev ) {
+        const current = ( music ? music : _current );
         if( !( current ) ) { return null; }
 
-        var index = -1;
-        for( var i = 0, max = _musics.length; i < max; ++i ) {
+        let index = -1;
+        for( let i = 0, max = _musics.length; i < max; ++i ) {
             if( _musics[ i ].id === current.id ) {
                 index = ( prev ? i - 1 : i + 1 );
                 break;
@@ -209,7 +210,7 @@ var MusicListStore = assign( {}, EventEmitter.prototype, {
     /**
      * 更新を通知します。
      */
-    emitChange: function( err, type, params ) {
+    emitChange( err, type, params ) {
         this.emit( CHANGE_EVENT, err, type, params );
     },
 
@@ -218,7 +219,7 @@ var MusicListStore = assign( {}, EventEmitter.prototype, {
      *
      * @param {Function} callback イベント リスナーとなる関数。
      */
-    addChangeListener: function( callback ) {
+    addChangeListener( callback ) {
         this.on( CHANGE_EVENT, callback );
     },
 
@@ -227,7 +228,7 @@ var MusicListStore = assign( {}, EventEmitter.prototype, {
      *
      * @param {Function} callback イベント リスナーとなっている関数。
      */
-    removeChangeListener: function( callback ) {
+    removeChangeListener( callback ) {
         this.removeListener( CHANGE_EVENT, callback );
     }
 } );

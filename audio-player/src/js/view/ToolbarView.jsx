@@ -10,10 +10,10 @@ import {PlayState} from '../model/constants/AudioPlayerConstants.js';
  * @return {ReactElement}  React エレメント。
  */
 export default ( comp ) => {
-    var music     = comp.currentPlay;
-    var title     = ( music ? music.title : '--' );
-    var duration  = ( comp.duration === 0 ? ( music ? music.duration : 0 ) : comp.duration );
-    var playpause = ( comp.playState === PlayState.PLAYING ? 'pause' : 'play' );
+    let music     = comp.currentPlay;
+    let title     = ( music ? music.title : '--' );
+    let duration  = ( comp.duration === 0 ? ( music ? music.duration : 0 ) : comp.duration );
+    let playpause = ( comp.playState === PlayState.PLAYING ? 'pause' : 'play' );
 
     return (
         <div className="toolbar">
@@ -27,7 +27,7 @@ export default ( comp ) => {
                         min={0}
                         max={100}
                         value={comp.volume}
-                        onChange={comp.onVolumeChange} />
+                        onChange={comp.onVolumeChange.bind( comp.self )} />
                 </div>
                 <div className="display">
                     <div className="metadata">
@@ -41,7 +41,7 @@ export default ( comp ) => {
                         min={0}
                         max={duration}
                         value={comp.playbackTime}
-                        onChange={comp.onPositionChange} />
+                        onChange={comp.onPositionChange.bind( comp.self )} />
                 </div>
                 <div className="option">
                     <div className="wrapper">

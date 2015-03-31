@@ -2,39 +2,39 @@ import AppDispatcher  from '../dispatcher/AppDispatcher.js';
 import MusicListStore from './MusicListStore.js';
 import {ActionTypes}  from '../constants/AudioPlayerConstants.js';
 import {PlayState}    from '../constants/AudioPlayerConstants.js';
+import AudioPlayer    from '../AudioPlayer.js';
 import {EventEmitter} from 'events';
 import assign         from 'object-assign';
-import AudioPlayer    from '../AudioPlayer.js';
 
 /**
  * 変更イベントを示す値。
  * @type {String}
  */
-var CHANGE_EVENT = 'change';
+const CHANGE_EVENT = 'change';
 
 /**
  * 唯一の音声プレーヤー。
  * @type {AudioPlayer}
  */
-var _audioPlayer = new AudioPlayer();
+const _audioPlayer = new AudioPlayer();
 
 /**
  * 再生状態。
  * @type {PlayState}
  */
-var _playState = PlayState.STOPPED;
+let _playState = PlayState.STOPPED;
 
 /**
  * 再生時間と演奏終了を監視するためのタイマー。
  * @type {Number}
  */
-var _timer = null;
+let _timer = null;
 
 /**
  * 再生対象となる音楽情報。
  * @type {Music}
  */
-var _current = null;
+let _current = null;
 
 /**
  * 再生時間と演奏終了を監視するためのタイマーを開始・停止します。
@@ -51,7 +51,7 @@ function playTimer( isStop ) {
                 clearInterval( _timer );
                 stop();
 
-                var music = MusicListStore.next( _current );
+                let music = MusicListStore.next( _current );
                 if( music ) {
                     // 次の曲を再生 ( 更新は play 内で通知される )
                     play( music );
@@ -191,13 +191,13 @@ AppDispatcher.register( ( action ) => {
  * 音声プレーヤーを操作します。
  * @type {Object}
  */
-var AudioPlayerStore = assign( {}, EventEmitter.prototype, {
+const AudioPlayerStore = assign( {}, EventEmitter.prototype, {
     /**
      * 再生対象となる音楽情報を取得します。
      *
      * @return {Music} 音楽情報。
      */
-    current: function() {
+    current() {
         return _current;
     },
 
@@ -206,8 +206,8 @@ var AudioPlayerStore = assign( {}, EventEmitter.prototype, {
      *
      * @return {Number} 演奏時間 ( 秒単位 )。
      */
-    duration: function() {
-        var d = _audioPlayer.duration();
+    duration() {
+        const d = _audioPlayer.duration();
         return ( d === 0 ? ( _current ? _current.duration : 0 ) : d );
     },
 
@@ -216,7 +216,7 @@ var AudioPlayerStore = assign( {}, EventEmitter.prototype, {
      *
      * @return {Number} 再生位置 ( 秒単位 )。
      */
-    playbackTime: function() {
+    playbackTime() {
         return _audioPlayer.playbackTime();
     },
 
@@ -225,7 +225,7 @@ var AudioPlayerStore = assign( {}, EventEmitter.prototype, {
      *
      * @return {Array} スペクトル。
      */
-    spectrums: function() {
+    spectrums() {
         return _audioPlayer.spectrums();
     },
 
@@ -234,7 +234,7 @@ var AudioPlayerStore = assign( {}, EventEmitter.prototype, {
      *
      * @return {Number} 音量。範囲は 0 〜 100 となります。
      */
-    volume: function() {
+    volume() {
         return _audioPlayer.volume();
     },
 
@@ -243,14 +243,14 @@ var AudioPlayerStore = assign( {}, EventEmitter.prototype, {
      *
      * @return {PlayState} 再生状態。
      */
-    playState: function() {
+    playState() {
         return _playState;
     },
 
     /**
      * 更新を通知します。
      */
-    emitChange: function() {
+    emitChange() {
         this.emit( CHANGE_EVENT );
     },
 
@@ -259,7 +259,7 @@ var AudioPlayerStore = assign( {}, EventEmitter.prototype, {
      *
      * @param {Function} callback イベント リスナーとなる関数。
      */
-    addChangeListener: function( callback ) {
+    addChangeListener( callback ) {
         this.on( CHANGE_EVENT, callback );
     },
 
@@ -268,7 +268,7 @@ var AudioPlayerStore = assign( {}, EventEmitter.prototype, {
      *
      * @param {Function} callback イベント リスナーとなっている関数。
      */
-    removeChangeListener: function( callback ) {
+    removeChangeListener( callback ) {
         this.removeListener( CHANGE_EVENT, callback );
     }
 } );

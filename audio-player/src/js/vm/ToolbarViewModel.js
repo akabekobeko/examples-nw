@@ -103,7 +103,7 @@ export default class ToolbarViewModel extends React.Component {
      * @param  {Boolan} prev 前の曲を選ぶなら true。
      */
     _moveNext( prev ) {
-        var music = MusicListStore.next( this.props.currentPlay, prev );
+        let music = MusicListStore.next( this.props.currentPlay, prev );
         if( !( music ) ) { return; }
 
         if( this.props.playState === PlayState.STOPPED ) {
@@ -118,10 +118,10 @@ export default class ToolbarViewModel extends React.Component {
      */
     _remove() {
         // リスト上の曲を対象とする
-        var current = this.props.current;
+        const current = this.props.current;
         if( !( current ) ) { return; }
 
-        var currentPlay = this.props.currentPlay;
+        const currentPlay = this.props.currentPlay;
         if( currentPlay && currentPlay.id === current.id ) {
             if( this.props.playState === PlayState.STOPPED ) {
                 MusicListActions.remove( current.id );
@@ -133,4 +133,4 @@ export default class ToolbarViewModel extends React.Component {
             MusicListActions.remove( current.id );
         }
     }
-};
+}

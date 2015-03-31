@@ -27,7 +27,7 @@ export default class MusicList {
      * @param  {Function} callback 初期化が完了した時に呼び出される関数。
      */
     init( callback ) {
-        var params = {
+        const params = {
             create: {
                 keyPath: 'id',
                 autoIncrement: true
@@ -91,9 +91,9 @@ export default class MusicList {
             return;
         }
 
-        var mm     = window.require( 'musicmetadata' );
-        var fs     = window.require( 'fs' );
-        var stream = fs.createReadStream( file.path );
+        const mm     = window.require( 'musicmetadata' );
+        const fs     = window.require( 'fs' );
+        const stream = fs.createReadStream( file.path );
 
         mm( stream, { duration: true }, ( err, metadata ) => {
             if( err ) {

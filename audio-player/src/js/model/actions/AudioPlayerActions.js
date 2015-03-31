@@ -11,7 +11,7 @@ export default {
      *
      * @param {Music} music 再生対象とする音楽情報。
      */
-    play: function( music ) {
+    play( music ) {
         AppDispatcher.dispatch( {
             actionType: ActionTypes.PLAY,
             music:      music
@@ -21,7 +21,7 @@ export default {
     /**
      * 音声再生を一時停止します。
      */
-    pause: function() {
+    pause() {
         AppDispatcher.dispatch( {
             actionType: ActionTypes.PAUSE
         } );
@@ -30,7 +30,7 @@ export default {
     /**
      * 音声再生を停止します。
      */
-    stop: function() {
+    stop() {
         AppDispatcher.dispatch( {
             actionType: ActionTypes.STOP
         } );
@@ -41,7 +41,7 @@ export default {
      *
      * @param {Number} playbackTime 新しい再生位置 ( 秒単位 )。
      */
-    seek: function( playbackTime ) {
+    seek( playbackTime ) {
         AppDispatcher.dispatch( {
             actionType:   ActionTypes.SEEK,
             playbackTime: playbackTime
@@ -53,7 +53,7 @@ export default {
      *
      * @param  {Number} volume 新しい音量 ( 0 〜 100 )。
      */
-    volume: function( volume ) {
+    volume( volume ) {
         AppDispatcher.dispatch( {
             actionType: ActionTypes.VOLUME,
             volume:     volume
@@ -63,7 +63,7 @@ export default {
     /**
      * 再生対象としている曲の選択を解除します。
      */
-    unselect: function() {
+    unselect() {
         AppDispatcher.dispatch( {
             actionType: ActionTypes.UNSELECT
         } );

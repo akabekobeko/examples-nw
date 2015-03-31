@@ -1,10 +1,11 @@
+import assign from 'object-assign';
 
 /**
  * ユーティリティ関数を提供します。
  * 
  * @type {Object}
  */
-var Util = {
+export default {
     /**
      * 複数オブジェクトを結合します。
      *
@@ -12,11 +13,9 @@ var Util = {
      *
      * @return {Object} 結合されたオブジェクト。
      */
-    mixin: function() {
-        var assign = require( 'object-assign' );
-        var obj    = {};
-
-        for( var i = 0, max = arguments.length; i < max; ++i ) {
+    mixin() {
+        const obj    = {};
+        for( let i = 0, max = arguments.length; i < max; ++i ) {
             if( arguments[ i ] ) {
                 assign( obj, arguments[ i ] );
             }
@@ -32,10 +31,10 @@ var Util = {
      *
      * @return {String} 文字列化された演奏時間。
      */
-    secondsToString: function( duration ) {
-        var h = ( duration / 3600 | 0 );
-        var m = ( ( duration % 3600 ) / 60 | 0 );
-        var s = ( duration % 60 );
+    secondsToString( duration ) {
+        const h = ( duration / 3600 | 0 );
+        const m = ( ( duration % 3600 ) / 60 | 0 );
+        const s = ( duration % 60 );
 
         function padding( num ) {
             return ( '0' + num ).slice( -2 );
@@ -46,5 +45,3 @@ var Util = {
                                                  '0:' + padding( s ) );
     }
 };
-
-export default Util;

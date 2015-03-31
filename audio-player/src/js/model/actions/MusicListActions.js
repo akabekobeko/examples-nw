@@ -9,7 +9,7 @@ export default {
     /**
      * 音楽リストを初期化します。
      */
-    init: function() {
+    init() {
         AppDispatcher.dispatch( {
             actionType: ActionTypes.INIT
         } );
@@ -20,7 +20,7 @@ export default {
      *
      * @param {Music} music 音楽情報。
      */
-    select: function( music ) {
+    select( music ) {
         AppDispatcher.dispatch( {
             actionType: ActionTypes.SELECT,
             music:      music
@@ -30,7 +30,7 @@ export default {
     /**
      * 音楽を追加します。
      */
-    add: function() {
+    add() {
         AppDispatcher.dispatch( {
             actionType: ActionTypes.ADD
         } );
@@ -41,7 +41,7 @@ export default {
      *
      * @param {Number} musicId 削除対象とする音楽の識別子。
      */
-    remove: function( musicId ) {
+    remove( musicId ) {
         AppDispatcher.dispatch( {
             actionType: ActionTypes.REMOVE,
             musicId:    musicId
@@ -51,7 +51,7 @@ export default {
     /**
      * すべての音楽を消去します。
      */
-    clear: function() {
+    clear() {
         AppDispatcher.dispatch( {
             actionType: ActionTypes.CLEAR
         } );

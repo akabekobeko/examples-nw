@@ -15,7 +15,7 @@ export default class AudioPlayer {
          * @type {AudioContext|webkitAudioContext}
          */
         this._audioContext = ( () => {
-            var audioContext = ( window.AudioContext || window.webkitAudioContext );
+            const audioContext = ( window.AudioContext || window.webkitAudioContext );
             if( audioContext ) { return new audioContext(); }
 
             throw new Error( 'Web Audio API is not supported.' );
@@ -107,7 +107,7 @@ export default class AudioPlayer {
     openFromFile( filePath, callback ) {
         if( !( filePath && callback ) ) { throw new Error( 'Arguments is not defined.' ); }
 
-        var fs = window.require( 'fs' );
+        const fs = window.require( 'fs' );
         fs.readFile( filePath, ( err, data ) => {
             if( err ) {
                 callback( err );
@@ -129,7 +129,7 @@ export default class AudioPlayer {
     openFromURL( url, callback ) {
         if( !( url && callback ) ) { throw new Error( 'Arguments is not defined.' ); }
 
-        var request = new XMLHttpRequest();
+        const request = new XMLHttpRequest();
         request.open( 'GET', url );
         request.responseType = 'arraybuffer'; 
 
@@ -273,7 +273,7 @@ export default class AudioPlayer {
      * @return {Array} スペクトル。
      */
     spectrums() {
-        var spectrums = new Uint8Array( this._analyserNode.frequencyBinCount );
+        const spectrums = new Uint8Array( this._analyserNode.frequencyBinCount );
         this._analyserNode.getByteFrequencyData( spectrums );
 
         return spectrums;
@@ -297,7 +297,7 @@ export default class AudioPlayer {
         if( 0 <= value && value <= 100 ) {
             this._gainNode.gain.value = ( value / 100 );
         }
-    };
+    }
 
     /**
      * 音声再生が終了した時に発生します。
@@ -314,7 +314,7 @@ export default class AudioPlayer {
         this._sourceNode.buffer  = this._audioBuffer;
         this._sourceNode.connect( this._analyserNode );
 
-        var onEnded = this._onEnded.bind( this );
+        const onEnded = this._onEnded.bind( this );
         this._sourceNode.onended = onEnded;
     }
 
@@ -328,10 +328,10 @@ export default class AudioPlayer {
      * @return {ArrayBuffer} JavaScript の ArrayBuffer。
      */
     _toArrayBuffer( buffer ) {
-        var ab   = new ArrayBuffer( buffer.length );
-        var view = new Uint8Array( ab );
+        const ab   = new ArrayBuffer( buffer.length );
+        const view = new Uint8Array( ab );
 
-        for( var i = 0, max = buffer.length; i < max; ++i ) {
+        for( let i = 0, max = buffer.length; i < max; ++i ) {
             view[ i ] = buffer[ i ];
         }
 

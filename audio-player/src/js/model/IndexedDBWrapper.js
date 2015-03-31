@@ -69,13 +69,13 @@ export default class IndexedDBWrapper {
     open( params, callback ) {
         if( !( params && params.create ) ) { throw new Error( 'Invalid arguments' ); }
 
-        var onFinish = ( callback || this._defaultCallback );
-        var request  = this._indexedDB.open( this._dbName, this._dbVersion );
+        const onFinish = ( callback || this._defaultCallback );
+        const request  = this._indexedDB.open( this._dbName, this._dbVersion );
 
         request.onupgradeneeded = ( ev ) => {
             // ストア生成
             this._db = ev.target.result;
-            var store = this._db.createObjectStore( this._dbStoreName, params.create );
+            const store = this._db.createObjectStore( this._dbStoreName, params.create );
 
             // インデックス
             if( params.index && 0 < params.index.length ) {
@@ -97,7 +97,7 @@ export default class IndexedDBWrapper {
         request.onerror = ( ev ) => {
             onFinish( ev.target.error );
         };
-    };
+    }
 
     /**
      * データベースを破棄します。
@@ -105,14 +105,14 @@ export default class IndexedDBWrapper {
      * @param {Function} callback 処理が終了した時に呼び出される関数。
      */
     dispose( callback ) {
-        var onFinish = ( callback || defaultCallback );
+        const onFinish = ( callback || defaultCallback );
 
         if( this._db ) {
             this._db.close();
             this._db = null;
         }
 
-        var request = this._indexedDB.deleteDatabase( this._dbName );
+        const request = this._indexedDB.deleteDatabase( this._dbName );
         request.onsuccess = ( ev ) => {
             onFinish();
         };
@@ -131,10 +131,10 @@ export default class IndexedDBWrapper {
     clear( callback ) {
         if( !( this._db ) ) { return; }
 
-        var onFinish    = ( callback || this._defaultCallback );
-        var transaction = this._db.transaction( this._dbStoreName, 'readwrite' );
-        var store       = transaction.objectStore( this._dbStoreName );
-        var request     = store.clear();
+        const onFinish    = ( callback || this._defaultCallback );
+        const transaction = this._db.transaction( this._dbStoreName, 'readwrite' );
+        const store       = transaction.objectStore( this._dbStoreName );
+        const request     = store.clear();
 
         request.onsuccess = ( ev ) => {
             onFinish();
@@ -153,14 +153,14 @@ export default class IndexedDBWrapper {
     readAll( callback ) {
         if( !( this._db ) ) { return; }
 
-        var onFinish    = ( callback || this._defaultCallback );
-        var transaction = this._db.transaction( this._dbStoreName, 'readonly' );
-        var store       = transaction.objectStore( this._dbStoreName );
-        var request     = store.openCursor();
-        var items       = [];
+        const onFinish    = ( callback || this._defaultCallback );
+        const transaction = this._db.transaction( this._dbStoreName, 'readonly' );
+        const store       = transaction.objectStore( this._dbStoreName );
+        const request     = store.openCursor();
+        const items       = [];
 
         request.onsuccess = ( ev ) => {
-            var cursor = ev.target.result;
+            const cursor = ev.target.result;
             if( cursor ) {
                 items.push( cursor.value );
                 cursor.continue();
@@ -183,13 +183,13 @@ export default class IndexedDBWrapper {
     readSome( callback ) {
         if( !( this._db ) ) { return; }
 
-        var onFinish    = ( callback || defaultCallback );
-        var transaction = this._db.transaction( this._dbStoreName, 'readonly' );
-        var store       = transaction.objectStore( this._dbStoreName );
-        var request     = store.openCursor();
+        const onFinish    = ( callback || defaultCallback );
+        const transaction = this._db.transaction( this._dbStoreName, 'readonly' );
+        const store       = transaction.objectStore( this._dbStoreName );
+        const request     = store.openCursor();
 
         request.onsuccess = ( ev ) => {
-            var cursor = ev.target.result;
+            const cursor = ev.target.result;
             if( cursor ) {
                 if( onFinish( null, cursor.value ) ) {
                     cursor.continue();
@@ -213,10 +213,10 @@ export default class IndexedDBWrapper {
     add( item, callback ) {
         if( !( this._db ) ) { return; }
 
-        var onFinish    = ( callback || defaultCallback );
-        var transaction = this._db.transaction( this._dbStoreName, 'readwrite' );
-        var store       = transaction.objectStore( this._dbStoreName );
-        var request     = store.put( item );
+        const onFinish    = ( callback || defaultCallback );
+        const transaction = this._db.transaction( this._dbStoreName, 'readwrite' );
+        const store       = transaction.objectStore( this._dbStoreName );
+        const request     = store.put( item );
 
         request.onsuccess = ( ev ) => {
             item.id = ev.target.result;
@@ -237,10 +237,10 @@ export default class IndexedDBWrapper {
     remove( id, callback ) {
         if( !( this._db ) ) { return; }
 
-        var onFinish    = ( callback || defaultCallback );
-        var transaction = this._db.transaction( this._dbStoreName, 'readwrite' );
-        var store       = transaction.objectStore( this._dbStoreName );
-        var request     = store.delete( id );
+        const onFinish    = ( callback || defaultCallback );
+        const transaction = this._db.transaction( this._dbStoreName, 'readwrite' );
+        const store       = transaction.objectStore( this._dbStoreName );
+        const request     = store.delete( id );
 
         request.onsuccess = ( ev ) => {
             onFinish( null, id );
