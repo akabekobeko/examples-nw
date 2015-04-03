@@ -1,4 +1,4 @@
-import keyMirror from 'react/lib/keyMirror';
+import KeyMirror from 'react/lib/keyMirror';
 
 /**
  * 音楽リストの操作を表す定数を定義します。
@@ -9,7 +9,7 @@ export default {
      * アクション種別。
      * @type {Object}
      */
-    ActionTypes: keyMirror( {
+    ActionTypes: KeyMirror( {
         /** 音楽リストの初期化。 */
         INIT: null,
 

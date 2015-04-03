@@ -1,4 +1,4 @@
-import keyMirror from 'react/lib/keyMirror';
+import KeyMirror from 'react/lib/keyMirror';
 
 /**
  * 音声プレーヤー用の定数を定義します。
@@ -9,7 +9,7 @@ export default {
      * アクション種別を定義します。
      * @type {Object}
      */
-    ActionTypes: keyMirror( {
+    ActionTypes: KeyMirror( {
         /** 再生。 */
         PLAY: null,
 
@@ -33,7 +33,7 @@ export default {
      * 再生状態を定義します。
      * @type {Object}
      */
-    PlayState: keyMirror( {
+    PlayState: KeyMirror( {
         /** 再生中。 */
         PLAYING: null,
 
