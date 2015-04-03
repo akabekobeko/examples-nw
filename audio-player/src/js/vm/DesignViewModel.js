@@ -1,8 +1,8 @@
 import React         from 'react';
+import ObjectAssign  from 'object-assign';
 import ToolbarView   from '../view/ToolbarView.jsx';
 import MusicListView from '../view/MusicListView.jsx';
 import {PlayState}   from '../model/constants/AudioPlayerConstants.js';
-import Util          from '../model/util/Utility.js';
 
 /**
  * アプリケーションのエントリー ポイントになるコンポーネント ( デザイン確認用 ) です。
@@ -48,7 +48,7 @@ export default class DesignViewModel extends React.Component {
      * @return {Object} React エレメント。
      */
     render() {
-        const comp = Util.mixin( this.state, { self: this } );
+        const comp = ObjectAssign( {}, this.state, { self: this } );
         return React.createElement(
             "article",
             { className: "app" },

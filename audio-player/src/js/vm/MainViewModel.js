@@ -1,4 +1,5 @@
 import React              from 'react';
+import ObjectAssign       from 'object-assign';
 import AudioPlayerStore   from '../model/stores/AudioPlayerStore.js';
 import MusicListActions   from '../model/actions/MusicListActions.js';
 import MusicListStore     from '../model/stores/MusicListStore.js';
@@ -6,7 +7,6 @@ import {PlayState}        from '../model/constants/AudioPlayerConstants.js';
 import MainView           from '../view/MainView.jsx';
 import ToolbarViewModel   from './ToolbarViewModel.js';
 import MusicListViewModel from './MusicListViewModel.js';
-import Util               from '../model/util/Utility.js';
 
 /**
  * アプリケーションのエントリー ポイントになるコンポーネントです。
@@ -55,7 +55,7 @@ export default class MainViewModel extends React.Component {
      * @return {Object} React エレメント。
      */
     render() {
-        return MainView( Util.mixin( this.state, {
+        return MainView( ObjectAssign( {}, this.state, {
             ToolbarViewModel:   ToolbarViewModel,
             MusicListViewModel: MusicListViewModel
         } ) );

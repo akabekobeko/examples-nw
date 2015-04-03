@@ -1,9 +1,9 @@
 import React              from 'react';
+import ObjectAssign       from 'object-assign';
 import MusicListActions   from '../model/actions/MusicListActions.js';
 import AudioPlayerActions from '../model/actions/AudioPlayerActions.js';
 import MusicListView      from'../view/MusicListView.jsx';
 import {PlayState}        from '../model/constants/AudioPlayerConstants.js';
-import Util               from '../model/util/Utility.js';
 
 /**
  * 音楽リストの Model - View を仲介するコンポーネントです。
@@ -26,7 +26,7 @@ export default class MusicListViewModel extends React.Component {
      * @return {Object} React エレメント。
      */
     render() {
-        return MusicListView( Util.mixin( this.props, {
+        return MusicListView( ObjectAssign( {}, this.props, {
             self:          this,
             playing:       ( this.props.playState !== PlayState.STOPPED ),
             onSelectMusic: this._onSelectMusic,

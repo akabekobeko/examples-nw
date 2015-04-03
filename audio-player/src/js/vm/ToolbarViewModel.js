@@ -1,10 +1,10 @@
 import React              from 'react';
+import ObjectAssign       from 'object-assign';
 import {PlayState}        from '../model/constants/AudioPlayerConstants.js';
 import MusicListActions   from '../model/actions/MusicListActions.js';
 import MusicListStore     from '../model/stores/MusicListStore.js';
 import AudioPlayerActions from '../model/actions/AudioPlayerActions.js';
 import ToolbarView        from '../view/ToolbarView.jsx';
-import Util               from '../model/util/Utility.js';
 
 /**
  * ツールバー用コンポーネントです。
@@ -27,7 +27,7 @@ export default class ToolbarViewModel extends React.Component {
      * @return {Object} React エレメント。
      */
     render() {
-        return ToolbarView( Util.mixin( this.props, {
+        return ToolbarView( ObjectAssign( {}, this.props, {
             self:             this,
             onPressButton:    this._onPressButton,
             onVolumeChange:   this._onVolumeChange,
