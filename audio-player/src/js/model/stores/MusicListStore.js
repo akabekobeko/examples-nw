@@ -1,184 +1,101 @@
-var AppDispatcher      = require( '../dispatcher/AppDispatcher.js' );
-var MusicListConstants = require( '../constants/MusicListConstants.js' );
-var ActionTypes        = MusicListConstants.ActionTypes;
-var FileDialog         = require( '../util/FileDialog.js' );
-var EventEmitter       = require( 'events' ).EventEmitter;
-var assign             = require( 'object-assign' );
+import {EventEmitter}   from 'events';
+import AppDispatcher    from '../dispatcher/AppDispatcher.js';
+import {ActionTypes}    from '../constants/MusicListConstants.js';
+import {OpenFileDialog} from '../util/FileDialog.js';
+import MusicList        from '../MusicList.js';
 
 /**
  * イベント種別。
  * @type {String}
  */
-var CHANGE_EVENT = 'change';
+const CHANGE_EVENT = 'change';
 
 /**
- * 唯一の曲リスト操作オブジェクト。
- * @type {MusicList}
+ * Store をシングルトンにするための識別子となるプロパティ名。
+ * @type {Symbol}
  */
-var _musicList = new ( require( '../MusicList.js' ) )();
+const SINGLETON_PROP = Symbol();
 
 /**
- * 唯一の曲リスト。
- * @type {Array.<Music>}
+ * Store のインスタンス生成元を判定するための識別子。
+ * @type {Symbol}
  */
-var _musics = [];
-
-/**
- * リスト上で選択されている曲。
- * @type {Music}
- */
-var _current = null;
-
-/**
- * ファイル選択ダイアログ。
- * @type {OpenFileDialog}
- */
-var _openFileDialog = FileDialog.openFileDialog( 'audio/*', true, function( files ) {
-    if( !( files && 0 < files.length ) ) { return; }
-
-    function onAdded( err, music ) {
-        if( err ) {
-            MusicListStore.emitChange( err, ActionTypes.ADD );
-        } else {
-            _musics.push( music );
-            MusicListStore.emitChange( null, ActionTypes.ADD, music );
-        }
-    }
-
-    for( var i = 0, max = files.length; i < max; ++i ) {
-        _musicList.add( files[ i ], onAdded );        
-    }
-} );
-
-/**
- * 音楽リストを初期化します。
- *
- * @param {Function} callback コールバック関数。
- */
-function init() {
-    _musicList.init( function( err ) {
-        if( err ) {
-            MusicListStore.emitChange( err, ActionTypes.INIT );
-        } else {
-            _musicList.readAll( function( err, musics ) {
-                if( err ) {
-                    MusicListStore.emitChange( err, ActionTypes.INIT );
-                } else {
-                    _musics = musics;
-                    if( 0 < _musics.length ) {
-                        _current = _musics[ 0 ];
-                    }
-
-                    MusicListStore.emitChange( null, ActionTypes.INIT );
-                }
-            } );
-        }
-    } );
-}
-
-/**
- * 曲を選択します。
- *
- * @param {Music} music 選択対象となる曲。
- *
- * @return {Boolean} 成功時は true。
- */
-function select( music ) {
-    if( _current && music && _current.id === music.id ) { return false; }
-
-    var err = new Error( 'Failed to select the music, not found.' );
-    for( var i = 0, max = _musics.length; i < max; ++i ) {
-        if( music.id === _musics[ i ].id ) {
-            err      = null;
-            _current = music;
-            break;
-        }
-    }
-
-    MusicListStore.emitChange( err, ActionTypes.SELECT, music );
-}
-
-/**
- * 音声ファイルを追加します。
- */
-function add() {
-    _openFileDialog.show();
-}
-
-/**
- * 曲を削除します。
- *
- * @param {Number} musicId  削除対象となる曲の識別子。
- */
-function remove( musicId ) {
-    _musicList.remove( musicId, function( err ){
-        if( err ) {
-            MusicListStore.emitChange( err, ActionTypes.REMOVE, musicId );
-        } else {
-            err = new Error( 'Failed to remove the music, not found.' );
-            for( var i = 0, max = _musics.length; i < max; ++i ) {
-                if( _musics[ i ].id === musicId ) {
-                    err = null;
-                    _musics.splice( i, 1 );
-                    break;
-                }
-            }
-
-            MusicListStore.emitChange( err, ActionTypes.REMOVE, musicId );
-        }
-    } );
-}
-
-/**
- * アクションを処理します。
- * 
- * @param {Object} action AudioPlayerConstants に定義されたアクション。
- */
-AppDispatcher.register( function( action ) {
-    switch( action.actionType ) {
-    case ActionTypes.INIT:
-        init();
-        break;
-
-    case ActionTypes.SELECT:
-        select( action.music );
-        break;
-
-    case ActionTypes.ADD:
-        add();
-        break;
-
-    case ActionTypes.REMOVE:
-        remove( action.musicId );
-        break;
-
-    default:
-        break;
-    }
-} );
+const SINGLETON_ENFORCER = Symbol();
 
 /**
  * 曲リストを操作します。
+ * このクラスはシングルトンとして実装されます。
+ *
  * @type {MusicListStore}
  */
-var MusicListStore = assign( {}, EventEmitter.prototype, {
+class MusicListStore extends EventEmitter {
+    /**
+     * インスタンスを初期化します。
+     *
+     * @param {Symbol} enforcer インスタンス生成元を判定するための識別子。
+     */
+    constructor( enforcer ) {
+        if( enforcer != SINGLETON_ENFORCER ) {
+            throw new Error( 'Cannot construct singleton' );
+        }
+
+        AppDispatcher.register( this._onAction.bind( this ) );
+
+        /**
+         * 唯一の曲リスト操作オブジェクト。
+         * @type {MusicList}
+         */
+        this._musicList = new MusicList();
+
+        /**
+         * 唯一の曲リスト。
+         * @type {Array.<Music>}
+         */
+        this._musics = [];
+
+        /**
+         * リスト上で選択されている曲。
+         * @type {Music}
+         */
+        this._current = null;
+
+        /**
+         * ファイル選択ダイアログ。
+         * @type {OpenFileDialog}
+         */
+        this._openFileDialog = new OpenFileDialog( 'audio/*', true, this._onSelectFiles.bind( this ) );
+    }
+
+    /**
+     * 唯一の MusicListStore インスタンスを取得します。
+     *
+     * @return {MusicListStore} MusicListStore インスタンス。
+     */
+    static get instance() {
+        if( !( this[ SINGLETON_PROP ] ) ) {
+            this[ SINGLETON_PROP ] = new MusicListStore( SINGLETON_ENFORCER );
+        }
+
+        return this[ SINGLETON_PROP ];
+    }
+
     /**
      * すべての曲を取得します。
      *
      * @return {Array.<Music>} 曲情報コレクション。
      */
-    getAll: function() {
-        return _musics;
-    },
+    getAll() {
+        return this._musics;
+    }
 
     /**
      * 現在選択されている曲を取得します。
      *
      * @return {Music} 曲情報。何も選択されていない場合は null。
      */
-    current: function() {
-        return _current;
-    },
+    current() {
+        return this._current;
+    }
 
     /**
      * 次の曲を取得します。
@@ -191,45 +108,175 @@ var MusicListStore = assign( {}, EventEmitter.prototype, {
      *
      * @return {Music} 成功時は曲情報。それ以外は null。
      */
-    next: function( music, prev ) {
-        var current = ( music ? music : _current );
+    next( music, prev ) {
+        const current = ( music ? music : _current );
         if( !( current ) ) { return null; }
 
-        var index = -1;
-        for( var i = 0, max = _musics.length; i < max; ++i ) {
-            if( _musics[ i ].id === current.id ) {
+        let index = -1;
+        for( let i = 0, max = this._musics.length; i < max; ++i ) {
+            if( this._musics[ i ].id === current.id ) {
                 index = ( prev ? i - 1 : i + 1 );
                 break;
             }
         }
 
-        return ( 0 <= index && index < _musics.length ? _musics[ index ] : null );
-    },
-
-    /**
-     * 更新を通知します。
-     */
-    emitChange: function( err, type, params ) {
-        this.emit( CHANGE_EVENT, err, type, params );
-    },
+        return ( 0 <= index && index < this._musics.length ? this._musics[ index ] : null );
+    }
 
     /**
      * イベント リスナーを登録します。
      *
      * @param {Function} callback イベント リスナーとなる関数。
      */
-    addChangeListener: function( callback ) {
+    addChangeListener( callback ) {
         this.on( CHANGE_EVENT, callback );
-    },
+    }
 
     /**
      * イベント リスナーの登録を解除します。
      *
      * @param {Function} callback イベント リスナーとなっている関数。
      */
-    removeChangeListener: function( callback ) {
+    removeChangeListener( callback ) {
         this.removeListener( CHANGE_EVENT, callback );
     }
-} );
 
-module.exports = MusicListStore;
+    /**
+     * 更新を通知します。
+     */
+    _emitChange( err, type, params ) {
+        this.emit( CHANGE_EVENT, err, type, params );
+    }
+
+    /**
+     * アクションが要求された時に発生します。
+     *
+     * @param {Object} action アクション情報。
+     */
+    _onAction( action ) {
+        switch( action.actionType ) {
+        case ActionTypes.INIT:
+            this._init();
+            break;
+
+        case ActionTypes.SELECT:
+            this._select( action.music );
+            break;
+
+        case ActionTypes.ADD:
+            this._add();
+            break;
+
+        case ActionTypes.REMOVE:
+            this._remove( action.musicId );
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    /**
+     * 音楽リストを初期化します。
+     *
+     * @param {Function} callback コールバック関数。
+     */
+    _init() {
+        this._musicList.init( ( err ) => {
+            if( err ) {
+                this._emitChange( err, ActionTypes.INIT );
+            } else {
+                this._musicList.readAll( ( err, musics ) => {
+                    if( err ) {
+                        this._emitChange( err, ActionTypes.INIT );
+                    } else {
+                        this._musics = musics;
+                        if( 0 < this._musics.length ) {
+                            this._current = this._musics[ 0 ];
+                        }
+
+                        this._emitChange( null, ActionTypes.INIT );
+                    }
+                } );
+            }
+        } );
+    }
+
+    /**
+     * 曲を選択します。
+     *
+     * @param {Music} music 選択対象となる曲。
+     *
+     * @return {Boolean} 成功時は true。
+     */
+    _select( music ) {
+        if( this._current && music && this._current.id === music.id ) { return false; }
+
+        let err = new Error( 'Failed to select the music, not found.' );
+        for( let i = 0, max = this._musics.length; i < max; ++i ) {
+            if( music.id === this._musics[ i ].id ) {
+                err      = null;
+                this._current = music;
+                break;
+            }
+        }
+
+        this._emitChange( err, ActionTypes.SELECT, music );
+    }
+
+    /**
+     * 音声ファイルを追加します。
+     */
+    _add() {
+        this._openFileDialog.show();
+    }
+
+    /**
+     * 曲を削除します。
+     *
+     * @param {Number} musicId  削除対象となる曲の識別子。
+     */
+    _remove( musicId ) {
+        this._musicList.remove( musicId, ( err ) => {
+            if( err ) {
+                this._emitChange( err, ActionTypes.REMOVE, musicId );
+            } else {
+                err = new Error( 'Failed to remove the music, not found.' );
+                for( let i = 0, max = this._musics.length; i < max; ++i ) {
+                    if( this._musics[ i ].id === musicId ) {
+                        err = null;
+                        this._musics.splice( i, 1 );
+                        break;
+                    }
+                }
+
+                this._emitChange( err, ActionTypes.REMOVE, musicId );
+            }
+        } );
+    }
+
+    /**
+     * 追加対象となるファイルが選択された時に発生します。
+     *
+     * @param {FileList} files ファイル情報コレクション。
+     */
+    _onSelectFiles( files ) {
+        if( !( files && 0 < files.length ) ) { return; }
+
+        function onAdded( err, music ) {
+            if( err ) {
+                this._emitChange( err, ActionTypes.ADD );
+            } else {
+                this._musics.push( music );
+                this._emitChange( null, ActionTypes.ADD, music );
+            }
+        }
+
+        // FileList は Array ではないため forEach を利用できない
+        for( let i = 0, max = files.length; i < max; ++i ) {
+            this._musicList.add( files[ i ], onAdded.bind( this ) );        
+        }
+    }
+}
+
+export default MusicListStore.instance;

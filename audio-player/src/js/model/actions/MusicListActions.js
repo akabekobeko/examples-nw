@@ -1,17 +1,15 @@
-
-var AppDispatcher      = require( '../dispatcher/AppDispatcher.js' );
-var MusicListConstants = require( '../constants/MusicListConstants.js' );
-var ActionTypes        = MusicListConstants.ActionTypes;
+import AppDispatcher from '../dispatcher/AppDispatcher.js';
+import {ActionTypes} from '../constants/MusicListConstants.js';
 
 /**
  * 音声プレーヤー操作を定義します。
  * @type {Object}
  */
-var MusicListActions = {
+export default {
     /**
      * 音楽リストを初期化します。
      */
-    init: function() {
+    init() {
         AppDispatcher.dispatch( {
             actionType: ActionTypes.INIT
         } );
@@ -22,7 +20,7 @@ var MusicListActions = {
      *
      * @param {Music} music 音楽情報。
      */
-    select: function( music ) {
+    select( music ) {
         AppDispatcher.dispatch( {
             actionType: ActionTypes.SELECT,
             music:      music
@@ -32,7 +30,7 @@ var MusicListActions = {
     /**
      * 音楽を追加します。
      */
-    add: function() {
+    add() {
         AppDispatcher.dispatch( {
             actionType: ActionTypes.ADD
         } );
@@ -43,7 +41,7 @@ var MusicListActions = {
      *
      * @param {Number} musicId 削除対象とする音楽の識別子。
      */
-    remove: function( musicId ) {
+    remove( musicId ) {
         AppDispatcher.dispatch( {
             actionType: ActionTypes.REMOVE,
             musicId:    musicId
@@ -53,11 +51,9 @@ var MusicListActions = {
     /**
      * すべての音楽を消去します。
      */
-    clear: function() {
+    clear() {
         AppDispatcher.dispatch( {
             actionType: ActionTypes.CLEAR
         } );
     }
 };
-
-module.exports = MusicListActions;

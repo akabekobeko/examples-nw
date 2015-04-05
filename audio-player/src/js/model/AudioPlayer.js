@@ -5,66 +5,71 @@
  *
  * @throws {Error} Web Audio API が未定義です。
  */
-var AudioPlayer = function() {
+export default class AudioPlayer {
     /**
-     * 音声操作コンテキスト。
-     * @type {AudioContext|webkitAudioContext}
+     * インスタンスを初期化します。
      */
-    var _audioContext = ( function() {
-        var audioContext = ( window.AudioContext || window.webkitAudioContext );
-        if( audioContext ) { return new audioContext(); }
+    constructor() {
+        /**
+         * 音声操作コンテキスト。
+         * @type {AudioContext|webkitAudioContext}
+         */
+        this._audioContext = ( () => {
+            const audioContext = ( window.AudioContext || window.webkitAudioContext );
+            if( audioContext ) { return new audioContext(); }
 
-        throw new Error( 'Web Audio API is not supported.' );
-    } )();
+            throw new Error( 'Web Audio API is not supported.' );
+        } )();
 
-    /**
-     * 音量調整ノード。
-     * @type {GainNode}
-     */
-    var _gainNode = _audioContext.createGain();
-    _gainNode.gain.value = 1.0;
-    _gainNode.connect( _audioContext.destination );
+        /**
+         * 音量調整ノード。
+         * @type {GainNode}
+         */
+        this._gainNode = this._audioContext.createGain();
+        this._gainNode.gain.value = 1.0;
+        this._gainNode.connect( this._audioContext.destination );
 
-    /**
-     * 音声解析ノード。
-     * @type {AnalyserNode}
-     */
-    var _analyserNode = _audioContext.createAnalyser();
-    _analyserNode.fftSize = 128;
-    _analyserNode.connect( _gainNode );
+        /**
+         * 音声解析ノード。
+         * @type {AnalyserNode}
+         */
+        this._analyserNode = this._audioContext.createAnalyser();
+        this._analyserNode.fftSize = 128;
+        this._analyserNode.connect( this._gainNode );
 
-    /**
-     * 音声ソース ノード。
-     * @type {AudioBufferSourceNode}
-     */
-    var _sourceNode = null;
+        /**
+         * 音声ソース ノード。
+         * @type {AudioBufferSourceNode}
+         */
+        this._sourceNode = null;
 
-    /**
-     * 音声バッファ。
-     * @type {AudioBuffer}
-     */
-    var _audioBuffer = null;
+        /**
+         * 音声バッファ。
+         * @type {AudioBuffer}
+         */
+        this._audioBuffer = null;
 
-    /**
-     * 音声が再生中であることを示す値。
-     * @type {Boolean}
-     */
-    var _isPlaying = false;
+        /**
+         * 音声が再生中であることを示す値。
+         * @type {Boolean}
+         */
+        this._isPlaying = false;
 
-    /**
-     * 再生位置 ( 秒単位 )。
-     * @type {Number}
-     */
-    var _playbackTime = 0;
+        /**
+         * 再生位置 ( 秒単位 )。
+         * @type {Number}
+         */
+        this._playbackTime = 0;
 
-    /**
-     * 再生を開始した時の日時 ( ミリ秒単位 )。
-     * AudioBufferSourceNode の再生操作は start/stop のみをサポートし、pause が存在しません。
-     * よって、これを実装するために start 時間を記録し、pause された時の現時刻から引いて再開位置を算出します。
-     *
-     * @type {Number}
-     */
-    var _startTimestamp = 0;
+        /**
+         * 再生を開始した時の日時 ( ミリ秒単位 )。
+         * AudioBufferSourceNode の再生操作は start/stop のみをサポートし、pause が存在しません。
+         * よって、これを実装するために start 時間を記録し、pause された時の現時刻から引いて再開位置を算出します。
+         *
+         * @type {Number}
+         */
+        this._startTimestamp = 0;
+    }
 
     /**
      * 音声データを再生対象として開きます。
@@ -72,24 +77,24 @@ var AudioPlayer = function() {
      * @param {ArrayBuffer} buffer   音声データ。
      * @param {Function}    callback 処理が完了したときに呼び出される関数。
      */
-    this.open = function( buffer, callback ) {
-        _audioContext.decodeAudioData( buffer,
-            function( audioBuffer ) {
+    open( buffer, callback ) {
+        this._audioContext.decodeAudioData( buffer,
+            ( audioBuffer ) => {
                 this.close();
 
-                _audioBuffer = audioBuffer;
-                _initSourceNode();
+                this._audioBuffer = audioBuffer;
+                this._initSourceNode();
 
                 callback();
 
             }.bind( this ),
 
-            function() {
+            () => {
                 // webkitAudioContext だとエラーが取れないので自前指定
                 callback( new Error( 'Faild to decode for audio data.' ) );
             }
         );
-    };
+    }
 
     /**
      * 音楽ファイルのパス情報から音楽プレーヤーを生成します。
@@ -99,19 +104,19 @@ var AudioPlayer = function() {
      *
      * @throws {Error} filePath または callback が未定義です。
      */
-    this.openFromFile = function( filePath, callback ) {
+    openFromFile( filePath, callback ) {
         if( !( filePath && callback ) ) { throw new Error( 'Arguments is not defined.' ); }
 
-        var fs = window.require( 'fs' );
-        fs.readFile( filePath, function( err, data ) {
+        const fs = window.require( 'fs' );
+        fs.readFile( filePath, ( err, data ) => {
             if( err ) {
                 callback( err );
 
             } else {
-                this.open( _toArrayBuffer( data ), callback );
+                this.open( this._toArrayBuffer( data ), callback );
             }
         }.bind( this ) );
-    };
+    }
 
     /**
      * 音声データの URL から音楽プレーヤーを生成します。
@@ -121,95 +126,95 @@ var AudioPlayer = function() {
      *
      * @throws {Error} filePath または callback が未定義です。
      */
-    this.openFromURL = function( url, callback ) {
+    openFromURL( url, callback ) {
         if( !( url && callback ) ) { throw new Error( 'Arguments is not defined.' ); }
 
-        var request = new XMLHttpRequest();
+        const request = new XMLHttpRequest();
         request.open( 'GET', url );
         request.responseType = 'arraybuffer'; 
 
-        request.onload = function() {
+        request.onload = () => {
             this.open( request.response, callback );
         }.bind( this );
 
-        request.onerror = function( err ) {
+        request.onerror = ( err ) => {
             callback( err );
         };
-    };
+    }
 
     /**
      * 再生対象としている音声データを閉じます。
      */
-    this.close = function() {
+    close() {
         this.stop();
 
-        _audioBuffer    = null;
-        _playbackTime   = 0;
-        _startTimestamp = 0;
-    };
+        this._audioBuffer    = null;
+        this._playbackTime   = 0;
+        this._startTimestamp = 0;
+    }
 
     /**
      * 音声の再生を開始します。
      *
      * @return {Boolean} 成功時は true。
      */
-    this.play = function() {
+    play() {
         console.log( '[play]' );
-        if( _isPlaying ) { return false; }
+        if( this._isPlaying ) { return false; }
 
-        _initSourceNode();
-        _sourceNode.start( 0, _playbackTime );
-        _startTimestamp = Date.now();
-        _isPlaying      = true;
+        this._initSourceNode();
+        this._sourceNode.start( 0, this._playbackTime );
+        this._startTimestamp = Date.now();
+        this._isPlaying      = true;
 
         return true;
-    };
+    }
 
     /**
      * 音声の再生を一時停止します。
      *
      * @return {Boolean} 成功時は true。
      */
-    this.pause = function() {
+    pause() {
         console.log( '[pause]' );
-        if( !( _isPlaying ) ) { return false; }
+        if( !( this._isPlaying ) ) { return false; }
 
         this.stop( true );
         return true;
-    };
+    }
 
     /**
      * 音声の再生を停止します。
      *
      * @param {Boolean}
      */
-    this.stop = function( pause ) {
+    stop( pause ) {
         console.log( '[stop]' );
         if( pause ) {
             // 一時停止呼ならば onended を無効化しておく
             // この処理がないと play の後に onended が遅延実行され、再生状態がおかしくなる
             // 
-            if( _sourceNode ) {
-                _sourceNode.onended = null;
-                _sourceNode.stop();
-                _sourceNode = null;
+            if( this._sourceNode ) {
+                this._sourceNode.onended = null;
+                this._sourceNode.stop();
+                this._sourceNode = null;
             }
 
             // 次回の再生時に復元するための位置を記録
-            _playbackTime = this.playbackTime();
+            this._playbackTime = this.playbackTime();
 
         } else {
-            if( _sourceNode ) {
-                _sourceNode.stop();
-                _sourceNode = null;
+            if( this._sourceNode ) {
+                this._sourceNode.stop();
+                this._sourceNode = null;
             }
 
-            _playbackTime = 0;
+            this._playbackTime = 0;
         }
 
         // this.playbackTime() 内で現在位置を算出してからフラグを無効化する
-        _isPlaying = false;
-    };
+        this._isPlaying = false;
+    }
 
     /**
      * 音声の再生位置を変更します。
@@ -218,7 +223,7 @@ var AudioPlayer = function() {
      *
      * @return {Boolean} 成功時は true。
      */
-    this.seek = function( playbackTime ) {
+    seek( playbackTime ) {
         console.log( '[seek]' );
         if( playbackTime === undefined ) { return false; }
 
@@ -229,88 +234,88 @@ var AudioPlayer = function() {
             return false;
         }
 
-        if( _isPlaying ) {
+        if( this._isPlaying ) {
             this.pause();
-            _playbackTime = playbackTime;
+            this._playbackTime = playbackTime;
             this.play();
         } else {
-            _playbackTime = playbackTime;
+            this._playbackTime = playbackTime;
         }
 
         return true;
-    };
+    }
 
     /**
      * 演奏時間を取得します。
      *
      * @return {Number} 演奏時間 ( 秒単位 )。
      */
-    this.duration = function() {
-        return ( _audioBuffer ? Math.round( _audioBuffer.duration ) : 0 );
-    };
+    duration() {
+        return ( this._audioBuffer ? Math.round( this._audioBuffer.duration ) : 0 );
+    }
 
     /**
      * 再生位置を取得します。
      *
      * @return {Number} 再生位置 ( 秒単位 )。
      */
-    this.playbackTime = function() {
-        if( _isPlaying ) {
-            return ( Math.round( ( Date.now() - _startTimestamp ) / 1000 ) + _playbackTime );
+    playbackTime() {
+        if( this._isPlaying ) {
+            return ( Math.round( ( Date.now() - this._startTimestamp ) / 1000 ) + this._playbackTime );
         } else {
-            return _playbackTime;
+            return this._playbackTime;
         }
-    };
+    }
 
     /**
      * 音声の周波数スペクトルを取得します。
      *
      * @return {Array} スペクトル。
      */
-    this.spectrums = function() {
-        var spectrums = new Uint8Array( _analyserNode.frequencyBinCount );
-        _analyserNode.getByteFrequencyData( spectrums );
+    spectrums() {
+        const spectrums = new Uint8Array( this._analyserNode.frequencyBinCount );
+        this._analyserNode.getByteFrequencyData( spectrums );
 
         return spectrums;
-    };
+    }
 
     /**
      * 音量を取得します。
      *
      * @return {Number} 音量。範囲は 0 〜 100 となります。
      */
-    this.volume = function() {
-        return ( _gainNode.gain.value * 100 );
-    };
+    volume() {
+        return ( this._gainNode.gain.value * 100 );
+    }
 
     /**
      * 音量を設定します。
      *
      * @param {Number} value 音量。範囲は 0 〜 100 となります。
      */
-    this.setVolume = function( value ) {
+    setVolume( value ) {
         if( 0 <= value && value <= 100 ) {
-            _gainNode.gain.value = ( value / 100 );
+            this._gainNode.gain.value = ( value / 100 );
         }
-    };
+    }
 
     /**
      * 音声再生が終了した時に発生します。
      */
-    function _onEnded() {
+    _onEnded() {
         console.log( '[onend]' );
     }
 
     /**
      * 音声ソース ノードを初期化します。
      */
-    function _initSourceNode() {
-        _sourceNode = _audioContext.createBufferSource();
-        _sourceNode.buffer  = _audioBuffer;
-        _sourceNode.connect( _analyserNode );
+    _initSourceNode() {
+        this._sourceNode = this._audioContext.createBufferSource();
+        this._sourceNode.buffer  = this._audioBuffer;
+        this._sourceNode.connect( this._analyserNode );
 
-        var onEnded = _onEnded.bind( this );
-        _sourceNode.onended = onEnded;
+        const onEnded = this._onEnded.bind( this );
+        this._sourceNode.onended = onEnded;
     }
 
     /**
@@ -322,20 +327,14 @@ var AudioPlayer = function() {
      *
      * @return {ArrayBuffer} JavaScript の ArrayBuffer。
      */
-    function _toArrayBuffer( buffer ) {
-        var ab   = new ArrayBuffer( buffer.length );
-        var view = new Uint8Array( ab );
+    _toArrayBuffer( buffer ) {
+        const ab   = new ArrayBuffer( buffer.length );
+        const view = new Uint8Array( ab );
 
-        for( var i = 0, max = buffer.length; i < max; ++i ) {
+        for( let i = 0, max = buffer.length; i < max; ++i ) {
             view[ i ] = buffer[ i ];
         }
 
         return ab;
     }
-};
-
-/**
- * 音楽プレーヤーを生成します。
- * @type {Object}
- */
-module.exports = AudioPlayer;
+}

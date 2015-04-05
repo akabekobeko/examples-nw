@@ -1,87 +1,73 @@
 /**
  * ファイル選択ダイアログを提供します。
  *
- * @param {String}   accept   種別。
- * @param {Boolean}  multiple 複数選択するなら true。
- * @param {Function} callback ダイアログが閉じられる時に呼び出される関数。
  */
-var OpenFileDialog = function( accept, multiple, callback ) {
+export class OpenFileDialog {
     /**
-     * input 要素。
-     * @type {Element}
+     * インスタンスを初期化します。
+     *
+     * @param {String}   accept   種別。
+     * @param {Boolean}  multiple 複数選択するなら true。
+     * @param {Function} callback ダイアログが閉じられる時に呼び出される関数。
      */
-    var _element = document.createElement( 'input' );
+    constructor( accept, multiple, callback ) {
+        /**
+         * input 要素。
+         * @type {Element}
+         */
+        this._element = document.createElement( 'input' );
+        this._element.setAttribute( 'type', 'file' );
+        this._element.addEventListener( 'change', ( ev ) => {
+            if( this._callback ) {
+                this._callback( ev.target.file || ev.target.files );
+            }
+        } );
 
-    /**
-     * ダイアログが閉じられる時に呼び出される関数。
-     * @type {Function}
-     */
-    var _callback = callback;
+        /**
+         * ダイアログが閉じられる時に呼び出される関数。
+         * @type {Function}
+         */
+        this._callback = callback;
+
+        this.setAccept( accept );
+        this.setMultipe( multiple );
+    }
 
     /**
      * ダイアログを表示します。
      *
      * @param {Function} callback ダイアログが閉じられる時に呼び出される関数。
      */
-    this.show = function( callback ) {
+    show( callback ) {
         if( callback ) {
-            _callback = callback;
+            this._callback = callback;
         }
 
-        _element.click();
-    };
+        this._element.click();
+    }
 
     /**
      * ダイアログで開くファイル種別を設定します。
      *
      * @param {String} accept 種別。
      */
-    this.setAccept = function( accept ) {
-        _element.setAttribute( 'accept', accept );
-    };
+    setAccept( accept ) {
+        this._element.setAttribute( 'accept', accept );
+    }
 
     /**
      * 複数ファイルを選択するための値を設定します。
      *
      * @param {Boolean} multiple 複数選択するなら true。
      */
-    this.setMultipe = function( multiple ) {
+    setMultipe( multiple ) {
         if( multiple ) {
-            _element.setAttribute( 'multiple', true );
-            _element.setAttribute( 'name', 'files[]' );
+            this._element.setAttribute( 'multiple', true );
+            this._element.setAttribute( 'name', 'files[]' );
 
         } else {
-            _element.removeAttribute( 'multiple' );
-            _element.setAttribute( 'name', 'file' );
+            this._element.removeAttribute( 'multiple' );
+            this._element.setAttribute( 'name', 'file' );
         }
-    };
-
-    _element.setAttribute( 'type', 'file' );
-    _element.addEventListener( 'change', function( ev ) {
-        if( _callback ) {
-            _callback( ev.target.file || ev.target.files );
-        }
-    } );
-
-    this.setAccept( accept );
-    this.setMultipe( multiple );
-};
-
-/**
- * ファイル系ダイアログを提供します。
- * @type {Object}
- */
-module.exports = {
-    /**
-     * ファイル選択ダイアログを生成します。
-     *
-     * @param {String}   accept   種別。
-     * @param {Boolean}  multiple 複数選択するなら true。
-     * @param {Function} callback ダイアログが閉じられる時に呼び出される関数。
-     *
-     * @return {OpenFileDialog} ファイル選択ダイアログ。
-     */
-    openFileDialog: function( accept, multiple, callback ) {
-        return new OpenFileDialog( accept, multiple, callback );
     }
-};
+}

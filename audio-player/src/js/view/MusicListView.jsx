@@ -1,5 +1,5 @@
-var React = require( 'react' );
-var Util  = require( '../model/util/Utility.js' );
+import React from 'react';
+import Util  from '../model/util/Utility.js';
 
 /**
  * 音楽リスト用コンポーネントを描画します。
@@ -8,15 +8,14 @@ var Util  = require( '../model/util/Utility.js' );
  *
  * @return {ReactElement} React エレメント。
  */
-module.exports = function( comp ) {
-    var items = comp.musics.map( function( music, index ) {
-        var selected = ( comp.current && comp.current.id === music.id );
-        var playing  = ( comp.playing && comp.currentPlay && comp.currentPlay.id === music.id  );
+export default ( comp ) => {
+    let items = comp.musics.map( ( music, index ) => {
+        let selected = ( comp.current && comp.current.id === music.id );
+        let playing  = ( comp.playing && comp.currentPlay && comp.currentPlay.id === music.id  );
         return item( comp, index, music, selected, playing );
     }, comp.self );
 
-    var style = { width: '1em' };
-
+    let style = { width: '1em' };
     return (
         <div className="music-list">
             <table className="musics">

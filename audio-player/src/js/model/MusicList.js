@@ -1,27 +1,33 @@
+import IndexedDBWrapper from './IndexedDBWrapper.js';
 
 /**
  * 音楽情報リストを管理します。
  */
-var MusicList = function() {
+export default class MusicList {
     /**
-     * オーディオ要素。
-     * @type {Element}
+     * インスタンスを初期化します。
      */
-    var _audioElement = document.createElement( 'audio' );
+    constructor( dbName, dbVersion, dbStoreName ) {
+        /**
+         * オーディオ要素。
+         * @type {Element}
+         */
+        this._audioElement = document.createElement( 'audio' );
 
-    /**
-     * データベース。
-     * @type {PouchDB}
-     */
-    var _db = new ( require( './IndexedDBWrapper.js' ) )( 'music_db', 1, 'musics' );
+        /**
+         * データベース。
+         * @type {PouchDB}
+         */
+        this._db = new IndexedDBWrapper( 'music_db', 1, 'musics' );
+    }
 
     /**
      * データベースを初期化します。
      *
      * @param  {Function} callback 初期化が完了した時に呼び出される関数。
      */
-    this.init = function( callback ) {
-        var params = {
+    init( callback ) {
+        const params = {
             create: {
                 keyPath: 'id',
                 autoIncrement: true
@@ -31,10 +37,10 @@ var MusicList = function() {
             ]
         };
 
-        _db.open( params, function( err ) {
+        this._db.open( params, ( err ) => {
             callback( err );
         } );
-    };
+    }
 
     /**
      * 音声ファイルを追加します。
@@ -42,16 +48,16 @@ var MusicList = function() {
      * @param {File}     file     ファイル情報。input[type="file"] で読み取った情報を指定してください。
      * @param {Function} callback 処理が完了した時に呼び出される関数。
      */
-    this.add = function( file, callback ) {
-        _readMetadata( file, function( err, music ) {
+    add( file, callback ) {
+        this._readMetadata( file, ( err, music ) => {
             if( err ) {
                 callback( err );
 
             } else {
-                _db.add( music, callback );
+                this._db.add( music, callback );
             }
-        } );
-    };
+        }.bind( this ) );
+    }
 
     /**
      * 音楽情報を削除します。
@@ -59,18 +65,18 @@ var MusicList = function() {
      * @param {Number}   musicId  削除対象となる音楽情報の識別子。
      * @param {Function} callback コールバック関数。
      */
-    this.remove = function( musicId, callback ) {
-        _db.remove( musicId, callback );
-    };
+    remove( musicId, callback ) {
+        this._db.remove( musicId, callback );
+    }
 
     /**
      * 全ての曲を読み取ります。
      *
      * @param {Function} callback 処理が完了した時に呼び出される関数。
      */
-    this.readAll = function( callback ) {
-        _db.readAll( callback );
-    };
+    readAll( callback ) {
+        this._db.readAll( callback );
+    }
 
     /**
      * 音声ファイルのメタデータを読み取ります。
@@ -78,21 +84,20 @@ var MusicList = function() {
      * @param {File}     file     ファイル情報。input[type="file"] で読み取った情報を指定してください。
      * @param {Function} callback 処理が完了した時に呼び出される関数。
      */
-    function _readMetadata( file, callback ) {
+    _readMetadata( file, callback ) {
         // MIME チェック
-        if( !( _audioElement.canPlayType( file.type ) ) ) {
+        if( !( this._audioElement.canPlayType( file.type ) ) ) {
             callback( new Error( 'Unsupported type "' + file.type + '".' ) );
             return;
         }
 
-        var mm     = window.require( 'musicmetadata' );
-        var fs     = window.require( 'fs' );
-        var stream = fs.createReadStream( file.path );
+        const mm     = window.require( 'musicmetadata' );
+        const fs     = window.require( 'fs' );
+        const stream = fs.createReadStream( file.path );
 
-        mm( stream, { duration: true }, function( err, metadata ) {
+        mm( stream, { duration: true }, ( err, metadata ) => {
             if( err ) {
                 callback( err );
-
             } else {
                 callback( null, {
                     type:     file.type,
@@ -105,6 +110,4 @@ var MusicList = function() {
             }
         } );
     }
-};
-
-module.exports = MusicList;
+}

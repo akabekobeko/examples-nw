@@ -69,7 +69,7 @@ module.exports = {
         browserify: {
             basedir:   './',
             debug:     true,
-            transform: [ 'reactify' ]
+            transform: [ 'babelify' ]
         }
     },
 
