@@ -5,17 +5,17 @@ import DesignViewModel from './vm/DesignViewModel.js';
 /**
  * アプリケーションのエントリー ポイントです。
  */
-onload = () => {
-    const render = ( vm ) => {
-        React.render(
-            React.createElement( vm, null ),
-            document.querySelector( 'body' )
-        );
-    };
+window.onload = () => {
+  const render = ( vm ) => {
+    React.render(
+      React.createElement( vm, null ),
+      document.querySelector( 'body' )
+      );
+  };
 
-    if( window.testDesignMode ) {
-        render( DesignViewModel );
-    } else {
-        render( MainViewModel );
-    }
+  if( window.testDesignMode ) {
+    render( DesignViewModel );
+  } else {
+    render( MainViewModel );
+  }
 };
