@@ -1,6 +1,7 @@
-bin/
-src/css/
+release/
 src/fonts/
 
+bundle.*
+Icon.styl
+icon.css
 icon-sample.html
-bundle.js
