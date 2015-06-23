@@ -1,8 +1,8 @@
-import React         from 'react';
-import ObjectAssign  from 'object-assign';
-import ToolbarView   from '../view/ToolbarView.js';
-import MusicListView from '../view/MusicListView.js';
-import { PlayState } from '../stores/AudioPlayerStore.js';
+import React             from 'react';
+import ObjectAssign      from 'object-assign';
+import { ToolbarView }   from '../vm/ToolbarViewModel.js';
+import { MusicListView } from '../vm/MusicListViewModel.js';
+import { PlayState }     from '../stores/AudioPlayerStore.js';
 
 /**
  * アプリケーションのエントリー ポイントになるコンポーネント ( デザイン確認用 ) です。

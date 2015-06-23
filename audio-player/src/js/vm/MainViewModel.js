@@ -58,23 +58,23 @@ export default class MainViewModel extends React.Component {
     return (
       <article className="app">
         <ToolbarViewModel
-          musicListAction={this.props.musicListAction}
-          musicListStore={this.props.musicListStore}
-          audioPlayerAction={this.props.audioPlayerAction}
-          current={this.state.current}
-          currentPlay={this.state.currentPlay}
-          playState={this.state.playState}
-          duration={this.state.duration}
-          playbackTime={this.state.playbackTime}
-          volume={this.state.volume}
+          musicListAction={ this.props.musicListAction }
+          musicListStore={ this.props.musicListStore }
+          audioPlayerAction={ this.props.audioPlayerAction }
+          current={ this.state.current }
+          currentPlay={ this.state.currentPlay }
+          playState={ this.state.playState }
+          duration={ this.state.duration }
+          playbackTime={ this.state.playbackTime }
+          volume={ this.state.volume }
            />
         <MusicListViewModel
-          musicListAction={this.props.musicListAction}
-          audioPlayerAction={this.props.audioPlayerAction}
-          musics={this.state.musics}
-          current={this.state.current}
-          currentPlay={this.state.currentPlay}
-          playState={this.state.playState} />
+          musicListAction={ this.props.musicListAction }
+          audioPlayerAction={ this.props.audioPlayerAction }
+          musics={ this.state.musics }
+          current={ this.state.current }
+          currentPlay={ this.state.currentPlay }
+          playState={ this.state.playState } />
 
       </article>
     );
@@ -121,10 +121,10 @@ export default class MainViewModel extends React.Component {
 export function SetupMainViewModel( context, selector ) {
   React.render(
     <MainViewModel
-      audioPlayerAction={context.audioPlayerAction}
-      audioPlayerStore={context.audioPlayerStore}
-      musicListAction={context.musicListAction}
-      musicListStore={context.musicListStore}
+      audioPlayerAction={ context.audioPlayerAction }
+      audioPlayerStore={ context.audioPlayerStore }
+      musicListAction={ context.musicListAction }
+      musicListStore={ context.musicListStore }
      />,
     document.querySelector( selector )
   );
