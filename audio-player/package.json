@@ -1,6 +1,6 @@
 {
   "name": "audio-player",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Example of the audio player in nw.js.",
   "main": "index.js",
   "scripts": {
@@ -14,7 +14,10 @@
     "url": "https://github.com/akabekobeko/examples-nw"
   },
   "keywords": [
-    "Audio"
+    "NW.js",
+    "Audio",
+    "React",
+    "Flux"
   ],
   "author": "akabeko",
   "license": "MIT",
