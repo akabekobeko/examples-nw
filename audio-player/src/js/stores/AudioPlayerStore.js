@@ -37,7 +37,7 @@ export default class AudioPlayerStore extends Store {
     this.register( Keys.pause,    this._actionPause    );
     this.register( Keys.stop,     this._actionStop     );
     this.register( Keys.seek,     this._actionSeek     );
-    this.register( Keys.volume,   this._actionValume   );
+    this.register( Keys.volume,   this._actionVolume   );
     this.register( Keys.unselect, this._actionUnselect );
 
     /**
