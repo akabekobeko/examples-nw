@@ -34,20 +34,21 @@ export function ToolbarView( comp ) {
 
   return (
     <div className="toolbar">
-      <div className="wrapper">
-        <div className="player">
+      <div className="toolbar__wrapper">
+        <div className="toolbar__wrapper__player">
           { renderButton( comp, 'prev' ) }
           { renderButton( comp, playpause ) }
           { renderButton( comp, 'next' ) }
           <input
+            className="toolbar__wrapper__player__volume"
             type="range"
             min={ 0 }
             max={ 100 }
             value={comp.volume}
             onChange={ comp.onVolumeChange.bind( comp.self ) } />
         </div>
-        <div className="display">
-          <div className="metadata">
+        <div className="toolbar__wrapper__display">
+          <div className="toolbar__wrapper__display__metadata">
             <div className="time playtime">
               { Util.secondsToString( comp.playbackTime ) }
             </div>
@@ -59,14 +60,14 @@ export function ToolbarView( comp ) {
             </div>
           </div>
           <input
-            className="position"
+            className="toolbar__wrapper__display__position"
             type="range"
             min={ 0 }
             max={ duration }
             value={ comp.playbackTime }
             onChange={ comp.onPositionChange.bind( comp.self ) } />
         </div>
-        <div className="option">
+        <div className="toolbar__wrapper__option">
           <div className="wrapper">
             { renderButton( comp, 'remove' ) }
             { renderButton( comp, 'add' ) }

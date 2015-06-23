@@ -50,7 +50,7 @@ export function MusicListView( comp ) {
   const style = { width: '1em' };
   return (
     <div className="music-list">
-      <table className="musics">
+      <table className="music-list__musics">
         <thead>
           <tr>
             <th style={ style }></th>
