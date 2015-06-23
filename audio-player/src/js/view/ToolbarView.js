@@ -1,6 +1,6 @@
-import React       from 'react';
-import Util        from '../model/util/Utility.js';
-import {PlayState} from '../model/constants/AudioPlayerConstants.js';
+import React         from 'react';
+import Util          from '../util/Utility.js';
+import { PlayState } from '../stores/AudioPlayerStore.js';
 
 /**
  * ボタンを描画します。
@@ -29,7 +29,7 @@ export default ( comp ) => {
   let music     = comp.currentPlay;
   let title     = ( music ? music.title : '--' );
   let duration  = ( comp.duration === 0 ? ( music ? music.duration : 0 ) : comp.duration );
-  let playpause = ( comp.playState === PlayState.PLAYING ? 'pause' : 'play' );
+  let playpause = ( comp.playState === PlayState.Playing ? 'pause' : 'play' );
 
   return (
     <div className="toolbar">

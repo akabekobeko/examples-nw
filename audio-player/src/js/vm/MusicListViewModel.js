@@ -1,9 +1,7 @@
-import React              from 'react';
-import ObjectAssign       from 'object-assign';
-import MusicListActions   from '../model/actions/MusicListActions.js';
-import AudioPlayerActions from '../model/actions/AudioPlayerActions.js';
-import MusicListView      from'../view/MusicListView.js';
-import {PlayState}        from '../model/constants/AudioPlayerConstants.js';
+import React         from 'react';
+import ObjectAssign  from 'object-assign';
+import MusicListView from '../view/MusicListView.js';
+import { PlayState } from '../stores/AudioPlayerStore.js';
 
 /**
  * 音楽リストの Model - View を仲介するコンポーネントです。
@@ -28,7 +26,7 @@ import {PlayState}        from '../model/constants/AudioPlayerConstants.js';
   render() {
     return MusicListView( ObjectAssign( {}, this.props, {
       self:          this,
-      playing:       ( this.props.playState !== PlayState.STOPPED ),
+      playing:       ( this.props.playState !== PlayState.Stopped ),
       onSelectMusic: this._onSelectMusic,
       onSelectPlay:  this._onSelectPlay
     } ) );
@@ -40,7 +38,7 @@ import {PlayState}        from '../model/constants/AudioPlayerConstants.js';
    * @param {Object} music 音楽。
    */
   _onSelectMusic( music ) {
-    MusicListActions.select( music );
+    this.props.musicListAction.select( music );
   }
 
   /**
@@ -49,6 +47,6 @@ import {PlayState}        from '../model/constants/AudioPlayerConstants.js';
    * @param {Object} music 音楽。
    */
   _onSelectPlay( music ) {
-    AudioPlayerActions.play( music );
+    this.props.audioPlayerAction.play( music );
   }
 }

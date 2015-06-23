@@ -1,5 +1,5 @@
 import React from 'react';
-import Util  from '../model/util/Utility.js';
+import Util  from '../util/Utility.js';
 
 /**
  * 曲が再生中であることを示すアイコンを描画します。
