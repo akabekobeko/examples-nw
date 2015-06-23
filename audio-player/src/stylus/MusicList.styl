@@ -1,8 +1,6 @@
 @import "CommonColor.styl"
 
-/**
- * 音楽リスト領域。
- */
+// 音楽リスト領域
 .music-list {
   position absolute
   left 0
@@ -12,17 +10,19 @@
   overflow auto
 }
 
-/**
- * 音楽リスト。
- */
+// 音楽リスト
 .music-list__musics {
-  
   width 100%
   border-collapse collapse
   border-spacing 0
 
   tr:nth-child( even ) {
     background-color color_gray_light
+  }
+
+  // 選択行、tr:nth-child より詳細度を高くする必要あり
+  tr.selected {
+    background-color color_blue_light
   }
 
   thead {
@@ -45,14 +45,6 @@
 
   .title {
     text-align left
-  }
-
-  /**
-   * 選択行。
-   * tr:nth-child より詳細度を高くする必要あり。
-   */
-  tr.selected {
-    background-color color_blue_light
   }
 
   .icon-speaker {
