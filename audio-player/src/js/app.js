@@ -1,21 +1,23 @@
-import React           from 'react';
-import MainViewModel   from './vm/MainViewModel.js';
-import DesignViewModel from './vm/DesignViewModel.js';
+import AppContext               from './AppContext.js';
+import { SetupDesignViewModel } from './vm/DesignViewModel.js';
+import { SetupMainViewModel }   from './vm/MainViewModel.js';
+
+/**
+ * アプリケーション。
+ * @type {AppContext}
+ */
+let context = null;
 
 /**
  * アプリケーションのエントリー ポイントです。
  */
 window.onload = () => {
-  const render = ( vm ) => {
-    React.render(
-      React.createElement( vm, null ),
-      document.querySelector( 'body' )
-      );
-  };
+  context = new AppContext();
 
+  const selector = 'body';
   if( window.testDesignMode ) {
-    render( DesignViewModel );
+    SetupDesignViewModel( selector );
   } else {
-    render( MainViewModel );
+    SetupMainViewModel( context, selector );
   }
 };

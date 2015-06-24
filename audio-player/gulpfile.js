@@ -125,7 +125,7 @@ gulp.task( 'release-build', [ 'clean', 'browserify-uglify', 'browserify', 'stylu
 // nw.js ビルド
 gulp.task( 'nw', [ 'release-build' ], function() {
   var builder = new ( require( 'node-webkit-builder' ) )( {
-    version:  '0.12.1',
+    version:  '0.12.2',
     files:     [ common.dest + '/src/**' ],
     buildDir:  common.dest + '/bin',
     cacheDir:  common.dest + '/nw',

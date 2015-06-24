@@ -1,10 +1,82 @@
-import React              from 'react';
-import ObjectAssign       from 'object-assign';
-import {PlayState}        from '../model/constants/AudioPlayerConstants.js';
-import MusicListActions   from '../model/actions/MusicListActions.js';
-import MusicListStore     from '../model/stores/MusicListStore.js';
-import AudioPlayerActions from '../model/actions/AudioPlayerActions.js';
-import ToolbarView        from '../view/ToolbarView.js';
+import React         from 'react';
+import ObjectAssign  from 'object-assign';
+import Util          from '../model/util/Utility.js';
+import { PlayState } from '../stores/AudioPlayerStore.js';
+
+/**
+ * ボタンを描画します。
+ *
+ * @param {Object} comp コンポーネント。
+ * @param {String} type ボタン種別。
+ *
+ * @return {ReactElement}  React エレメント。
+ */
+function renderButton( comp, type ) {
+  return (
+    <div className="button" onClick={comp.onPressButton.bind( comp.self, type )}>
+      <i className={'icon-' + type}></i>
+    </div>
+  );
+}
+
+/**
+ * ツールバー用コンポーネントを描画します。
+ *
+ * @param {Object} comp コンポーネント。
+ *
+ * @return {ReactElement}  React エレメント。
+ */
+export function ToolbarView( comp ) {
+  const music     = comp.currentPlay;
+  const title     = ( music ? music.title : '--' );
+  const duration  = ( comp.duration === 0 ? ( music ? music.duration : 0 ) : comp.duration );
+  const playpause = ( comp.playState === PlayState.Playing ? 'pause' : 'play' );
+
+  return (
+    <div className="toolbar">
+      <div className="toolbar__wrapper">
+        <div className="toolbar__wrapper__player">
+          { renderButton( comp, 'prev' ) }
+          { renderButton( comp, playpause ) }
+          { renderButton( comp, 'next' ) }
+          <input
+            className="toolbar__wrapper__player__volume"
+            type="range"
+            min={ 0 }
+            max={ 100 }
+            value={comp.volume}
+            onChange={ comp.onVolumeChange.bind( comp.self ) } />
+        </div>
+        <div className="toolbar__wrapper__display">
+          <div className="toolbar__wrapper__display__metadata">
+            <div className="time playtime">
+              { Util.secondsToString( comp.playbackTime ) }
+            </div>
+            <div className="title">
+              { title }
+            </div>
+            <div className="time duration">
+              { Util.secondsToString( duration ) }
+            </div>
+          </div>
+          <input
+            className="toolbar__wrapper__display__position"
+            type="range"
+            min={ 0 }
+            max={ duration }
+            value={ comp.playbackTime }
+            onChange={ comp.onPositionChange.bind( comp.self ) } />
+        </div>
+        <div className="toolbar__wrapper__option">
+          <div className="wrapper">
+            { renderButton( comp, 'remove' ) }
+            { renderButton( comp, 'add' ) }
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /**
  * ツールバー用コンポーネントです。
@@ -47,7 +119,7 @@ export default class ToolbarViewModel extends React.Component {
       break;
 
       case 'pause':
-      AudioPlayerActions.pause();
+      this.props.context.audioPlayerAction.pause();
       break;
 
       case 'prev':
@@ -59,7 +131,7 @@ export default class ToolbarViewModel extends React.Component {
       break;
 
       case 'add':
-      MusicListActions.add();
+      this.props.context.musicListAction.add();
       break;
 
       case 'remove':
@@ -74,7 +146,7 @@ export default class ToolbarViewModel extends React.Component {
    * @param  {Object} ev イベント情報。
    */
   _onVolumeChange( ev ) {
-    AudioPlayerActions.volume( ev.target.value );
+    this.props.context.audioPlayerAction.volume( ev.target.value );
   }
 
   /**
@@ -83,17 +155,17 @@ export default class ToolbarViewModel extends React.Component {
    * @param  {Object} ev イベント情報。
    */
   _onPositionChange( ev ) {
-    AudioPlayerActions.seek( ev.target.value );
+    this.props.context.audioPlayerAction.seek( ev.target.value );
   }
 
   /**
    * 曲を再生します。
    */
   _play() {
-    if( this.props.playState === PlayState.STOPPED ) {
-      AudioPlayerActions.play( this.props.currentPlay );
+    if( this.props.playState === PlayState.Stopped ) {
+      this.props.context.audioPlayerAction.play( this.props.currentPlay );
     } else {
-      AudioPlayerActions.play();
+      this.props.context.audioPlayerAction.play();
     }
   }
 
@@ -103,13 +175,13 @@ export default class ToolbarViewModel extends React.Component {
    * @param  {Boolan} prev 前の曲を選ぶなら true。
    */
   _moveNext( prev ) {
-    let music = MusicListStore.next( this.props.currentPlay, prev );
+    let music = this.props.context.musicListStore.next( this.props.currentPlay, prev );
     if( !( music ) ) { return; }
 
-    if( this.props.playState === PlayState.STOPPED ) {
-      MusicListActions.select( music );
+    if( this.props.playState === PlayState.Stopped ) {
+      this.props.context.musicListAction.select( music );
     } else {
-      AudioPlayerActions.play( music );
+      this.props.context.audioPlayerAction.play( music );
     }
   }
 
@@ -123,14 +195,14 @@ export default class ToolbarViewModel extends React.Component {
 
     const currentPlay = this.props.currentPlay;
     if( currentPlay && currentPlay.id === current.id ) {
-      if( this.props.playState === PlayState.STOPPED ) {
-        MusicListActions.remove( current.id );
+      if( this.props.playState === PlayState.Stopped ) {
+        this.props.context.musicListAction.remove( current.id );
       } else {
-        alert( 'Failed to remove the music, is playing.' );
+        console.error( 'Failed to remove the music, is playing.' );
       }
 
     } else {
-      MusicListActions.remove( current.id );
+      this.props.context.musicListAction.remove( current.id );
     }
   }
 }

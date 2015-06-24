@@ -1,9 +1,73 @@
-import React              from 'react';
-import ObjectAssign       from 'object-assign';
-import MusicListActions   from '../model/actions/MusicListActions.js';
-import AudioPlayerActions from '../model/actions/AudioPlayerActions.js';
-import MusicListView      from'../view/MusicListView.js';
-import {PlayState}        from '../model/constants/AudioPlayerConstants.js';
+import React         from 'react';
+import ObjectAssign  from 'object-assign';
+import Util          from '../model/util/Utility.js';
+import { PlayState } from '../stores/AudioPlayerStore.js';
+
+/**
+ * 音楽リストのアイテムを描画します。
+ *
+ * @param {Object}  comp     コンポーネント。
+ * @param {Numbet}  index    リスト上のインデックス。
+ * @param {Music}   music    音楽情報。
+ * @param {Boolean} selected 曲がリスト上で選択されているなら true。
+ * @param {Boolean} playing  曲が再生中なら true。
+ *
+ * @return {ReactElement} React エレメント。
+ */
+function renderItem( comp, index, music, selected, playing ) {
+  return (
+    <tr
+      key={ music.id }
+      className={ ( selected ? 'selected' : null ) }
+      onClick={ comp.onSelectMusic.bind( comp.self, music ) }
+      onDoubleClick={ comp.onSelectPlay.bind( comp.self, music ) }>
+      <td>
+        { ( playing ? ( <i className="icon-speaker"></i> ) : null ) }
+      </td>
+      <td className="number">{ index + 1 }</td>
+      <td className="title">{ music.title }</td>
+      <td>{ music.artist }</td>
+      <td>{ music.album }</td>
+      <td>{ Util.secondsToString( music.duration ) }</td>
+    </tr>
+  );
+}
+
+/**
+ * 音楽リスト用コンポーネントを描画します。
+ *
+ * @param {Object} comp コンポーネント。
+ *
+ * @return {ReactElement} React エレメント。
+ */
+export function MusicListView( comp ) {
+  const items = comp.musics.map( ( music, index ) => {
+    const selected = ( comp.current && comp.current.id === music.id );
+    const playing  = ( comp.playing && comp.currentPlay && comp.currentPlay.id === music.id  );
+    return renderItem( comp, index, music, selected, playing );
+  } );
+
+  const style = { width: '1em' };
+  return (
+    <div className="music-list">
+      <table className="music-list__musics">
+        <thead>
+          <tr>
+            <th style={ style }></th>
+            <th>#</th>
+            <th>Title</th>
+            <th>Artis</th>
+            <th>Album</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          { items }
+        </tbody>
+      </table>
+    </div>
+  );
+}
 
 /**
  * 音楽リストの Model - View を仲介するコンポーネントです。
@@ -28,7 +92,7 @@ import {PlayState}        from '../model/constants/AudioPlayerConstants.js';
   render() {
     return MusicListView( ObjectAssign( {}, this.props, {
       self:          this,
-      playing:       ( this.props.playState !== PlayState.STOPPED ),
+      playing:       ( this.props.playState !== PlayState.Stopped ),
       onSelectMusic: this._onSelectMusic,
       onSelectPlay:  this._onSelectPlay
     } ) );
@@ -40,7 +104,7 @@ import {PlayState}        from '../model/constants/AudioPlayerConstants.js';
    * @param {Object} music 音楽。
    */
   _onSelectMusic( music ) {
-    MusicListActions.select( music );
+    this.props.context.musicListAction.select( music );
   }
 
   /**
@@ -49,6 +113,6 @@ import {PlayState}        from '../model/constants/AudioPlayerConstants.js';
    * @param {Object} music 音楽。
    */
   _onSelectPlay( music ) {
-    AudioPlayerActions.play( music );
+    this.props.context.audioPlayerAction.play( music );
   }
 }

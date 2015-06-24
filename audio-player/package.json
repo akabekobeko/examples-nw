@@ -1,19 +1,23 @@
 {
   "name": "audio-player",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Example of the audio player in nw.js.",
   "main": "index.js",
   "scripts": {
+    "start": "gulp watch",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "gulp nw",
-    "watch": "gulp watch"
+    "app": "nw ./src",
+    "release": "gulp nw"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/akabekobeko/examples-nw"
   },
   "keywords": [
-    "Audio"
+    "NW.js",
+    "Audio",
+    "React",
+    "Flux"
   ],
   "author": "akabeko",
   "license": "MIT",
@@ -38,13 +42,14 @@
     "gulp-watchify": "^0.5.0",
     "lodash": "^3.8.0",
     "node-webkit-builder": "^1.0.11",
+    "nw": "^0.12.2",
     "pretty-hrtime": "^1.0.0",
     "run-sequence": "^1.1.0",
     "vinyl-buffer": "^1.0.0",
     "watchify": "^3.2.1"
   },
   "dependencies": {
-    "flux": "^2.0.3",
+    "material-flux": "^1.2.1",
     "musicmetadata": "^1.0.1",
     "object-assign": "^2.0.0",
     "react": "^0.13.3"

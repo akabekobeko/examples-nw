@@ -1,8 +1,4 @@
-color_gray          = #bdc3c7
-color_gray_light    = #ecf0f1
-color_gray_light_ex = #f8f8f8
-color_gray_dark     = #95a5a6
-color_blue_light    = #3498db
+@import "CommonColor.styl"
 
 toolbar_height    = 48px
 player_width      = 256px
@@ -13,212 +9,163 @@ option_width      = 256px
  * ツールバー領域。
  */
 .toolbar {
-    position absolute
-    top 0
-    left 0
-    right 0
-    height toolbar_height
-    border-bottom solid 1px color_gray
-    background-color color_gray_light
-
-    .wrapper {
-        position relative
-        width 100%
-        height 100%
-    }
+  position absolute
+  top 0
+  left 0
+  right 0
+  height toolbar_height
+  border-bottom solid 1px color_gray
+  background-color color_gray_light
 }
 
-/**
- * 再生コントロール。
- */
-.toolbar > .wrapper > .player {
+// ツールバー領域内を相対配置するための領域
+.toolbar__wrapper {
+  position relative
+  width 100%
+  height 100%
+}
+
+// 再生コントロール
+.toolbar__wrapper__player {
+  display table-cell
+  vertical-align middle
+  padding 0 0 0 .5em
+  box-sizing border-box
+  width player_width
+  height toolbar_height
+
+  .button {
+    display inline-block
+    margin 0 1em 0 0
+    font-size 1.2em
+  }
+}
+
+// 音量スライダー
+.toolbar__wrapper__player__volume {
+  -webkit-appearance none
+  width 124px
+  height 24px
+  margin 0
+  padding 0
+  background-color transparent
+
+  &:focus {
+    outline none
+  }
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance none
+    margin-top -5px
+    width 14px
+    height 14px
+    border-radius 50%
+    background-color color_gray_dark
+  }
+
+  &::-webkit-slider-runnable-track {
+    margin-top 6px
+    height 3px
+    background-color color_gray
+  }
+}
+
+// 音声情報の表示
+.toolbar__wrapper__display {
+  position absolute
+  top 0
+  bottom 0
+  left player_width
+  right option_width
+  min-width 16em
+  border-left solid 1px color_gray
+  border-right solid 1px color_gray
+  background-color color_gray_light_ex
+  text-align center
+}
+
+// 再生位置スライダー
+.toolbar__wrapper__display__position {
+  -webkit-appearance none
+  margin 0
+  padding 0
+  width 100%
+  height 16px
+  background-color transparent
+
+  &:focus {
+    outline none
+  }
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance none
+    margin-top -8px
+    width 8px
+    height 12px
+    background-color color_gray_dark
+  }
+
+  &::-webkit-slider-runnable-track {
+    margin-top 13px
+    height 3px
+    background-color color_gray
+  }
+}
+
+// メタデータ表示
+.toolbar__wrapper__display__metadata {
+  position relative
+  width 100%
+  height 32px
+
+  .time {
+    position absolute
+    bottom 0
+    width 4em
+    font-size .8em
+    color color_gray_dark
+  }
+
+  .playtime {
+    left 0
+    padding-left .2em
+    text-align left
+
+  }
+  
+  .duration {
+    right 0
+    padding-right .2em
+    text-align right
+  }
+
+  .title {
+    position absolute
+    left 4em
+    right 4em
+    top 0.2em
+    text-align center
+  }
+}
+
+// その他の機能
+.toolbar__wrapper__option {
+  position absolute
+  top 0
+  right 0
+  width option_width
+  height toolbar_height
+
+  .wrapper {
     display table-cell
     vertical-align middle
-    padding 0 0 0 .5em
-    box-sizing border-box
-    width player_width
-    height toolbar_height
-
-    .button {
-        display inline-block
-        margin 0 1em 0 0
-        font-size 1.2em
-    }
-
-    /**
-     * 音量スライダー。
-     */
-    input[type="range"] {
-        -webkit-appearance none
-        width 124px
-        height 24px
-        margin 0
-        padding 0
-        background-color transparent
-
-        &:focus {
-            outline none
-        }
-
-        &::-webkit-slider-thumb {
-            -webkit-appearance none
-            margin-top -5px
-            width 14px
-            height 14px
-            border-radius 50%
-            background-color color_gray_dark
-        }
-
-        &::-webkit-slider-runnable-track {
-            margin-top 6px
-            height 3px
-            background-color color_gray
-        }
-    }
-}
-
-/**
- * 音声情報の表示。
- */
-.toolbar > .wrapper > .display {
-    position absolute
-    top 0
-    bottom 0
-    left player_width
-    right option_width
-    min-width 16em
-    border-left solid 1px color_gray
-    border-right solid 1px color_gray
-    background-color color_gray_light_ex
-    text-align center
-
-    /**
-     * メタデータ表示。
-     */
-    .metadata {
-        position relative
-        width 100%
-        height 32px
-
-        .time {
-            position absolute
-            bottom 0
-            width 4em
-            font-size .8em
-            color color_gray_dark
-        }
-
-        .playtime {
-            left 0
-            padding-left .2em
-            text-align left
-
-        }
-        
-        .duration {
-            right 0
-            padding-right .2em
-            text-align right
-        }
-
-        .title {
-            position absolute
-            left 4em
-            right 4em
-            top 0.2em
-            text-align center
-        }
-    }
-
-    /**
-     * 再生位置スライダー。
-     */
-    input[type="range"] {
-        -webkit-appearance none
-        margin 0
-        padding 0
-        width 100%
-        height 16px
-        background-color transparent
-
-        &:focus {
-            outline none
-        }
-
-        &::-webkit-slider-thumb {
-            -webkit-appearance none
-            margin-top -8px
-            width 8px
-            height 12px
-            background-color color_gray_dark
-        }
-
-        &::-webkit-slider-runnable-track {
-            margin-top 13px
-            height 3px
-            background-color color_gray
-        }
-    }
-
-    /**
-     * 時間表示。
-     */
-    .time {
-        position relative
-        width 100%;
-        height 1em
-
-        span {
-            width 4em
-            font-size .8em
-            color color_gray_dark
-        }
-
-        .playtime {
-            position absolute
-            left .5em
-            text-align left
-        }
-
-        .duration {
-            position absolute
-            right .5em
-            text-align right
-        }
-
-        .position-wrapper {
-            display block
-            position absolute
-            left 4.5em
-            right 4.5em
-
-            .position {
-                width 100%
-            }
-        }
-    }
-}
-
-/**
- * その他の機能。
- */
-.toolbar > .wrapper > .option {
-    position absolute
-    top 0
-    right 0
     width option_width
     height toolbar_height
+    text-align right
+  }
 
-    .wrapper {
-        display table-cell
-        vertical-align middle
-        width option_width
-        height toolbar_height
-        text-align right
-
-        .button {
-            display inline-block
-            margin-right 1em
-        }
-    }
+  .button {
+    display inline-block
+    margin-right 1em
+  }
 }

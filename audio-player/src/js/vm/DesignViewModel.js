@@ -1,8 +1,8 @@
-import React         from 'react';
-import ObjectAssign  from 'object-assign';
-import ToolbarView   from '../view/ToolbarView.js';
-import MusicListView from '../view/MusicListView.js';
-import {PlayState}   from '../model/constants/AudioPlayerConstants.js';
+import React             from 'react';
+import ObjectAssign      from 'object-assign';
+import { ToolbarView }   from './ToolbarViewModel.js';
+import { MusicListView } from './MusicListViewModel.js';
+import { PlayState }     from '../stores/AudioPlayerStore.js';
 
 /**
  * アプリケーションのエントリー ポイントになるコンポーネント ( デザイン確認用 ) です。
@@ -32,7 +32,7 @@ import {PlayState}   from '../model/constants/AudioPlayerConstants.js';
 
       // ツールバー
       currentPlay:      musics[ 0 ],
-      playState:        PlayState.STOPPED,
+      playState:        PlayState.Stopped,
       duration:         musics[ 0 ].duration,
       playbackTime:     0,
       volume:           100,
@@ -49,12 +49,12 @@ import {PlayState}   from '../model/constants/AudioPlayerConstants.js';
    */
   render() {
     const comp = ObjectAssign( {}, this.state, { self: this } );
-    return React.createElement(
-      "article",
-      { className: "app" },
-      ToolbarView( comp ),
-      MusicListView( comp )
-      );
+    return (
+      <article className="app">
+        { ToolbarView( comp ) }
+        { MusicListView( comp ) }
+      </article>
+    );
   }
 
   /**
@@ -72,7 +72,7 @@ import {PlayState}   from '../model/constants/AudioPlayerConstants.js';
    *
    * @param {Object} music 音楽。
    */
-  _onSelectPlay( music ) {
+  _onSelectPlay( /*music*/ ) {
     console.log( '_onSelectPlay' );
   }
 
@@ -104,4 +104,16 @@ import {PlayState}   from '../model/constants/AudioPlayerConstants.js';
     console.log( '_onPositionChange: value = ' + ev.target.value );
     this.setState( { playbackTime: ev.target.value } );
   }
+}
+
+/**
+ * デザイン確認用コンポーネントを設定します。
+ *
+ * @param {String} selector コンポーネントを配置する要素のセレクター。
+ */
+export function SetupDesignViewModel( selector ) {
+  React.render(
+    <DesignViewModel />,
+    document.querySelector( selector )
+  );
 }
