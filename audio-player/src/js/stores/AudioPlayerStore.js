@@ -1,6 +1,6 @@
 import { Store }   from 'material-flux';
 import { Keys }    from '../actions/AudioPlayerAction.js';
-import AudioPlayer from './AudioPlayer.js';
+import AudioPlayer from '../model/AudioPlayer.js';
 
 /**
  * 音声プレーヤーの再生状態を定義します。

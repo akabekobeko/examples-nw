@@ -1,7 +1,7 @@
 import React             from 'react';
 import ObjectAssign      from 'object-assign';
-import { ToolbarView }   from '../vm/ToolbarViewModel.js';
-import { MusicListView } from '../vm/MusicListViewModel.js';
+import { ToolbarView }   from './ToolbarViewModel.js';
+import { MusicListView } from './MusicListViewModel.js';
 import { PlayState }     from '../stores/AudioPlayerStore.js';
 
 /**

@@ -1,6 +1,6 @@
 import React         from 'react';
 import ObjectAssign  from 'object-assign';
-import Util          from '../util/Utility.js';
+import Util          from '../model/util/Utility.js';
 import { PlayState } from '../stores/AudioPlayerStore.js';
 
 /**

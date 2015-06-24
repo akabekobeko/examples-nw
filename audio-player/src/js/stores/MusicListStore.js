@@ -1,7 +1,7 @@
 import { Store }          from 'material-flux';
 import { Keys }           from '../actions/MusicListAction.js';
-import { OpenFileDialog } from '../util/FileDialog.js';
-import MusicList          from './MusicList.js';
+import { OpenFileDialog } from '../model/util/FileDialog.js';
+import MusicList          from '../model/MusicList.js';
 
 /**
  * 曲リストを操作します。
