@@ -104,7 +104,7 @@ export function MusicListView( comp ) {
    * @param {Object} music 音楽。
    */
   _onSelectMusic( music ) {
-    this.props.musicListAction.select( music );
+    this.props.context.musicListAction.select( music );
   }
 
   /**
@@ -113,6 +113,6 @@ export function MusicListView( comp ) {
    * @param {Object} music 音楽。
    */
   _onSelectPlay( music ) {
-    this.props.audioPlayerAction.play( music );
+    this.props.context.audioPlayerAction.play( music );
   }
 }

@@ -119,7 +119,7 @@ export default class ToolbarViewModel extends React.Component {
       break;
 
       case 'pause':
-      this.props.audioPlayerAction.pause();
+      this.props.context.audioPlayerAction.pause();
       break;
 
       case 'prev':
@@ -131,7 +131,7 @@ export default class ToolbarViewModel extends React.Component {
       break;
 
       case 'add':
-      this.props.musicListAction.add();
+      this.props.context.musicListAction.add();
       break;
 
       case 'remove':
@@ -146,7 +146,7 @@ export default class ToolbarViewModel extends React.Component {
    * @param  {Object} ev イベント情報。
    */
   _onVolumeChange( ev ) {
-    this.props.audioPlayerAction.volume( ev.target.value );
+    this.props.context.audioPlayerAction.volume( ev.target.value );
   }
 
   /**
@@ -155,7 +155,7 @@ export default class ToolbarViewModel extends React.Component {
    * @param  {Object} ev イベント情報。
    */
   _onPositionChange( ev ) {
-    this.props.audioPlayerAction.seek( ev.target.value );
+    this.props.context.audioPlayerAction.seek( ev.target.value );
   }
 
   /**
@@ -163,9 +163,9 @@ export default class ToolbarViewModel extends React.Component {
    */
   _play() {
     if( this.props.playState === PlayState.Stopped ) {
-      this.props.audioPlayerAction.play( this.props.currentPlay );
+      this.props.context.audioPlayerAction.play( this.props.currentPlay );
     } else {
-      this.props.audioPlayerAction.play();
+      this.props.context.audioPlayerAction.play();
     }
   }
 
@@ -175,13 +175,13 @@ export default class ToolbarViewModel extends React.Component {
    * @param  {Boolan} prev 前の曲を選ぶなら true。
    */
   _moveNext( prev ) {
-    let music = this.props.musicListStore.next( this.props.currentPlay, prev );
+    let music = this.props.context.musicListStore.next( this.props.currentPlay, prev );
     if( !( music ) ) { return; }
 
     if( this.props.playState === PlayState.Stopped ) {
-      this.props.musicListAction.select( music );
+      this.props.context.musicListAction.select( music );
     } else {
-      this.props.audioPlayerAction.play( music );
+      this.props.context.audioPlayerAction.play( music );
     }
   }
 
@@ -196,13 +196,13 @@ export default class ToolbarViewModel extends React.Component {
     const currentPlay = this.props.currentPlay;
     if( currentPlay && currentPlay.id === current.id ) {
       if( this.props.playState === PlayState.Stopped ) {
-        this.props.musicListAction.remove( current.id );
+        this.props.context.musicListAction.remove( current.id );
       } else {
         console.error( 'Failed to remove the music, is playing.' );
       }
 
     } else {
-      this.props.musicListAction.remove( current.id );
+      this.props.context.musicListAction.remove( current.id );
     }
   }
 }

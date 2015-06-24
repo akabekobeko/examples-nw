@@ -36,17 +36,17 @@ export default class MainViewModel extends React.Component {
    * コンポーネントが配置される時に発生します。
    */
   componentDidMount() {
-    this.props.audioPlayerStore.onChange( this.__onChangeAudioPlayer );
-    this.props.musicListStore.onChange( this.__onChangeMusicList );
-    this.props.musicListAction.init();
+    this.props.context.audioPlayerStore.onChange( this.__onChangeAudioPlayer );
+    this.props.context.musicListStore.onChange( this.__onChangeMusicList );
+    this.props.context.musicListAction.init();
   }
 
   /**
    * コンポーネント配置が解除される時に発生します。
    */
   componentWillUnmount() {
-    this.props.audioPlayerStore.removeChangeListener( this.__onChangeAudioPlayer );
-    this.props.musicListStore.removeChangeListener( this.__onChangeMusicList );
+    this.props.context.audioPlayerStore.removeChangeListener( this.__onChangeAudioPlayer );
+    this.props.context.musicListStore.removeChangeListener( this.__onChangeMusicList );
   }
 
   /**
@@ -58,9 +58,7 @@ export default class MainViewModel extends React.Component {
     return (
       <article className="app">
         <ToolbarViewModel
-          musicListAction={ this.props.musicListAction }
-          musicListStore={ this.props.musicListStore }
-          audioPlayerAction={ this.props.audioPlayerAction }
+          context={ this.props.context }
           current={ this.state.current }
           currentPlay={ this.state.currentPlay }
           playState={ this.state.playState }
@@ -69,8 +67,7 @@ export default class MainViewModel extends React.Component {
           volume={ this.state.volume }
            />
         <MusicListViewModel
-          musicListAction={ this.props.musicListAction }
-          audioPlayerAction={ this.props.audioPlayerAction }
+          context={ this.props.context }
           musics={ this.state.musics }
           current={ this.state.current }
           currentPlay={ this.state.currentPlay }
@@ -85,11 +82,11 @@ export default class MainViewModel extends React.Component {
    */
   _onChangeAudioPlayer() {
     this.setState( {
-      currentPlay:  this.props.audioPlayerStore.current,
-      playState:    this.props.audioPlayerStore.playState,
-      duration:     this.props.audioPlayerStore.duration,
-      playbackTime: this.props.audioPlayerStore.playbackTime,
-      volume:       this.props.audioPlayerStore.volume
+      currentPlay:  this.props.context.audioPlayerStore.current,
+      playState:    this.props.context.audioPlayerStore.playState,
+      duration:     this.props.context.audioPlayerStore.duration,
+      playbackTime: this.props.context.audioPlayerStore.playbackTime,
+      volume:       this.props.context.audioPlayerStore.volume
     } );
   }
 
@@ -99,14 +96,14 @@ export default class MainViewModel extends React.Component {
   _onChangeMusicList() {
     if( this.state.playState === PlayState.Stopped ) {
       this.setState( {
-        musics:      this.props.musicListStore.musics,
-        current:     this.props.musicListStore.current,
-        currentPlay: this.props.audioPlayerStore.current
+        musics:      this.props.context.musicListStore.musics,
+        current:     this.props.context.musicListStore.current,
+        currentPlay: this.props.context.audioPlayerStore.current
       } );
     } else {
       this.setState( {
-        musics:  this.props.musicListStore.musics,
-        current: this.props.musicListStore.current
+        musics:  this.props.context.musicListStore.musics,
+        current: this.props.context.musicListStore.current
       } );
     }
   }
@@ -120,12 +117,7 @@ export default class MainViewModel extends React.Component {
  */
 export function SetupMainViewModel( context, selector ) {
   React.render(
-    <MainViewModel
-      audioPlayerAction={ context.audioPlayerAction }
-      audioPlayerStore={ context.audioPlayerStore }
-      musicListAction={ context.musicListAction }
-      musicListStore={ context.musicListStore }
-     />,
+    <MainViewModel context={ context } />,
     document.querySelector( selector )
   );
 }
