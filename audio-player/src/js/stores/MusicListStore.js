@@ -5,7 +5,6 @@ import MusicList          from '../model/MusicList.js';
 
 /**
  * 曲リストを操作します。
- * このクラスはシングルトンとして実装されます。
  *
  * @type {MusicListStore}
  */

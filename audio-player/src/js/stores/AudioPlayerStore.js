@@ -19,7 +19,6 @@ export const PlayState = {
 
 /**
  * 音声プレーヤーを操作します。
- * このクラスはシングルトンとして実装されます。
  *
  * @type {AudioPlayerStore}
  */
