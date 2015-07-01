@@ -1,6 +1,6 @@
 {
     "name": "AudioPlayer",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Example of the audio player in nw.js.",
     "main": "index.html",
     "window": {
