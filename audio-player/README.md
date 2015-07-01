@@ -11,9 +11,11 @@ Example of simple audio player in [NW.js](https://github.com/nwjs/nw.js).
 1. `cd audio player`
 1. `npm install`
 1. Run npm commands
- * `npm start` is a development build & start watch files
- * `npm run app` is a launcher app on NW.js
- * `npm run release` is a release build ( create nw.js app package )
+ * `npm start` Development build & start watch files
+ *  `npm test` Unit tests
+ * `npm run app` Launcher app on NW.js
+ * `npm run esdoc` Create code documents
+ * `npm run release` Release build ( create NW.js app package & code documents )
 
 ## Remarks
 

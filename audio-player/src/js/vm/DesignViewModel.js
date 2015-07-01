@@ -23,6 +23,10 @@ import { PlayState }     from '../stores/AudioPlayerStore.js';
       { id: 2, title: 'test2', artist: 'artist2', album: 'album2', duration: 120 }
     ];
 
+    /**
+     * コンポーネントの状態。
+     * @type {Object}
+     */
     this.state = {
       // 音楽リスト
       musics:        musics,

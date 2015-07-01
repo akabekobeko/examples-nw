@@ -180,7 +180,7 @@
   /**
    * 音声の再生を停止します。
    *
-   * @param {Boolean}
+   * @param {Boolean} pause 一時停止する場合は true。それ以外は停止。
    */
   stop( pause ) {
     console.log( '[stop]' );
@@ -220,23 +220,24 @@
   seek( playbackTime ) {
     console.log( '[seek]' );
     if( playbackTime === undefined ) { return false; }
-      // 時間指定が文字列になる現象を避けるため、ここで強制的に数値化しておく
-      playbackTime = Number( playbackTime );
-      if( this.duration() < playbackTime ) {
-        console.log( '[ERROR] Seek time is greater than duration of audio buffer.' );
-        return false;
-      }
 
-      if( this._isPlaying ) {
-        this.pause();
-        this._playbackTime = playbackTime;
-        this.play();
-      } else {
-        this._playbackTime = playbackTime;
-      }
-
-      return true;
+    // 時間指定が文字列になる現象を避けるため、ここで強制的に数値化しておく
+    playbackTime = Number( playbackTime );
+    if( this.duration() < playbackTime ) {
+      console.log( '[ERROR] Seek time is greater than duration of audio buffer.' );
+      return false;
     }
+
+    if( this._isPlaying ) {
+      this.pause();
+      this._playbackTime = playbackTime;
+      this.play();
+    } else {
+      this._playbackTime = playbackTime;
+    }
+
+    return true;
+  }
 
   /**
    * 演奏時間を取得します。

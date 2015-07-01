@@ -17,6 +17,10 @@ export default class MainViewModel extends React.Component {
   constructor( props ) {
     super( props );
 
+    /**
+     * コンポーネントの状態。
+     * @type {Object}
+     */
     this.state = {
       musics:       [],
       current:      null,
