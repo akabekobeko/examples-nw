@@ -7,8 +7,8 @@
     "start": "gulp watch",
     "test": "mocha --compilers js:espower-babel/guess test/**/*.js",
     "app": "nw ./src",
-    "release": "gulp nw",
-    "esdoc": "esdoc -c esdoc.json"
+    "esdoc": "esdoc -c esdoc.json",
+    "release": "npm run esdoc && gulp nw"
   },
   "repository": {
     "type": "git",
