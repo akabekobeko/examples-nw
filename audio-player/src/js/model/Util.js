@@ -3,7 +3,7 @@
  *
  * @type {Object}
  */
- export default {
+ export class Util {
   /**
    * 秒単位の演奏時間を文字列化します。
    *
@@ -11,7 +11,7 @@
    *
    * @return {String} 文字列化された演奏時間。
    */
-   secondsToString( duration ) {
+  secondsToString( duration ) {
     const h = ( duration / 3600 | 0 );
     const m = ( ( duration % 3600 ) / 60 | 0 );
     const s = ( duration % 60 );
@@ -26,4 +26,7 @@
                                       '0:' + padding( s )
     );
   }
-};
+}
+
+// シングルトンとして公開
+export default new Util();

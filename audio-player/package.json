@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "gulp watch",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --compilers js:espower-babel/guess test/**/*.js",
     "app": "nw ./src",
-    "release": "gulp nw"
+    "release": "gulp nw",
+    "esdoc": "esdoc -c esdoc.json"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,8 @@
     "babelify": "^6.1.1",
     "browserify": "^9.0.8",
     "del": "^1.1.1",
+    "esdoc": "^0.1.2",
+    "espower-babel": "^3.2.0",
     "gulp": "^3.8.11",
     "gulp-concat": "^2.5.2",
     "gulp-consolidate": "^0.1.2",
@@ -41,8 +44,10 @@
     "gulp-util": "^3.0.4",
     "gulp-watchify": "^0.5.0",
     "lodash": "^3.8.0",
+    "mocha": "^2.2.5",
     "node-webkit-builder": "^1.0.11",
     "nw": "^0.12.2",
+    "power-assert": "^0.11.0",
     "pretty-hrtime": "^1.0.0",
     "run-sequence": "^1.1.0",
     "vinyl-buffer": "^1.0.0",
