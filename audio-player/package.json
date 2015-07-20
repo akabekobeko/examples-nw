@@ -8,6 +8,7 @@
     "test": "mocha --compilers js:espower-babel/guess test/**/*.js",
     "app": "nw ./src",
     "esdoc": "esdoc -c esdoc.json",
+    "css": "gulp stylus",
     "release": "npm run esdoc && gulp nw"
   },
   "repository": {
