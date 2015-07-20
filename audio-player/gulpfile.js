@@ -44,16 +44,11 @@ gulp.task( 'browserify', $.watchify( function( watchify ) {
 
 // Stylus コンパイルと結合
 gulp.task( 'stylus', function() {
-  return gulp.src( [
-      common.src + '/stylus/App.styl',
-      common.src + '/stylus/MusicList.styl',
-      common.src + '/stylus/Toolbar.styl',
-      common.src + '/stylus/Icon.styl'
-    ] )
+  return gulp.src( [ common.src + '/stylus/App.styl' ] )
     .pipe( $.plumber() )
     .pipe( $.sourcemaps.init() )
     .pipe( $.stylus() )
-    .pipe( $.concat( 'bundle.css' ) )
+    .pipe( $.rename( 'bundle.css' ) )
     .pipe( $.minifyCss() )
     .pipe( $.sourcemaps.write( '.' ) )
     .pipe( gulp.dest( common.src ) );
